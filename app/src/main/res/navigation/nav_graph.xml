@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/FirstFragment">
+
+    <fragment
+        android:id="@+id/FirstFragment"
+        android:name="com.example.indytest.FirstFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_first">
+
+        <action
+            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_IDGenerationFragment"
+            app:destination="@id/IDGenerationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/SecondFragment"
+        android:name="com.example.indytest.SecondFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_second">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/IDGenerationFragment"
+        android:name="com.example.indytest.IDGeneration.IDGenerationFragment"
+        android:label="fragment_i_d_generation"
+        tools:layout="@layout/fragment_i_d_generation">
+        <action
+            android:id="@+id/action_IDGenerationFragment_to_signingFragment"
+            app:destination="@id/signingFragment">
+            <argument
+                android:name="didInfo"
+                app:argType="com.example.indytest.IDGeneration.IDGenerationModels$DidInfo"
+                app:nullable="false" />
+            <argument
+                android:name="walletInfo"
+                app:argType="com.example.indytest.IDGeneration.IDGenerationModels$WalletInfo"
+                app:nullable="false" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/signingFragment"
+        android:name="com.example.indytest.Signing.SigningFragment"
+        android:label="fragment_signing"
+        tools:layout="@layout/fragment_signing">
+        <argument
+            android:name="didInfo"
+            app:argType="com.example.indytest.IDGeneration.IDGenerationModels$DidInfo" />
+        <argument
+            android:name="walletInfo"
+            app:argType="com.example.indytest.IDGeneration.IDGenerationModels$WalletInfo" />
+    </fragment>
+</navigation>
