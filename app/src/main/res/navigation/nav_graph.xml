@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="com.example.indytest.FirstFragment"
+        android:name="com.example.did.FirstFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_first">
 
@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="com.example.indytest.SecondFragment"
+        android:name="com.example.did.SecondFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second">
 
@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/IDGenerationFragment"
-        android:name="com.example.indytest.ui.wallets.IDGenerationFragment"
+        android:name="com.example.did.ui.wallets.IDGenerationFragment"
         android:label="fragment_i_d_generation"
         tools:layout="@layout/fragment_i_d_generation">
         <action
@@ -38,11 +38,11 @@
             app:destination="@id/signingFragment">
             <argument
                 android:name="didInfo"
-                app:argType="com.example.indytest.data.DidInfo"
+                app:argType="com.example.did.data.DidInfo"
                 app:nullable="false" />
             <argument
                 android:name="walletInfo"
-                app:argType="com.example.indytest.data.WalletInfo"
+                app:argType="com.example.did.data.WalletInfo"
                 app:nullable="false" />
         </action>
         <action
@@ -50,28 +50,28 @@
             app:destination="@id/DIDsFragment">
             <argument
                 android:name="walletInfo"
-                app:argType="com.example.indytest.data.WalletInfo" />
+                app:argType="com.example.did.data.WalletInfo" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/signingFragment"
-        android:name="com.example.indytest.ui.signing.SigningFragment"
+        android:name="com.example.did.ui.signing.SigningFragment"
         android:label="fragment_signing"
         tools:layout="@layout/fragment_signing">
         <argument
             android:name="didInfo"
-            app:argType="com.example.indytest.data.DidInfo" />
+            app:argType="com.example.did.data.DidInfo" />
         <argument
             android:name="walletInfo"
-            app:argType="com.example.indytest.data.WalletInfo" />
+            app:argType="com.example.did.data.WalletInfo" />
     </fragment>
     <fragment
         android:id="@+id/DIDsFragment"
-        android:name="com.example.indytest.ui.dids.DIDsFragment"
+        android:name="com.example.did.ui.dids.DIDsFragment"
         android:label="fragment_d_i_ds"
         tools:layout="@layout/fragment_d_i_ds">
         <argument
             android:name="walletInfo"
-            app:argType="com.example.indytest.data.WalletInfo" />
+            app:argType="com.example.did.data.WalletInfo" />
     </fragment>
 </navigation>

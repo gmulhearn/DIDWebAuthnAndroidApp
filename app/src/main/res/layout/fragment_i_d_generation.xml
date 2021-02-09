@@ -4,7 +4,7 @@
     android:id="@+id/generateIDLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.indytest.ui.wallets.IDGenerationFragment">
+    tools:context="com.example.did.ui.wallets.IDGenerationFragment">
 
     <Button
         android:id="@+id/genWalletButton"
