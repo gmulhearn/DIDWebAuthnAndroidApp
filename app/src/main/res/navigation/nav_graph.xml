@@ -46,8 +46,8 @@
                 app:nullable="false" />
         </action>
         <action
-            android:id="@+id/action_WalletsFragment_to_DIDsFragment"
-            app:destination="@id/DIDsFragment">
+            android:id="@+id/action_WalletsFragment_to_DIDSelectFragment"
+            app:destination="@id/DIDSelectFragment">
             <argument
                 android:name="walletInfo"
                 app:argType="com.example.did.data.WalletInfo" />
@@ -66,8 +66,8 @@
             app:argType="com.example.did.data.WalletInfo" />
     </fragment>
     <fragment
-        android:id="@+id/DIDsFragment"
-        android:name="com.example.did.ui.dids.DIDsFragment"
+        android:id="@+id/DIDSelectFragment"
+        android:name="com.example.did.ui.didselect.DIDSelectFragment"
         android:label="fragment_d_i_ds"
         tools:layout="@layout/fragment_d_i_ds">
         <argument

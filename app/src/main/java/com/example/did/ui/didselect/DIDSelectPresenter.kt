@@ -1,23 +1,23 @@
-package com.example.did.ui.dids
+package com.example.did.ui.didselect
 
 import android.os.Bundle
 import com.example.did.common.ObjectDelegate
 import javax.inject.Inject
 
 /**
- * DIDs VIPER Presenter Implementation
+ * DIDSelect VIPER Presenter Implementation
  */
-class DIDsPresenter @Inject constructor(
-        private val interactor: DIDsContract.InteractorInput,
-        private val router: DIDsContract.Router
-) : DIDsContract.Presenter, DIDsContract.InteractorOutput {
+class DIDSelectPresenter @Inject constructor(
+        private val interactor: DIDSelectContract.InteractorInput,
+        private val router: DIDSelectContract.Router
+) : DIDSelectContract.Presenter, DIDSelectContract.InteractorOutput {
 
-    internal val viewDelegate = ObjectDelegate<DIDsContract.View>()
+    internal val viewDelegate = ObjectDelegate<DIDSelectContract.View>()
     internal val view by viewDelegate
 
     // region viper lifecycle
 
-    override fun attachView(view: DIDsContract.View) {
+    override fun attachView(view: DIDSelectContract.View) {
         viewDelegate.attach(view)
         interactor.attachOutput(this)
     }
@@ -39,6 +39,9 @@ class DIDsPresenter @Inject constructor(
         interactor.generateDID()
     }
 
+    override fun didClicked(did: DIDSelectModels.DidDisplayModel) {
+    }
+
     // endregion
 
     // region view event handlers
@@ -53,7 +56,7 @@ class DIDsPresenter @Inject constructor(
         // TODO handle result
     }
 
-    override fun didGenerated(dids: MutableList<DIDsModels.DidDisplayModel>) {
+    override fun didGenerated(dids: MutableList<DIDSelectModels.DidDisplayModel>) {
         view.updateDidList(dids)
     }
 

@@ -1,4 +1,4 @@
-package com.example.did.ui.dids
+package com.example.did.ui.didselect
 
 import com.anonyome.mysudo.base.DispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher

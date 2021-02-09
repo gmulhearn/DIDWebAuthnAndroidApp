@@ -1,9 +1,9 @@
-package com.example.did.ui.dids
+package com.example.did.ui.didselect
 
 /**
- * DIDs display nodels, data models and errors for the module
+ * DIDSelect display nodels, data models and errors for the module
  */
-interface DIDsModels {
+interface DIDSelectModels {
 
     // region View display models
 

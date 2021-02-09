@@ -1,4 +1,4 @@
-package com.example.did.ui.dids
+package com.example.did.ui.didselect
 
 import android.os.Bundle
 import com.example.did.common.MSCoroutineScope
@@ -10,20 +10,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
 import javax.inject.Inject
 
 /**
- * DIDs VIPER Interactor Implementation
+ * DIDSelect VIPER Interactor Implementation
  */
-class DIDsInteractor @Inject constructor(
+class DIDSelectInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
     @WalletInformation internal val walletInfo: WalletInfo
-) : DIDsContract.InteractorInput, CoroutineScope by coroutineScope {
+) : DIDSelectContract.InteractorInput, CoroutineScope by coroutineScope {
     
-    internal val outputDelegate = ObjectDelegate<DIDsContract.InteractorOutput>()
+    internal val outputDelegate = ObjectDelegate<DIDSelectContract.InteractorOutput>()
     internal val output by outputDelegate
 
     private var wallet: Wallet? = null
@@ -32,7 +31,7 @@ class DIDsInteractor @Inject constructor(
     
     // region viper lifecycle
 
-    override fun attachOutput(output: DIDsContract.InteractorOutput) {
+    override fun attachOutput(output: DIDSelectContract.InteractorOutput) {
         outputDelegate.attach(output)
     }
     
@@ -78,8 +77,8 @@ class DIDsInteractor @Inject constructor(
         }
     }
 
-    private fun transformDidInfoToModel(didInfo: DidInfo): DIDsModels.DidDisplayModel {
-        return DIDsModels.DidDisplayModel(didInfo.did, didInfo.verkey)
+    private fun transformDidInfoToModel(didInfo: DidInfo): DIDSelectModels.DidDisplayModel {
+        return DIDSelectModels.DidDisplayModel(didInfo.did, didInfo.verkey)
     }
 
     private fun openWallet() {

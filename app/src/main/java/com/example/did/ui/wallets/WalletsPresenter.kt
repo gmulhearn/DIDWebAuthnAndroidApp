@@ -40,7 +40,7 @@ class WalletsPresenter @Inject constructor(
     }
 
     override fun walletClicked(name: String) {
-        interactor.toWalletDIDs(name)
+        interactor.toWalletDIDSelect(name)
     }
 
 

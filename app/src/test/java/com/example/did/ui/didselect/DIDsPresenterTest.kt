@@ -1,4 +1,4 @@
-package com.example.did.ui.dids
+package com.example.did.ui.didselect
 
 import com.anonyome.sudotestfoundation.BaseTests
 import com.nhaarman.mockitokotlin2.verify
@@ -10,14 +10,14 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class DIDsPresenterTest: BaseTests() {
+class DIDSelectPresenterTest: BaseTests() {
 
-    private val view: DIDsContract.View = mock()
-    private val interactor: DIDsContract.InteractorInput = mock()
-    private val router: DIDsContract.Router = mock()
+    private val view: DIDSelectContract.View = mock()
+    private val interactor: DIDSelectContract.InteractorInput = mock()
+    private val router: DIDSelectContract.Router = mock()
 
-    private val presenter: DIDsPresenter by before{
-        DIDsPresenter(interactor, router)
+    private val presenter: DIDSelectPresenter by before{
+        DIDSelectPresenter(interactor, router)
     }
 
     @Before
@@ -43,7 +43,7 @@ class DIDsPresenterTest: BaseTests() {
 
     @Test
     fun `presenter test required`() {
-        Assert.fail("Presenter unit tests have not been implemented for DIDs. Replace this method with actual tests.")
+        Assert.fail("Presenter unit tests have not been implemented for DIDSelect. Replace this method with actual tests.")
     }
 
 }

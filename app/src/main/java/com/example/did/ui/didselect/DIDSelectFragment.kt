@@ -1,4 +1,4 @@
-package com.example.did.ui.dids
+package com.example.did.ui.didselect
 
 import android.content.Context
 import android.os.Bundle
@@ -14,22 +14,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.did.R
 import com.example.did.common.viewhelpers.animateVisibilityIn
 import com.example.did.common.viewhelpers.animateVisibilityOut
-import com.example.did.ui.wallets.WalletAdapter
 import kotlinx.android.synthetic.main.fragment_d_i_ds.*
-import kotlinx.android.synthetic.main.fragment_i_d_generation.*
 import org.json.JSONObject
 import javax.inject.Inject
 
 /**
- * DIDs VIPER Fragment Implementation
+ * DIDSelect VIPER Fragment Implementation
  */
-class DIDsFragment : Fragment(), DIDsContract.View {
+class DIDSelectFragment : Fragment(), DIDSelectContract.View {
 
     @Inject
-    internal lateinit var presenter: DIDsContract.Presenter
+    internal lateinit var presenter: DIDSelectContract.Presenter
 
     @VisibleForTesting
-    internal val navigationArgs by navArgs<DIDsFragmentArgs>()
+    internal val navigationArgs by navArgs<DIDSelectFragmentArgs>()
 
     internal var adapter =
         DIDAdapter { did ->
@@ -67,15 +65,15 @@ class DIDsFragment : Fragment(), DIDsContract.View {
             presenter.genDIDClicked()
         }
 
-        DIDsList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-        DIDsList.adapter = adapter
+        DIDSelectList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        DIDSelectList.adapter = adapter
 
         // Notify Presenter that the View is ready
         presenter.viewLoaded(savedInstanceState)
     }
 
-    private fun didOnClick(did: DIDsModels.DidDisplayModel) {
-
+    private fun didOnClick(did: DIDSelectModels.DidDisplayModel) {
+        presenter.didClicked(did)
     }
 
     override fun onDestroyView() {
@@ -88,7 +86,7 @@ class DIDsFragment : Fragment(), DIDsContract.View {
         presenter.saveState(outState)
     }
 
-    override fun updateDidList(dids: MutableList<DIDsModels.DidDisplayModel>) {
+    override fun updateDidList(dids: MutableList<DIDSelectModels.DidDisplayModel>) {
         adapter.submitList(dids)
         hideSpinner()
     }

@@ -1,4 +1,4 @@
-package com.example.did.ui.dids
+package com.example.did.ui.didselect
 
 import com.anonyome.mysudo.base.MSCoroutineScope
 import com.anonyome.sudotestfoundation.BaseTests
@@ -12,18 +12,18 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class DIDsInteractorTest : BaseTests() {
+class DIDSelectInteractorTest : BaseTests() {
 
     private val coroutineScopeSpy: MSCoroutineScope by before {
         spy(MSCoroutineScope(dispatchers = TestDispatcherProvider()))
     }
 
-    private val interactor: DIDsInteractor by before {
-        DIDsInteractor(coroutineScopeSpy)
+    private val interactor: DIDSelectInteractor by before {
+        DIDSelectInteractor(coroutineScopeSpy)
     }
 
     private val output by before {
-        mock<DIDsContract.InteractorOutput>()
+        mock<DIDSelectContract.InteractorOutput>()
     }
 
     @Before
@@ -48,6 +48,6 @@ class DIDsInteractorTest : BaseTests() {
 
     @Test
     fun `interactor test required`() {
-        Assert.fail("Interactor unit tests have not been implemented for DIDs. Replace this method with actual tests.")
+        Assert.fail("Interactor unit tests have not been implemented for DIDSelect. Replace this method with actual tests.")
     }
 }

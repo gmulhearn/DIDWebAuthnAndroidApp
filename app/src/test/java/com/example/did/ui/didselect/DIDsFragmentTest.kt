@@ -1,4 +1,4 @@
-package com.example.did.ui.dids
+package com.example.did.ui.didselect
 
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.Lifecycle
@@ -18,17 +18,17 @@ import com.anonyome.mysudo.R
 
 @RunWith(AndroidJUnit4::class)
 @Config(application = TestApplication::class)
-class DIDsFragmentTest : BaseTests() {
+class DIDSelectFragmentTest : BaseTests() {
 
-    private val presenter by before { mock<DIDsPresenter>() }
+    private val presenter by before { mock<DIDSelectPresenter>() }
 
     private val fragment by before {
-        spy(DIDsFragment()) {
+        spy(DIDSelectFragment()) {
             // Stop fragment from injecting with dagger
             doNothing().whenever(it).inject()
         }.apply {
             // Set any injectable values
-            presenter = this@DIDsFragmentTest.presenter
+            presenter = this@DIDSelectFragmentTest.presenter
         }
     }
 
@@ -61,6 +61,6 @@ class DIDsFragmentTest : BaseTests() {
 
     @Test
     fun `fragment robolectric tests required`() {
-        Assert.fail("Fragment unit tests have not been implemented for DIDs. Replace this method with actual tests.")
+        Assert.fail("Fragment unit tests have not been implemented for DIDSelect. Replace this method with actual tests.")
     }
 }

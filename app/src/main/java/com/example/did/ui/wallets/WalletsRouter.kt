@@ -25,8 +25,8 @@ class WalletsRouter @Inject constructor(
         findNavController().navigate(directions)
     }
 
-    override fun toDIDs(walletInfo: WalletInfo) {
-        val directions = WalletsFragmentDirections.actionWalletsFragmentToDIDsFragment(
+    override fun toDIDSelect(walletInfo: WalletInfo) {
+        val directions = WalletsFragmentDirections.actionWalletsFragmentToDIDSelectFragment(
             walletInfo
         )
 

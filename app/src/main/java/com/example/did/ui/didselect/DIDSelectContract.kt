@@ -1,12 +1,12 @@
-package com.example.did.ui.dids
+package com.example.did.ui.didselect
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 
 /**
- * DIDsContract VIPER contract
+ * DIDSelectContract VIPER contract
  */
-interface DIDsContract {
+interface DIDSelectContract {
 
     /**
      * Passive view interface. This interface declares behaviors that can modify the View
@@ -15,7 +15,7 @@ interface DIDsContract {
         /**
          * TODO
          */
-        fun updateDidList(dids: MutableList<DIDsModels.DidDisplayModel>)
+        fun updateDidList(dids: MutableList<DIDSelectModels.DidDisplayModel>)
 
         /**
          * TODO
@@ -63,6 +63,11 @@ interface DIDsContract {
          * TODO
          */
         fun genDIDClicked()
+
+        /**
+         *
+         */
+        fun didClicked(did: DIDSelectModels.DidDisplayModel)
     }
 
     /**
@@ -120,7 +125,7 @@ interface DIDsContract {
         /**
          * TODO
          */
-        fun didGenerated(dids: MutableList<DIDsModels.DidDisplayModel>)
+        fun didGenerated(dids: MutableList<DIDSelectModels.DidDisplayModel>)
 
         /**
          * TODO

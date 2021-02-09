@@ -133,8 +133,8 @@ class WalletsInteractor @Inject constructor(
         }
     }
 
-    override fun toWalletDIDs(walletName: String) {
-        router.toDIDs(walletNameToInfo(walletName))
+    override fun toWalletDIDSelect(walletName: String) {
+        router.toDIDSelect(walletNameToInfo(walletName))
     }
 
     private fun walletNameToInfo(walletName: String): WalletInfo {

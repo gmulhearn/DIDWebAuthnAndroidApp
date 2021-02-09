@@ -121,7 +121,7 @@ interface WalletsContract {
         /**
          * TODO
          */
-        fun toWalletDIDs(walletName: String)
+        fun toWalletDIDSelect(walletName: String)
 
     }
 
@@ -163,6 +163,6 @@ interface WalletsContract {
         /**
          * TODO
          */
-        fun toDIDs(walletInfo: WalletInfo)
+        fun toDIDSelect(walletInfo: WalletInfo)
     }
 }
