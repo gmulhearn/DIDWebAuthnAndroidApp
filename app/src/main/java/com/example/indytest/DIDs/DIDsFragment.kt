@@ -1,4 +1,4 @@
-package com.example.indytest.Signing
+package com.example.indytest.DIDs
 
 import android.content.Context
 import android.os.Bundle
@@ -8,23 +8,23 @@ import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import dagger.android.support.AndroidSupportInjection
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavArgs
 import androidx.navigation.fragment.navArgs
 import com.example.indytest.R
-import com.example.indytest.common.viewhelpers.animateVisibilityIn
-import com.example.indytest.common.viewhelpers.animateVisibilityOut
-import kotlinx.android.synthetic.main.fragment_signing.*
+import kotlinx.android.synthetic.main.fragment_d_i_ds.*
+import org.json.JSONObject
 import javax.inject.Inject
 
 /**
- * Signing VIPER Fragment Implementation
+ * DIDs VIPER Fragment Implementation
  */
-class SigningFragment : Fragment(), SigningContract.View {
+class DIDsFragment : Fragment(), DIDsContract.View {
 
     @Inject
-    internal lateinit var presenter: SigningContract.Presenter
+    internal lateinit var presenter: DIDsContract.Presenter
 
     @VisibleForTesting
-    internal val navigationArgs by navArgs<SigningFragmentArgs>()
+    internal val navigationArgs by navArgs<DIDsFragmentArgs>()
 
     // region viper lifecycle
 
@@ -42,7 +42,7 @@ class SigningFragment : Fragment(), SigningContract.View {
     // region view setup and state lifecycle
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_signing, container, false)
+        return inflater.inflate(R.layout.fragment_d_i_ds, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,13 +50,11 @@ class SigningFragment : Fragment(), SigningContract.View {
         presenter.attachView(this)
 
         // TODO setup view, event listeners etc.
-        signButton.setOnClickListener {
-            showSpinner()
-            presenter.signTextPressed(textToSign.text.toString())
-        }
 
         // Notify Presenter that the View is ready
         presenter.viewLoaded(savedInstanceState)
+
+        walletTitle.text = JSONObject(navigationArgs.walletInfo.config).getString("id")
     }
 
     override fun onDestroyView() {
@@ -68,20 +66,6 @@ class SigningFragment : Fragment(), SigningContract.View {
         super.onSaveInstanceState(outState)
         presenter.saveState(outState)
     }
-
-    override fun updateSignedText(text: String) {
-        hideSpinner()
-        signedTextBox.text = text
-    }
-
-    private fun showSpinner() {
-        signingSpinner.animateVisibilityIn()
-    }
-
-    private fun hideSpinner() {
-        signingSpinner.animateVisibilityOut()
-    }
-
 
     // endregion
 

@@ -1,23 +1,23 @@
-package com.example.indytest.Signing
+package com.example.indytest.DIDs
 
 import android.os.Bundle
 import com.example.indytest.common.ObjectDelegate
 import javax.inject.Inject
 
 /**
- * Signing VIPER Presenter Implementation
+ * DIDs VIPER Presenter Implementation
  */
-class SigningPresenter @Inject constructor(
-        private val interactor: SigningContract.InteractorInput,
-        private val router: SigningContract.Router
-) : SigningContract.Presenter, SigningContract.InteractorOutput {
+class DIDsPresenter @Inject constructor(
+        private val interactor: DIDsContract.InteractorInput,
+        private val router: DIDsContract.Router
+) : DIDsContract.Presenter, DIDsContract.InteractorOutput {
 
-    internal val viewDelegate = ObjectDelegate<SigningContract.View>()
+    internal val viewDelegate = ObjectDelegate<DIDsContract.View>()
     internal val view by viewDelegate
 
     // region viper lifecycle
 
-    override fun attachView(view: SigningContract.View) {
+    override fun attachView(view: DIDsContract.View) {
         viewDelegate.attach(view)
         interactor.attachOutput(this)
     }
@@ -35,10 +35,6 @@ class SigningPresenter @Inject constructor(
         interactor.savePendingState(outState)
     }
 
-    override fun signTextPressed(text: String) {
-        interactor.signText(text)
-    }
-
     // endregion
 
     // region view event handlers
@@ -51,10 +47,6 @@ class SigningPresenter @Inject constructor(
 
     override fun loadDataResult() {
         // TODO handle result
-    }
-
-    override fun signTextResult(text: String) {
-        view.updateSignedText(text)
     }
 
     // TODO Add interactor outputs

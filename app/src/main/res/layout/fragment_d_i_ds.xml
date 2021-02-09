@@ -1,46 +1,24 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/generateIDLayout"
+    android:id="@+id/DIDLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.indytest.Wallets.IDGenerationFragment">
+    tools:context="com.example.indytest.DIDs.DIDsFragment">
 
     <Button
-        android:id="@+id/genWalletButton"
+        android:id="@+id/genDIDButton"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:text="@string/generate_wallet"
+        android:text="@string/generate_did"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.88" />
 
-    <EditText
-        android:id="@+id/walletNameTextBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:ems="10"
-        android:hint="Enter a wallet ID"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/genWalletButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/walletButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/my_wallet"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/walletNameTextBox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <ProgressBar
-        android:id="@+id/generatingSpinner"
+        android:id="@+id/DIDGeneratingSpinner"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
@@ -60,7 +38,18 @@
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/walletNameTextBox"
+        app:layout_constraintBottom_toTopOf="@+id/genDIDButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/walletTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="no wallet"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

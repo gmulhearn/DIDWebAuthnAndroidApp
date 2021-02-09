@@ -13,5 +13,7 @@
     <string name="generate_wallet">Generate new Wallet</string>
     <string name="my_wallet">My Wallet</string>
 
+    <string name="generate_did">Generate new DID</string>
+
     <string name="sign_text">Sign Text</string>
 </resources>

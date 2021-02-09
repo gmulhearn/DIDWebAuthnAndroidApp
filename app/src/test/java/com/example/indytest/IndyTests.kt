@@ -5,8 +5,7 @@ import org.junit.Assert.*
 import org.hyperledger.indy.sdk.*
 import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.wallet.Wallet
-import org.hyperledger.indy.sdk.wallet.WalletAccessFailedException
-import org.hyperledger.indy.sdk.wallet.WalletResults
+import org.hyperledger.indy.sdk.anoncreds.Anoncreds
 import java.io.File
 import org.hyperledger.indy.sdk.did.Did
 

@@ -17,8 +17,8 @@
 package com.example.indytest
 
 import android.app.Application
-import com.example.indytest.base.di.AppComponent
-import com.example.indytest.base.di.DaggerAppComponent
+import com.example.indytest.common.di.AppComponent
+import com.example.indytest.common.di.DaggerAppComponent
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector

@@ -1,8 +1,8 @@
 package com.example.indytest.Signing
 
-import com.example.indytest.base.di.BaseFragmentModule
-import com.example.indytest.base.di.qualifier.DidInfo
-import com.example.indytest.base.di.qualifier.WalletInfo
+import com.example.indytest.common.di.BaseFragmentModule
+import com.example.indytest.common.di.qualifier.DidInfo
+import com.example.indytest.common.di.qualifier.WalletInfo
 import dagger.Module
 import dagger.Provides
 

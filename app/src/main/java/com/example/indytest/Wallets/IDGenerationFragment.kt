@@ -1,30 +1,36 @@
-package com.example.indytest.Signing
+package com.example.indytest.Wallets
 
+import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.annotation.VisibleForTesting
-import dagger.android.support.AndroidSupportInjection
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.indytest.R
 import com.example.indytest.common.viewhelpers.animateVisibilityIn
 import com.example.indytest.common.viewhelpers.animateVisibilityOut
-import kotlinx.android.synthetic.main.fragment_signing.*
 import javax.inject.Inject
+import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.fragment_i_d_generation.*
 
 /**
- * Signing VIPER Fragment Implementation
+ * IDGeneration VIPER Fragment Implementation
  */
-class SigningFragment : Fragment(), SigningContract.View {
+class IDGenerationFragment : Fragment(), IDGenerationContract.View {
 
     @Inject
-    internal lateinit var presenter: SigningContract.Presenter
+    internal lateinit var presenter: IDGenerationContract.Presenter
 
     @VisibleForTesting
-    internal val navigationArgs by navArgs<SigningFragmentArgs>()
+    internal var adapter =
+        WalletAdapter { wallet ->
+            walletOnClick(wallet)
+        }
 
     // region viper lifecycle
 
@@ -42,7 +48,7 @@ class SigningFragment : Fragment(), SigningContract.View {
     // region view setup and state lifecycle
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_signing, container, false)
+        return inflater.inflate(R.layout.fragment_i_d_generation, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,13 +56,25 @@ class SigningFragment : Fragment(), SigningContract.View {
         presenter.attachView(this)
 
         // TODO setup view, event listeners etc.
-        signButton.setOnClickListener {
+        view.findViewById<Button>(R.id.genWalletButton).setOnClickListener {
             showSpinner()
-            presenter.signTextPressed(textToSign.text.toString())
+            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 101)
+            presenter.genWalletPressed(walletNameTextBox.text.toString())
         }
+
+        // walletAddressText.setOnClickListener {
+            // presenter.walletClicked()
+        // }
+
+        DIDList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        DIDList.adapter = adapter
 
         // Notify Presenter that the View is ready
         presenter.viewLoaded(savedInstanceState)
+    }
+
+    private fun walletOnClick(wallet: IDGenerationModels.WalletDisplayModel) {
+        presenter.walletClicked(wallet.walletID)
     }
 
     override fun onDestroyView() {
@@ -69,25 +87,33 @@ class SigningFragment : Fragment(), SigningContract.View {
         presenter.saveState(outState)
     }
 
-    override fun updateSignedText(text: String) {
+    override fun updateWalletText(walletID: String) {
+        // walletAddressText.text = walletID
+        // hideSpinner()
+    }
+
+    override fun updateWalletList(wallets: MutableList<IDGenerationModels.WalletDisplayModel>) {
+        adapter.submitList(wallets)
         hideSpinner()
-        signedTextBox.text = text
     }
 
     private fun showSpinner() {
-        signingSpinner.animateVisibilityIn()
+        generatingSpinner.animateVisibilityIn()
     }
 
     private fun hideSpinner() {
-        signingSpinner.animateVisibilityOut()
+        generatingSpinner.animateVisibilityOut()
     }
-
 
     // endregion
 
     // region View contract
 
     // TODO Add view contract overrides
+
+    override fun onGenerationError() {
+        hideSpinner()
+    }
 
     // endregion
 

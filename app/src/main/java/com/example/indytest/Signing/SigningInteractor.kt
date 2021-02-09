@@ -2,11 +2,11 @@ package com.example.indytest.Signing
 
 
 import android.os.Bundle
-import com.example.indytest.IDGeneration.IDGenerationModels
-import com.example.indytest.base.MSCoroutineScope
-import com.example.indytest.base.ObjectDelegate
-import com.example.indytest.base.di.qualifier.DidInfo
-import com.example.indytest.base.di.qualifier.WalletInfo
+import com.example.indytest.Wallets.IDGenerationModels
+import com.example.indytest.common.MSCoroutineScope
+import com.example.indytest.common.ObjectDelegate
+import com.example.indytest.common.di.qualifier.DidInfo
+import com.example.indytest.common.di.qualifier.WalletInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/IDGenerationFragment"
-        android:name="com.example.indytest.IDGeneration.IDGenerationFragment"
+        android:name="com.example.indytest.Wallets.IDGenerationFragment"
         android:label="fragment_i_d_generation"
         tools:layout="@layout/fragment_i_d_generation">
         <action
@@ -38,12 +38,19 @@
             app:destination="@id/signingFragment">
             <argument
                 android:name="didInfo"
-                app:argType="com.example.indytest.IDGeneration.IDGenerationModels$DidInfo"
+                app:argType="com.example.indytest.Wallets.IDGenerationModels$DidInfo"
                 app:nullable="false" />
             <argument
                 android:name="walletInfo"
-                app:argType="com.example.indytest.IDGeneration.IDGenerationModels$WalletInfo"
+                app:argType="com.example.indytest.Wallets.IDGenerationModels$WalletInfo"
                 app:nullable="false" />
+        </action>
+        <action
+            android:id="@+id/action_IDGenerationFragment_to_DIDsFragment"
+            app:destination="@id/DIDsFragment">
+            <argument
+                android:name="walletInfo"
+                app:argType="com.example.indytest.Wallets.IDGenerationModels$WalletInfo" />
         </action>
     </fragment>
     <fragment
@@ -53,9 +60,18 @@
         tools:layout="@layout/fragment_signing">
         <argument
             android:name="didInfo"
-            app:argType="com.example.indytest.IDGeneration.IDGenerationModels$DidInfo" />
+            app:argType="com.example.indytest.Wallets.IDGenerationModels$DidInfo" />
         <argument
             android:name="walletInfo"
-            app:argType="com.example.indytest.IDGeneration.IDGenerationModels$WalletInfo" />
+            app:argType="com.example.indytest.Wallets.IDGenerationModels$WalletInfo" />
+    </fragment>
+    <fragment
+        android:id="@+id/DIDsFragment"
+        android:name="com.example.indytest.DIDs.DIDsFragment"
+        android:label="fragment_d_i_ds"
+        tools:layout="@layout/fragment_d_i_ds">
+        <argument
+            android:name="walletInfo"
+            app:argType="com.example.indytest.Wallets.IDGenerationModels$WalletInfo" />
     </fragment>
 </navigation>
