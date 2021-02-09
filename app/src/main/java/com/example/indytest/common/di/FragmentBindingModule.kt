@@ -1,11 +1,11 @@
 package com.example.indytest.common.di
 
-import com.example.indytest.DIDs.DIDsFragment
-import com.example.indytest.DIDs.DIDsModule
-import com.example.indytest.Wallets.IDGenerationFragment
-import com.example.indytest.Wallets.IDGenerationModule
-import com.example.indytest.Signing.SigningFragment
-import com.example.indytest.Signing.SigningModule
+import com.example.indytest.ui.dids.DIDsFragment
+import com.example.indytest.ui.dids.DIDsModule
+import com.example.indytest.ui.wallets.IDGenerationFragment
+import com.example.indytest.ui.wallets.IDGenerationModule
+import com.example.indytest.ui.signing.SigningFragment
+import com.example.indytest.ui.signing.SigningModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
