@@ -67,13 +67,14 @@ class WalletsInteractor @Inject constructor(
     }
 
     override fun generateWallet(name: String) {
+        var exception = false
         if (wallets.size >= 3) {
             output.generationError()
             return
         }
         launch {
             try {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
                     val key = Wallet.generateWalletKey(null).get()
 
                     val credentials = "{\"key\":\"$key\"}"
@@ -82,12 +83,16 @@ class WalletsInteractor @Inject constructor(
                     Wallet.createWallet(config, credentials).get()
 
                     wallets.add(WalletInfo(config, credentials))
-
-                    output.walletGenerated(wallets.map { transformWalletInfoToModel(it) }
-                        .toMutableList())
                 }
             } catch (e: Exception) {
+                exception = true
+                println(e)
+            }
+            if (exception) {
                 output.generationError()
+            } else {
+                output.walletGenerated(wallets.map { transformWalletInfoToModel(it) }
+                    .toMutableList())
             }
         }
     }

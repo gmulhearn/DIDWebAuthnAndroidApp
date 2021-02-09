@@ -66,8 +66,8 @@ class WalletsFragment : Fragment(), WalletsContract.View {
             // presenter.walletClicked()
         // }
 
-        DIDList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-        DIDList.adapter = adapter
+        WalletsList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        WalletsList.adapter = adapter
 
         // Notify Presenter that the View is ready
         presenter.viewLoaded(savedInstanceState)
@@ -94,6 +94,7 @@ class WalletsFragment : Fragment(), WalletsContract.View {
 
     override fun updateWalletList(wallets: MutableList<WalletsModels.WalletDisplayModel>) {
         adapter.submitList(wallets)
+        println(wallets)
         hideSpinner()
     }
 

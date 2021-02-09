@@ -35,6 +35,10 @@ class DIDsPresenter @Inject constructor(
         interactor.savePendingState(outState)
     }
 
+    override fun genDIDClicked() {
+        interactor.generateDID()
+    }
+
     // endregion
 
     // region view event handlers
@@ -47,6 +51,14 @@ class DIDsPresenter @Inject constructor(
 
     override fun loadDataResult() {
         // TODO handle result
+    }
+
+    override fun didGenerated(dids: MutableList<DIDsModels.DidDisplayModel>) {
+        view.updateDidList(dids)
+    }
+
+    override fun generationError() {
+        view.onGenerationError()
     }
 
     // TODO Add interactor outputs

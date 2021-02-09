@@ -12,7 +12,15 @@ interface DIDsContract {
      * Passive view interface. This interface declares behaviors that can modify the View
      */
     interface View {
+        /**
+         * TODO
+         */
+        fun updateDidList(dids: MutableList<DIDsModels.DidDisplayModel>)
 
+        /**
+         * TODO
+         */
+        fun onGenerationError()
     }
 
     /**
@@ -50,6 +58,11 @@ interface DIDsContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
+
+        /**
+         * TODO
+         */
+        fun genDIDClicked()
     }
 
     /**
@@ -87,6 +100,11 @@ interface DIDsContract {
          */
         fun savePendingState(outState: Bundle)
 
+        /**
+         * TODO
+         */
+        fun generateDID()
+
     }
 
     /**
@@ -98,6 +116,16 @@ interface DIDsContract {
          * Called after [InteractorInput.loadData] completes successfully
          */
         fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
+
+        /**
+         * TODO
+         */
+        fun didGenerated(dids: MutableList<DIDsModels.DidDisplayModel>)
+
+        /**
+         * TODO
+         */
+        fun generationError()
 
     }
 

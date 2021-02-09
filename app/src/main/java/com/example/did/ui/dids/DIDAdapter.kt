@@ -12,38 +12,39 @@ import androidx.recyclerview.widget.DiffUtil
 import com.example.did.R
 import com.example.did.data.DidInfo
 
-class DIDAdapter(private val onClick: (DidInfo) -> Unit) :
-    ListAdapter<DidInfo, DIDAdapter.DIDViewHolder>(
+class DIDAdapter(private val onClick: (DIDsModels.DidDisplayModel) -> Unit) :
+    ListAdapter<DIDsModels.DidDisplayModel, DIDAdapter.DIDViewHolder>(
         FlowerDiffCallback
     ) {
 
     /* ViewHolder for Flower, takes in the inflated view and the onClick behavior. */
-    class DIDViewHolder(itemView: View, val onClick: (DidInfo) -> Unit) :
+    class DIDViewHolder(itemView: View, val onClick: (DIDsModels.DidDisplayModel) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
-        private val flowerTextView: TextView = itemView.findViewById(R.id.walletID_text)
-        private val flowerImageView: ImageView = itemView.findViewById(R.id.wallet_image)
-        private var currentFlower: DidInfo? = null
+        private val didTextView: TextView = itemView.findViewById(R.id.did_text)
+        private val verkeyTextView: TextView = itemView.findViewById(R.id.verkey_text)
+        private var currentDid: DIDsModels.DidDisplayModel? = null
 
         init {
             itemView.setOnClickListener {
-                currentFlower?.let {
+                currentDid?.let {
                     onClick(it)
                 }
             }
         }
 
         /* Bind flower name and image. */
-        fun bind(did: DidInfo) {
-            currentFlower = did
+        fun bind(did: DIDsModels.DidDisplayModel) {
+            currentDid = did
 
-            flowerTextView.text = did.did
+            didTextView.text = did.did
+            verkeyTextView.text = did.did
         }
     }
 
     /* Creates and inflates view and return FlowerViewHolder. */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DIDViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.wallet_item, parent, false)
+            .inflate(R.layout.did_item, parent, false)
         return DIDViewHolder(
             view,
             onClick
@@ -58,12 +59,12 @@ class DIDAdapter(private val onClick: (DidInfo) -> Unit) :
     }
 }
 
-object FlowerDiffCallback : DiffUtil.ItemCallback<DidInfo>() {
-    override fun areItemsTheSame(oldItem: DidInfo, newItem: DidInfo): Boolean {
+object FlowerDiffCallback : DiffUtil.ItemCallback<DIDsModels.DidDisplayModel>() {
+    override fun areItemsTheSame(oldItem: DIDsModels.DidDisplayModel, newItem: DIDsModels.DidDisplayModel): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: DidInfo, newItem: DidInfo): Boolean {
+    override fun areContentsTheSame(oldItem: DIDsModels.DidDisplayModel, newItem: DIDsModels.DidDisplayModel): Boolean {
         return oldItem.did == newItem.did
     }
 }

@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import com.example.did.R
@@ -16,16 +15,15 @@ class WalletAdapter(private val onClick: (WalletsModels.WalletDisplayModel) -> U
         FlowerDiffCallback
     ) {
 
-    /* ViewHolder for Flower, takes in the inflated view and the onClick behavior. */
+    /* ViewHolder for Wallet, takes in the inflated view and the onClick behavior. */
     class WalletViewHolder(itemView: View, val onClick: (WalletsModels.WalletDisplayModel) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
-        private val flowerTextView: TextView = itemView.findViewById(R.id.walletID_text)
-        private val flowerImageView: ImageView = itemView.findViewById(R.id.wallet_image)
-        private var currentFlower: WalletsModels.WalletDisplayModel? = null
+        private val walletTextView: TextView = itemView.findViewById(R.id.wallet_text)
+        private var currentWallet: WalletsModels.WalletDisplayModel? = null
 
         init {
             itemView.setOnClickListener {
-                currentFlower?.let {
+                currentWallet?.let {
                     onClick(it)
                 }
             }
@@ -33,9 +31,9 @@ class WalletAdapter(private val onClick: (WalletsModels.WalletDisplayModel) -> U
 
         /* Bind flower name and image. */
         fun bind(wallet: WalletsModels.WalletDisplayModel) {
-            currentFlower = wallet
+            currentWallet = wallet
 
-            flowerTextView.text = wallet.walletID
+            walletTextView.text = wallet.walletID
         }
     }
 
