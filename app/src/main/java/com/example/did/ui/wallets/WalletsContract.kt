@@ -6,9 +6,9 @@ import com.example.did.data.DidInfo
 import com.example.did.data.WalletInfo
 
 /**
- * IDGenerationContract VIPER contract
+ * WalletsContract VIPER contract
  */
-interface IDGenerationContract {
+interface WalletsContract {
 
     /**
      * Passive view interface. This interface declares behaviors that can modify the View
@@ -23,7 +23,7 @@ interface IDGenerationContract {
         /**
          * TODO
          */
-        fun updateWalletList(wallets: MutableList<IDGenerationModels.WalletDisplayModel>)
+        fun updateWalletList(wallets: MutableList<WalletsModels.WalletDisplayModel>)
 
         /**
          * TODO
@@ -138,7 +138,7 @@ interface IDGenerationContract {
         /**
          * TODO
          */
-        fun walletGenerated(wallets: MutableList<IDGenerationModels.WalletDisplayModel>)
+        fun walletGenerated(wallets: MutableList<WalletsModels.WalletDisplayModel>)
 
         /**
          * TODO

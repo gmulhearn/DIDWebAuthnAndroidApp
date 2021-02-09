@@ -1,9 +1,9 @@
 package com.example.did.ui.wallets
 
 /**
- * IDGeneration display nodels, data models and errors for the module
+ * Wallets display nodels, data models and errors for the module
  */
-interface IDGenerationModels {
+interface WalletsModels {
 
     // region View display models
 

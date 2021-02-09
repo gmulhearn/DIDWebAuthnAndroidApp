@@ -11,17 +11,17 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import com.example.did.R
 
-class WalletAdapter(private val onClick: (IDGenerationModels.WalletDisplayModel) -> Unit) :
-    ListAdapter<IDGenerationModels.WalletDisplayModel, WalletAdapter.WalletViewHolder>(
+class WalletAdapter(private val onClick: (WalletsModels.WalletDisplayModel) -> Unit) :
+    ListAdapter<WalletsModels.WalletDisplayModel, WalletAdapter.WalletViewHolder>(
         FlowerDiffCallback
     ) {
 
     /* ViewHolder for Flower, takes in the inflated view and the onClick behavior. */
-    class WalletViewHolder(itemView: View, val onClick: (IDGenerationModels.WalletDisplayModel) -> Unit) :
+    class WalletViewHolder(itemView: View, val onClick: (WalletsModels.WalletDisplayModel) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
         private val flowerTextView: TextView = itemView.findViewById(R.id.walletID_text)
         private val flowerImageView: ImageView = itemView.findViewById(R.id.wallet_image)
-        private var currentFlower: IDGenerationModels.WalletDisplayModel? = null
+        private var currentFlower: WalletsModels.WalletDisplayModel? = null
 
         init {
             itemView.setOnClickListener {
@@ -32,7 +32,7 @@ class WalletAdapter(private val onClick: (IDGenerationModels.WalletDisplayModel)
         }
 
         /* Bind flower name and image. */
-        fun bind(wallet: IDGenerationModels.WalletDisplayModel) {
+        fun bind(wallet: WalletsModels.WalletDisplayModel) {
             currentFlower = wallet
 
             flowerTextView.text = wallet.walletID
@@ -57,12 +57,12 @@ class WalletAdapter(private val onClick: (IDGenerationModels.WalletDisplayModel)
     }
 }
 
-object FlowerDiffCallback : DiffUtil.ItemCallback<IDGenerationModels.WalletDisplayModel>() {
-    override fun areItemsTheSame(oldItem: IDGenerationModels.WalletDisplayModel, newItem: IDGenerationModels.WalletDisplayModel): Boolean {
+object FlowerDiffCallback : DiffUtil.ItemCallback<WalletsModels.WalletDisplayModel>() {
+    override fun areItemsTheSame(oldItem: WalletsModels.WalletDisplayModel, newItem: WalletsModels.WalletDisplayModel): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: IDGenerationModels.WalletDisplayModel, newItem: IDGenerationModels.WalletDisplayModel): Boolean {
+    override fun areContentsTheSame(oldItem: WalletsModels.WalletDisplayModel, newItem: WalletsModels.WalletDisplayModel): Boolean {
         return oldItem.walletID == newItem.walletID
     }
 }

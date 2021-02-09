@@ -1,4 +1,4 @@
-//package com.example.indytest.IDGeneration
+//package com.example.indytest.Wallets
 //
 //import com.anonyome.sudotestfoundation.BaseTests
 //import com.nhaarman.mockitokotlin2.verify
@@ -10,14 +10,14 @@
 //import org.junit.Before
 //import org.junit.Test
 //
-//class IDGenerationPresenterTest: BaseTests() {
+//class WalletsPresenterTest: BaseTests() {
 //
-//    private val view: IDGenerationContract.View = mock()
-//    private val interactor: IDGenerationContract.InteractorInput = mock()
-//    private val router: IDGenerationContract.Router = mock()
+//    private val view: WalletsContract.View = mock()
+//    private val interactor: WalletsContract.InteractorInput = mock()
+//    private val router: WalletsContract.Router = mock()
 //
-//    private val presenter: IDGenerationPresenter by before{
-//        IDGenerationPresenter(interactor, router)
+//    private val presenter: WalletsPresenter by before{
+//        WalletsPresenter(interactor, router)
 //    }
 //
 //    @Before
@@ -43,7 +43,7 @@
 //
 //    @Test
 //    fun `presenter test required`() {
-//        Assert.fail("Presenter unit tests have not been implemented for IDGeneration. Replace this method with actual tests.")
+//        Assert.fail("Presenter unit tests have not been implemented for Wallets. Replace this method with actual tests.")
 //    }
 //
 //}

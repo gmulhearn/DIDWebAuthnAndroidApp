@@ -1,4 +1,4 @@
-//package com.example.indytest.IDGeneration
+//package com.example.indytest.Wallets
 //
 //import com.anonyome.sudotestfoundation.BaseTests
 //import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
@@ -6,10 +6,10 @@
 //import org.junit.Assert
 //import org.junit.Test
 //
-//class IDGenerationRouterTest : BaseTests() {
+//class WalletsRouterTest : BaseTests() {
 //
 //    private val router by before {
-//        IDGenerationRouter()
+//        WalletsRouter()
 //    }
 //
 //    @After
@@ -20,6 +20,6 @@
 //
 //    @Test
 //    fun `router test required`() {
-//        Assert.fail("Router unit tests have not been implemented for IDGeneration. Replace this method with actual tests.")
+//        Assert.fail("Router unit tests have not been implemented for Wallets. Replace this method with actual tests.")
 //    }
 //}

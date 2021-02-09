@@ -19,12 +19,12 @@ import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_i_d_generation.*
 
 /**
- * IDGeneration VIPER Fragment Implementation
+ * Wallets VIPER Fragment Implementation
  */
-class IDGenerationFragment : Fragment(), IDGenerationContract.View {
+class WalletsFragment : Fragment(), WalletsContract.View {
 
     @Inject
-    internal lateinit var presenter: IDGenerationContract.Presenter
+    internal lateinit var presenter: WalletsContract.Presenter
 
     @VisibleForTesting
     internal var adapter =
@@ -73,7 +73,7 @@ class IDGenerationFragment : Fragment(), IDGenerationContract.View {
         presenter.viewLoaded(savedInstanceState)
     }
 
-    private fun walletOnClick(wallet: IDGenerationModels.WalletDisplayModel) {
+    private fun walletOnClick(wallet: WalletsModels.WalletDisplayModel) {
         presenter.walletClicked(wallet.walletID)
     }
 
@@ -92,7 +92,7 @@ class IDGenerationFragment : Fragment(), IDGenerationContract.View {
         // hideSpinner()
     }
 
-    override fun updateWalletList(wallets: MutableList<IDGenerationModels.WalletDisplayModel>) {
+    override fun updateWalletList(wallets: MutableList<WalletsModels.WalletDisplayModel>) {
         adapter.submitList(wallets)
         hideSpinner()
     }

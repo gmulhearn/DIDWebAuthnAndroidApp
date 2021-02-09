@@ -5,19 +5,19 @@ import android.os.Bundle
 import javax.inject.Inject
 
 /**
- * IDGeneration VIPER Presenter Implementation
+ * Wallets VIPER Presenter Implementation
  */
-class IDGenerationPresenter @Inject constructor(
-        private val interactor: IDGenerationContract.InteractorInput,
-        private val router: IDGenerationContract.Router
-) : IDGenerationContract.Presenter, IDGenerationContract.InteractorOutput {
+class WalletsPresenter @Inject constructor(
+        private val interactor: WalletsContract.InteractorInput,
+        private val router: WalletsContract.Router
+) : WalletsContract.Presenter, WalletsContract.InteractorOutput {
 
-    internal val viewDelegate = ObjectDelegate<IDGenerationContract.View>()
+    internal val viewDelegate = ObjectDelegate<WalletsContract.View>()
     internal val view by viewDelegate
 
     // region viper lifecycle
 
-    override fun attachView(view: IDGenerationContract.View) {
+    override fun attachView(view: WalletsContract.View) {
         viewDelegate.attach(view)
         interactor.attachOutput(this)
     }
@@ -58,7 +58,7 @@ class IDGenerationPresenter @Inject constructor(
         // TODO handle result
     }
 
-    override fun walletGenerated(wallets: MutableList<IDGenerationModels.WalletDisplayModel>) {
+    override fun walletGenerated(wallets: MutableList<WalletsModels.WalletDisplayModel>) {
         view.updateWalletList(wallets)
     }
 

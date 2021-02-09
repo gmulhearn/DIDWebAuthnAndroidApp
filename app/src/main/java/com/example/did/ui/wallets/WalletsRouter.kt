@@ -8,17 +8,17 @@ import com.example.did.data.DidInfo
 import com.example.did.data.WalletInfo
 
 /**
- * IDGeneration VIPER Router Implementation
+ * Wallets VIPER Router Implementation
  */
-class IDGenerationRouter @Inject constructor(
-    private val fragment: IDGenerationFragment
-) : IDGenerationContract.Router {
+class WalletsRouter @Inject constructor(
+    private val fragment: WalletsFragment
+) : WalletsContract.Router {
 
     override fun showSigning(
         didInfo: DidInfo,
         walletInfo: WalletInfo
     ) {
-        val directions = IDGenerationFragmentDirections.actionIDGenerationFragmentToSigningFragment(
+        val directions = WalletsFragmentDirections.actionWalletsFragmentToSigningFragment(
             didInfo,
             walletInfo
         )
@@ -26,7 +26,7 @@ class IDGenerationRouter @Inject constructor(
     }
 
     override fun toDIDs(walletInfo: WalletInfo) {
-        val directions = IDGenerationFragmentDirections.actionIDGenerationFragmentToDIDsFragment(
+        val directions = WalletsFragmentDirections.actionWalletsFragmentToDIDsFragment(
             walletInfo
         )
 

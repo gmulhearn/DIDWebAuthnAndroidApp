@@ -10,19 +10,19 @@ import kotlinx.coroutines.*
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
 import javax.inject.Inject
-import com.example.did.ui.wallets.IDGenerationModels.*
+import com.example.did.ui.wallets.WalletsModels.*
 import org.json.JSONObject
 
 /**
- * IDGeneration VIPER Interactor Implementation
+ * Wallets VIPER Interactor Implementation
  */
-class IDGenerationInteractor @Inject constructor(
+class WalletsInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
     internal val context: Context,
-    private val router: IDGenerationContract.Router
-) : IDGenerationContract.InteractorInput, CoroutineScope by coroutineScope {
+    private val router: WalletsContract.Router
+) : WalletsContract.InteractorInput, CoroutineScope by coroutineScope {
 
-    internal val outputDelegate = ObjectDelegate<IDGenerationContract.InteractorOutput>()
+    internal val outputDelegate = ObjectDelegate<WalletsContract.InteractorOutput>()
     internal val output by outputDelegate
 
     private var wallet: Wallet? = null
@@ -32,7 +32,7 @@ class IDGenerationInteractor @Inject constructor(
 
     // region viper lifecycle
 
-    override fun attachOutput(output: IDGenerationContract.InteractorOutput) {
+    override fun attachOutput(output: WalletsContract.InteractorOutput) {
         outputDelegate.attach(output)
     }
 

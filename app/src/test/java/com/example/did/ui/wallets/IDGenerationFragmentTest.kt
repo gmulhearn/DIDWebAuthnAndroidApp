@@ -1,4 +1,4 @@
-//package com.example.indytest.IDGeneration
+//package com.example.indytest.Wallets
 //
 //import androidx.fragment.app.testing.launchFragmentInContainer
 //import androidx.lifecycle.Lifecycle
@@ -18,17 +18,17 @@
 //
 //@RunWith(AndroidJUnit4::class)
 //@Config(application = TestApplication::class)
-//class IDGenerationFragmentTest : BaseTests() {
+//class WalletsFragmentTest : BaseTests() {
 //
-//    private val presenter by before { mock<IDGenerationPresenter>() }
+//    private val presenter by before { mock<WalletsPresenter>() }
 //
 //    private val fragment by before {
-//        spy(IDGenerationFragment()) {
+//        spy(WalletsFragment()) {
 //            // Stop fragment from injecting with dagger
 //            doNothing().whenever(it).inject()
 //        }.apply {
 //            // Set any injectable values
-//            presenter = this@IDGenerationFragmentTest.presenter
+//            presenter = this@WalletsFragmentTest.presenter
 //        }
 //    }
 //
@@ -61,6 +61,6 @@
 //
 //    @Test
 //    fun `fragment robolectric tests required`() {
-//        Assert.fail("Fragment unit tests have not been implemented for IDGeneration. Replace this method with actual tests.")
+//        Assert.fail("Fragment unit tests have not been implemented for Wallets. Replace this method with actual tests.")
 //    }
 //}

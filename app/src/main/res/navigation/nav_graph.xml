@@ -15,8 +15,8 @@
             android:id="@+id/action_FirstFragment_to_SecondFragment"
             app:destination="@id/SecondFragment" />
         <action
-            android:id="@+id/action_FirstFragment_to_IDGenerationFragment"
-            app:destination="@id/IDGenerationFragment" />
+            android:id="@+id/action_FirstFragment_to_WalletsFragment"
+            app:destination="@id/WalletsFragment" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -29,12 +29,12 @@
             app:destination="@id/FirstFragment" />
     </fragment>
     <fragment
-        android:id="@+id/IDGenerationFragment"
-        android:name="com.example.did.ui.wallets.IDGenerationFragment"
+        android:id="@+id/WalletsFragment"
+        android:name="com.example.did.ui.wallets.WalletsFragment"
         android:label="fragment_i_d_generation"
         tools:layout="@layout/fragment_i_d_generation">
         <action
-            android:id="@+id/action_IDGenerationFragment_to_signingFragment"
+            android:id="@+id/action_WalletsFragment_to_signingFragment"
             app:destination="@id/signingFragment">
             <argument
                 android:name="didInfo"
@@ -46,7 +46,7 @@
                 app:nullable="false" />
         </action>
         <action
-            android:id="@+id/action_IDGenerationFragment_to_DIDsFragment"
+            android:id="@+id/action_WalletsFragment_to_DIDsFragment"
             app:destination="@id/DIDsFragment">
             <argument
                 android:name="walletInfo"

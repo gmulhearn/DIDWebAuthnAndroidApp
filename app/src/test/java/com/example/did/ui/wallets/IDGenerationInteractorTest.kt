@@ -1,4 +1,4 @@
-//package com.example.indytest.IDGeneration
+//package com.example.indytest.Wallets
 //
 //import com.anonyome.mysudo.base.MSCoroutineScope
 //import com.anonyome.sudotestfoundation.BaseTests
@@ -12,18 +12,18 @@
 //import org.junit.Before
 //import org.junit.Test
 //
-//class IDGenerationInteractorTest : BaseTests() {
+//class WalletsInteractorTest : BaseTests() {
 //
 //    private val coroutineScopeSpy: MSCoroutineScope by before {
 //        spy(MSCoroutineScope(dispatchers = TestDispatcherProvider()))
 //    }
 //
-//    private val interactor: IDGenerationInteractor by before {
-//        IDGenerationInteractor(coroutineScopeSpy)
+//    private val interactor: WalletsInteractor by before {
+//        WalletsInteractor(coroutineScopeSpy)
 //    }
 //
 //    private val output by before {
-//        mock<IDGenerationContract.InteractorOutput>()
+//        mock<WalletsContract.InteractorOutput>()
 //    }
 //
 //    @Before
@@ -48,6 +48,6 @@
 //
 //    @Test
 //    fun `interactor test required`() {
-//        Assert.fail("Interactor unit tests have not been implemented for IDGeneration. Replace this method with actual tests.")
+//        Assert.fail("Interactor unit tests have not been implemented for Wallets. Replace this method with actual tests.")
 //    }
 //}
