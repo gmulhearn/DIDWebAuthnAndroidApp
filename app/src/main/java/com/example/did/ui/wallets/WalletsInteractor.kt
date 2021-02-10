@@ -102,50 +102,12 @@ class WalletsInteractor @Inject constructor(
         return WalletDisplayModel(walletID)
     }
 
-    private fun generateWallet2(name: String) {
-
-        launch {
-
-            try {
-
-                val didResult = withContext(Dispatchers.Default) {
-                    val key = Wallet.generateWalletKey(null).get()
-                    println("key: $key")
-
-                    val credentials = "{\"key\":\"$key\"}"
-                    val config = "{\"id\":\"$name\"}"
-
-                    Wallet.createWallet(config, credentials).get()
-
-                    walletInfo = WalletInfo(config, credentials)
-
-                    wallet = Wallet.openWallet(config, credentials).get()
-
-                    Did.createAndStoreMyDid(wallet, "{}").get()
-                }
-
-                didInfo = DidInfo(didResult.did, didResult.verkey)
-
-                // output.walletGenerated("DID:${didInfo?.did} VERKEY:${didInfo?.verkey}")
-            } catch (e: Exception) {
-                output.generationError()
-            }
-        }
-    }
-
     override fun toWalletDIDSelect(walletName: String) {
         router.toDIDSelect(walletNameToInfo(walletName))
     }
 
     private fun walletNameToInfo(walletName: String): WalletInfo {
         return wallets.first { JSONObject(it.config).getString("id") == walletName }
-    }
-
-    private fun signingRequestedOld() {
-        if (didInfo != null && wallet != null) {
-            wallet!!.closeWallet().get()
-            router.showSigning(didInfo!!, walletInfo!!)
-        }
     }
 
     // endregion

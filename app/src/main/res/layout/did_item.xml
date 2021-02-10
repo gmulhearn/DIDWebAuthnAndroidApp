@@ -18,7 +18,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:background="@color/purple_200">
+    android:background="?attr/colorPrimarySurface">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/didLayout"
@@ -46,7 +46,6 @@
             android:maxLines="1"
             android:text="test test test stes ts te tsets t"
             android:textAppearance="?attr/textAppearanceHeadline5"
-            android:textColor="@android:color/tertiary_text_light"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/nextArrow1"

@@ -12,22 +12,22 @@ import androidx.recyclerview.widget.DiffUtil
 import com.example.did.R
 import com.google.android.material.tabs.TabLayout
 
-class DIDAdapter(private val onClick: (DIDSelectModels.DidDisplayModel) -> Unit) :
+class DIDAdapter(private val onClick: (DIDSelectModels.DidDisplayModel, String) -> Unit) :
     ListAdapter<DIDSelectModels.DidDisplayModel, DIDAdapter.DIDViewHolder>(
         DidDiffCallback
     ) {
 
     /* ViewHolder for Flower, takes in the inflated view and the onClick behavior. */
-    class DIDViewHolder(itemView: View, val onClick: (DIDSelectModels.DidDisplayModel) -> Unit) :
+    class DIDViewHolder(itemView: View, val onTabClick: (DIDSelectModels.DidDisplayModel, String) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
         private val didTextView: TextView = itemView.findViewById(R.id.did_text)
         private val verkeyTextView: TextView = itemView.findViewById(R.id.verkey_text)
         private val arrow: ImageView = itemView.findViewById(R.id.nextArrow1)
 
         private val didTabs: TabLayout = itemView.findViewById(R.id.did_tabs)
-        private val signTab = didTabs.getTabAt(0)
-        private val commTab = didTabs.getTabAt(1)
-        private val browserTab = didTabs.getTabAt(2)
+        private val signTab = didTabs.getTabAt(0)!!
+        private val commTab = didTabs.getTabAt(1)!!
+        private val browserTab = didTabs.getTabAt(2)!!
 
         private var currentDid: DIDSelectModels.DidDisplayModel? = null
 
@@ -35,6 +35,22 @@ class DIDAdapter(private val onClick: (DIDSelectModels.DidDisplayModel) -> Unit)
             itemView.setOnClickListener {
                 currentDid?.let {
                     onMainClick(it)
+                }
+            }
+
+            signTab.view.setOnClickListener {
+                currentDid?.let {
+                    onTabClick(it, "sign")
+                }
+            }
+            commTab.view.setOnClickListener {
+                currentDid?.let {
+                    onTabClick(it, "comm")
+                }
+            }
+            browserTab.view.setOnClickListener {
+                currentDid?.let {
+                    onTabClick(it, "browser")
                 }
             }
         }

@@ -39,7 +39,8 @@ class DIDSelectPresenter @Inject constructor(
         interactor.generateDID()
     }
 
-    override fun didClicked(did: DIDSelectModels.DidDisplayModel) {
+    override fun didTabClicked(did: DIDSelectModels.DidDisplayModel, tabClicked: String) {
+        interactor.didTabClicked(did, tabClicked)
     }
 
     // endregion

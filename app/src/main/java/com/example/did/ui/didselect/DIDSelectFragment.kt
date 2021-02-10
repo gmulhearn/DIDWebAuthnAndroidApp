@@ -30,8 +30,8 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
     internal val navigationArgs by navArgs<DIDSelectFragmentArgs>()
 
     internal var adapter =
-        DIDAdapter { did ->
-            didOnClick(did)
+        DIDAdapter { did, tab  ->
+            didTabOnClick(did, tab)
         }
 
     // region viper lifecycle
@@ -72,8 +72,8 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
         presenter.viewLoaded(savedInstanceState)
     }
 
-    private fun didOnClick(did: DIDSelectModels.DidDisplayModel) {
-        presenter.didClicked(did)
+    private fun didTabOnClick(did: DIDSelectModels.DidDisplayModel, tabClicked: String) {
+        presenter.didTabClicked(did, tabClicked)
     }
 
     override fun onDestroyView() {

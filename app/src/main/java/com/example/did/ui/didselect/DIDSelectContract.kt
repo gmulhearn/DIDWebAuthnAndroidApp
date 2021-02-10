@@ -2,6 +2,8 @@ package com.example.did.ui.didselect
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.example.did.data.DidInfo
+import com.example.did.data.WalletInfo
 
 /**
  * DIDSelectContract VIPER contract
@@ -65,9 +67,9 @@ interface DIDSelectContract {
         fun genDIDClicked()
 
         /**
-         *
+         * TODO
          */
-        fun didClicked(did: DIDSelectModels.DidDisplayModel)
+        fun didTabClicked(did: DIDSelectModels.DidDisplayModel, tabClicked: String)
     }
 
     /**
@@ -110,6 +112,11 @@ interface DIDSelectContract {
          */
         fun generateDID()
 
+        /**
+         * TODO
+         */
+        fun didTabClicked(did: DIDSelectModels.DidDisplayModel, tabClicked: String)
+
     }
 
     /**
@@ -138,6 +145,9 @@ interface DIDSelectContract {
      * Declares all routes out of the module
      */
     interface Router {
-
+        /**
+         * TODO
+         */
+        fun toSigning(didInfo: DidInfo, walletInfo: WalletInfo)
     }
 }

@@ -19,7 +19,8 @@ import javax.inject.Inject
  */
 class DIDSelectInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
-    @WalletInformation internal val walletInfo: WalletInfo
+    @WalletInformation internal val walletInfo: WalletInfo,
+    private val router: DIDSelectRouter
 ) : DIDSelectContract.InteractorInput, CoroutineScope by coroutineScope {
     
     internal val outputDelegate = ObjectDelegate<DIDSelectContract.InteractorOutput>()
@@ -77,8 +78,27 @@ class DIDSelectInteractor @Inject constructor(
         }
     }
 
+    override fun didTabClicked(did: DIDSelectModels.DidDisplayModel, tabClicked: String) {
+        val didInfo = getDidInfoFromModel(did)
+
+        checkNotNull(wallet)
+
+        wallet!!.closeWallet().get()
+
+        when (tabClicked) {
+            "sign" -> router.toSigning(didInfo, walletInfo)
+            "comm" -> {}
+            "browser" -> {}
+            else -> {}
+        }
+    }
+
     private fun transformDidInfoToModel(didInfo: DidInfo): DIDSelectModels.DidDisplayModel {
         return DIDSelectModels.DidDisplayModel(didInfo.did, didInfo.verkey)
+    }
+
+    private fun getDidInfoFromModel(didModel: DIDSelectModels.DidDisplayModel): DidInfo {
+        return dids.first { it.did == didModel.did }
     }
 
     private fun openWallet() {
