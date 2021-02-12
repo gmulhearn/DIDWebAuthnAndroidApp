@@ -47,7 +47,11 @@ class WalletsFragment : Fragment(), WalletsContract.View {
 
     // region view setup and state lifecycle
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_i_d_generation, container, false)
     }
 
@@ -63,10 +67,11 @@ class WalletsFragment : Fragment(), WalletsContract.View {
         }
 
         // walletAddressText.setOnClickListener {
-            // presenter.walletClicked()
+        // presenter.walletClicked()
         // }
 
-        WalletsList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        WalletsList.layoutManager =
+            LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         WalletsList.adapter = adapter
 
         // Notify Presenter that the View is ready
@@ -85,11 +90,6 @@ class WalletsFragment : Fragment(), WalletsContract.View {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         presenter.saveState(outState)
-    }
-
-    override fun updateWalletText(walletID: String) {
-        // walletAddressText.text = walletID
-        // hideSpinner()
     }
 
     override fun updateWalletList(wallets: MutableList<WalletsModels.WalletDisplayModel>) {

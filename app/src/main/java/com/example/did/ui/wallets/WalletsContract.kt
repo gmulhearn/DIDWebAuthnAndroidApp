@@ -18,11 +18,6 @@ interface WalletsContract {
         /**
          * TODO
          */
-        fun updateWalletText(walletID: String)
-
-        /**
-         * TODO
-         */
         fun updateWalletList(wallets: MutableList<WalletsModels.WalletDisplayModel>)
 
         /**

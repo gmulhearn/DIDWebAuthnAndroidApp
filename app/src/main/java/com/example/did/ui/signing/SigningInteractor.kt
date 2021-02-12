@@ -60,7 +60,7 @@ class SigningInteractor @Inject constructor(
                 Crypto.cryptoSign(wallet, didInfo.verkey, text.toByteArray(Charsets.UTF_8))
                         .get()
             }
-            output.signTextResult(signature.toList().toString())
+            output.signTextResult(signature.toString(Charsets.UTF_8))
         }
     }
 

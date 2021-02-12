@@ -8,8 +8,8 @@ import javax.inject.Inject
  * Wallets VIPER Presenter Implementation
  */
 class WalletsPresenter @Inject constructor(
-        private val interactor: WalletsContract.InteractorInput,
-        private val router: WalletsContract.Router
+    private val interactor: WalletsContract.InteractorInput,
+    private val router: WalletsContract.Router
 ) : WalletsContract.Presenter, WalletsContract.InteractorOutput {
 
     internal val viewDelegate = ObjectDelegate<WalletsContract.View>()
@@ -60,10 +60,6 @@ class WalletsPresenter @Inject constructor(
 
     override fun walletGenerated(wallets: MutableList<WalletsModels.WalletDisplayModel>) {
         view.updateWalletList(wallets)
-    }
-
-    private fun walletGenerated2(walletID: String) {
-        view.updateWalletText(walletID)
     }
 
     override fun generationError() {
