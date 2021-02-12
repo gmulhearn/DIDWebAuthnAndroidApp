@@ -22,6 +22,14 @@ class DIDSelectRouter @Inject constructor(
         findNavController().navigate(directions)
     }
 
+    override fun toContacts(didInfo: DidInfo, walletInfo: WalletInfo) {
+        val directions = DIDSelectFragmentDirections.actionDIDSelectFragmentToContactSelectFragment(
+            didInfo,
+            walletInfo
+        )
+        findNavController().navigate(directions)
+    }
+
 
     @VisibleForTesting
     internal fun findNavController(): NavController {

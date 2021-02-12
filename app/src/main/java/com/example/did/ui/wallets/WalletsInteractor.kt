@@ -4,6 +4,8 @@ import android.content.Context
 import com.example.did.common.MSCoroutineScope
 import com.example.did.common.ObjectDelegate
 import android.os.Bundle
+import android.os.Parcelable
+import androidx.navigation.NavType
 import com.example.did.data.DidInfo
 import com.example.did.data.WalletInfo
 import kotlinx.coroutines.*
@@ -11,6 +13,7 @@ import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
 import javax.inject.Inject
 import com.example.did.ui.wallets.WalletsModels.*
+import kotlinx.android.parcel.Parcelize
 import org.json.JSONObject
 
 /**
@@ -22,12 +25,17 @@ class WalletsInteractor @Inject constructor(
     private val router: WalletsContract.Router
 ) : WalletsContract.InteractorInput, CoroutineScope by coroutineScope {
 
+    companion object {
+        // bundle key for saved wallets
+        internal const val WALLETS_OUTSTATE = "WALLETS_OUTSTATE"
+    }
+
+    @Parcelize
+    data class ParcelableWalletInfoList(val wallets: MutableList<WalletInfo>) : Parcelable
+
     internal val outputDelegate = ObjectDelegate<WalletsContract.InteractorOutput>()
     internal val output by outputDelegate
 
-    private var wallet: Wallet? = null
-    private var didInfo: DidInfo? = null
-    private var walletInfo: WalletInfo? = null
     private var wallets: MutableList<WalletInfo> = mutableListOf()
 
     // region viper lifecycle
@@ -42,28 +50,13 @@ class WalletsInteractor @Inject constructor(
     }
 
     override fun loadData(savedState: Bundle?) {
-        // TODO implement this. Call output with results of a data load or load existing state
+        (savedState?.getParcelable<ParcelableWalletInfoList>(WALLETS_OUTSTATE))?.wallets?.let {
+            wallets = it
+        }
     }
 
     override fun savePendingState(outState: Bundle) {
-        // TODO save interactor state to bundle and output success if required
-    }
-
-    private fun importWallet(): Wallet {
-
-        val key = "5dd8DLF9GP6V9dEeQeHxsmGnBfaLxZnERrToak8sfCTJ"
-        val credentials = "{\"key\":\"$key\"}"
-        val credentials2 = """
-            {"key":"$key"}
-            """.trimIndent()
-        val config = "{\"id\":\"testID1\"}"
-        val importJson = "{\"path\":\"/sdcard/Documents/indyWalletTest\", \"key\":\"password\" }"
-
-        Wallet.importWallet(config, credentials, importJson).get()
-
-        val wallet = Wallet.openWallet(config, credentials).get()
-
-        return wallet
+        outState.putParcelable(WALLETS_OUTSTATE, ParcelableWalletInfoList(wallets))
     }
 
     override fun generateWallet(name: String) {

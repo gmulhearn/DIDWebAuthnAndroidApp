@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
+import org.hyperledger.indy.sdk.wallet.WalletAlreadyOpenedException
 import javax.inject.Inject
 
 /**
@@ -19,9 +20,13 @@ import javax.inject.Inject
  */
 class DIDSelectInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
-    @WalletInformation internal val walletInfo: WalletInfo,
+    @WalletInformation internal var walletInfo: WalletInfo,
     private val router: DIDSelectRouter
 ) : DIDSelectContract.InteractorInput, CoroutineScope by coroutineScope {
+
+    companion object {
+        internal const val WALLET_INFO = "WALLET_INFO"
+    }
     
     internal val outputDelegate = ObjectDelegate<DIDSelectContract.InteractorOutput>()
     internal val output by outputDelegate
@@ -42,11 +47,16 @@ class DIDSelectInteractor @Inject constructor(
     }
 
     override fun loadData(savedState: Bundle?) {
-        // TODO implement this. Call output with results of a data load or load existing state
+        println("loading data")
+        savedState?.getParcelable<WalletInfo>(WALLET_INFO)?.let {
+            walletInfo = it
+        }
+        openWallet()
     }
 
     override fun savePendingState(outState: Bundle) {
-        // TODO save interactor state to bundle and output success if required
+        println("saving data")
+        outState.putParcelable(WALLET_INFO, walletInfo)
     }
 
     override fun generateDID() {
@@ -81,13 +91,18 @@ class DIDSelectInteractor @Inject constructor(
     override fun didTabClicked(did: DIDSelectModels.DidDisplayModel, tabClicked: String) {
         val didInfo = getDidInfoFromModel(did)
 
+        if (wallet == null) {
+            openWallet()
+        }
+
         checkNotNull(wallet)
 
         wallet!!.closeWallet().get()
+        wallet = null
 
         when (tabClicked) {
             "sign" -> router.toSigning(didInfo, walletInfo)
-            "comm" -> {}
+            "comm" -> router.toContacts(didInfo, walletInfo)
             "browser" -> {}
             else -> {}
         }
@@ -102,7 +117,12 @@ class DIDSelectInteractor @Inject constructor(
     }
 
     private fun openWallet() {
-        wallet = Wallet.openWallet(walletInfo.config, walletInfo.credentials).get()
+        println("Opening Wallet")
+        try {
+            wallet = Wallet.openWallet(walletInfo.config, walletInfo.credentials).get()
+        } catch (e: java.lang.Exception) {
+            println(e)
+        }
     }
 
     // endregion

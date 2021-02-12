@@ -1,5 +1,9 @@
 package com.example.did.common.di
 
+import com.example.did.ui.didcomm.AddContact.AddContactFragment
+import com.example.did.ui.didcomm.AddContact.AddContactModule
+import com.example.did.ui.didcomm.contactselect.ContactSelectFragment
+import com.example.did.ui.didcomm.contactselect.ContactSelectModule
 import com.example.did.ui.didselect.DIDSelectFragment
 import com.example.did.ui.didselect.DIDSelectModule
 import com.example.did.ui.wallets.WalletsFragment
@@ -22,4 +26,12 @@ abstract class FragmentBindingModule {
     @ActivityScope
     @ContributesAndroidInjector(modules = [SigningModule::class])
     abstract fun bindSigningFragment(): SigningFragment
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [ContactSelectModule::class])
+    abstract fun bindContactSelectFragment(): ContactSelectFragment
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [AddContactModule::class])
+    abstract fun bindAddContactFragment(): AddContactFragment
 }

@@ -37,12 +37,13 @@ class SigningInteractor @Inject constructor(
     }
 
     override fun detachOutput() {
+        wallet?.closeWallet()?.get()
         coroutineScope.cancelJobs()
         outputDelegate.detach()
     }
 
     override fun loadData(savedState: Bundle?) {
-        // TODO implement this. Call output with results of a data load or load existing state
+
     }
 
     override fun savePendingState(outState: Bundle) {

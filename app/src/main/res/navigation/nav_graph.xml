@@ -34,18 +34,6 @@
         android:label="fragment_i_d_generation"
         tools:layout="@layout/fragment_i_d_generation">
         <action
-            android:id="@+id/action_WalletsFragment_to_signingFragment"
-            app:destination="@id/signingFragment">
-            <argument
-                android:name="didInfo"
-                app:argType="com.example.did.data.DidInfo"
-                app:nullable="false" />
-            <argument
-                android:name="walletInfo"
-                app:argType="com.example.did.data.WalletInfo"
-                app:nullable="false" />
-        </action>
-        <action
             android:id="@+id/action_WalletsFragment_to_DIDSelectFragment"
             app:destination="@id/DIDSelectFragment">
             <argument
@@ -76,5 +64,34 @@
         <action
             android:id="@+id/action_DIDSelectFragment_to_signingFragment"
             app:destination="@id/signingFragment" />
+        <action
+            android:id="@+id/action_DIDSelectFragment_to_contactSelectFragment"
+            app:destination="@id/contactSelectFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactSelectFragment"
+        android:name="com.example.did.ui.didcomm.contactselect.ContactSelectFragment"
+        android:label="fragment_contact_select"
+        tools:layout="@layout/fragment_contact_select" >
+        <argument
+            android:name="didInfo"
+            app:argType="com.example.did.data.DidInfo" />
+        <argument
+            android:name="walletInfo"
+            app:argType="com.example.did.data.WalletInfo" />
+        <action
+            android:id="@+id/action_contactSelectFragment_to_addContactFragment"
+            app:destination="@id/addContactFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addContactFragment"
+        android:name="com.example.did.ui.didcomm.AddContact.AddContactFragment"
+        android:label="add_contact_fragment">
+        <argument
+            android:name="didInfo"
+            app:argType="com.example.did.data.DidInfo" />
+        <argument
+            android:name="walletInfo"
+            app:argType="com.example.did.data.WalletInfo" />
     </fragment>
 </navigation>

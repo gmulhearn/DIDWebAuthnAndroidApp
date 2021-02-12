@@ -1,29 +1,21 @@
-package com.example.did.ui.wallets
+package com.example.did.ui.didcomm.contactselect
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.example.did.data.DidInfo
 import com.example.did.data.WalletInfo
 
 /**
- * WalletsContract VIPER contract
+ * ContactSelectContract VIPER contract
  */
-interface WalletsContract {
+interface ContactSelectContract {
 
     /**
      * Passive view interface. This interface declares behaviors that can modify the View
      */
     interface View {
 
-        /**
-         * TODO
-         */
-        fun updateWalletList(wallets: MutableList<WalletsModels.WalletDisplayModel>)
-
-        /**
-         * TODO
-         */
-        fun onGenerationError()
     }
 
     /**
@@ -61,16 +53,7 @@ interface WalletsContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
-
-        /**
-         * TODO
-         */
-        fun genWalletPressed(name: String)
-
-        /**
-         * TODO
-         */
-        fun walletClicked(name: String)
+        fun addContactClicked()
     }
 
     /**
@@ -107,17 +90,7 @@ interface WalletsContract {
          * @param outState Bundle to save Interactor state to
          */
         fun savePendingState(outState: Bundle)
-
-        /**
-         * TODO
-         */
-        fun generateWallet(name: String)
-
-        /**
-         * TODO
-         */
-        fun toWalletDIDSelect(walletName: String)
-
+        fun toAddContact()
     }
 
     /**
@@ -129,17 +102,6 @@ interface WalletsContract {
          * Called after [InteractorInput.loadData] completes successfully
          */
         fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
-
-        /**
-         * TODO
-         */
-        fun walletGenerated(wallets: MutableList<WalletsModels.WalletDisplayModel>)
-
-        /**
-         * TODO
-         */
-        fun generationError()
-
     }
 
     /**
@@ -147,9 +109,6 @@ interface WalletsContract {
      */
     interface Router {
 
-        /**
-         * TODO
-         */
-        fun toDIDSelect(walletInfo: WalletInfo)
+        fun toAddContact(didInfo: DidInfo, walletInfo: WalletInfo)
     }
 }

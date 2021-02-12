@@ -66,10 +66,6 @@ class WalletsFragment : Fragment(), WalletsContract.View {
             presenter.genWalletPressed(walletNameTextBox.text.toString())
         }
 
-        // walletAddressText.setOnClickListener {
-        // presenter.walletClicked()
-        // }
-
         WalletsList.layoutManager =
             LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         WalletsList.adapter = adapter

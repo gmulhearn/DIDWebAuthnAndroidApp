@@ -14,17 +14,6 @@ class WalletsRouter @Inject constructor(
     private val fragment: WalletsFragment
 ) : WalletsContract.Router {
 
-    override fun showSigning(
-        didInfo: DidInfo,
-        walletInfo: WalletInfo
-    ) {
-        val directions = WalletsFragmentDirections.actionWalletsFragmentToSigningFragment(
-            didInfo,
-            walletInfo
-        )
-        findNavController().navigate(directions)
-    }
-
     override fun toDIDSelect(walletInfo: WalletInfo) {
         val directions = WalletsFragmentDirections.actionWalletsFragmentToDIDSelectFragment(
             walletInfo

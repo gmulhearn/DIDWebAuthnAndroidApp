@@ -149,5 +149,10 @@ interface DIDSelectContract {
          * TODO
          */
         fun toSigning(didInfo: DidInfo, walletInfo: WalletInfo)
+
+        /**
+         * TODO
+         */
+        fun toContacts(didInfo: DidInfo, walletInfo: WalletInfo)
     }
 }
