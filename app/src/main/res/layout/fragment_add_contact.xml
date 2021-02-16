@@ -6,6 +6,32 @@
     android:layout_height="match_parent"
     tools:context="com.example.did.ui.didcomm.contactselect.ContactSelectFragment">
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cameraContainer"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        app:layout_constraintBottom_toTopOf="@+id/qrCode"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.budiyev.android.codescanner.CodeScannerView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:autoFocusButtonColor="@android:color/white"
+            app:autoFocusButtonVisible="false"
+            app:flashButtonColor="@android:color/white"
+            app:flashButtonVisible="false"
+            app:frameAspectRatioHeight="1"
+            app:frameAspectRatioWidth="1"
+            app:frameColor="@android:color/white"
+            app:frameCornersRadius="0dp"
+            app:frameCornersSize="50dp"
+            app:frameSize="1"
+            app:frameThickness="0dp"
+            app:maskColor="#77000000" />
+
+    </androidx.cardview.widget.CardView>
+
     <ImageView
         android:id="@+id/qrCode"
         android:layout_width="200dp"

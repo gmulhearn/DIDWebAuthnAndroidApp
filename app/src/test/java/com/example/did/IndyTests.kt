@@ -1,15 +1,21 @@
 package com.example.did
 
-import org.junit.Test
-import org.junit.Assert.*
-import org.hyperledger.indy.sdk.*
+import org.hyperledger.indy.sdk.LibIndy
 import org.hyperledger.indy.sdk.crypto.Crypto
-import org.hyperledger.indy.sdk.wallet.Wallet
-import java.io.File
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.pairwise.Pairwise
+import org.hyperledger.indy.sdk.wallet.Wallet
 import org.json.JSONObject
+import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Test
+import java.io.File
+import java.security.MessageDigest
+import java.security.SecureRandom
+import java.util.*
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
+import kotlin.collections.HashMap
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -138,5 +144,84 @@ class IndyTests {
 
         val decryptedMsg = Crypto.unpackMessage(openWallet2, encryptedMsg).get()
         println(decryptedMsg.toString(Charsets.UTF_8))
+    }
+
+    @ExperimentalUnsignedTypes
+    fun generateMnemonic(numEntBits: Int = 128): List<String> {
+        val ent = SecureRandom.getInstanceStrong().generateSeed(numEntBits / 8)
+
+        val entString = ent.toUByteArray().joinToString("") {
+            val bits = it.toString(2)
+            "0".repeat(8 - bits.length) + bits
+        }
+
+        val md = MessageDigest.getInstance("SHA-256")
+        val hashedEnt = md.digest(ent)
+
+        val hashedEntString = hashedEnt.toUByteArray().joinToString("") {
+            val bits = it.toString(2)
+            "0".repeat(8 - bits.length) + bits
+        }
+
+        val checksum = hashedEntString.subSequence(0, numEntBits / 32)
+        val concatBits = entString + checksum
+        val numWords = concatBits.length / 11
+
+        val wordIntList = (0 until numWords).map { i ->
+            val wordStr = concatBits.substring(11 * (numWords - 1 - i), 11 * (numWords - i))
+            wordStr.toInt(2)
+        }.toList().reversed()
+
+        val wordList =
+            this.javaClass.classLoader.getResource("bip0039wordlist.txt").readText(Charsets.UTF_8)
+                .split("\n")
+
+        return wordIntList.map { index -> wordList[index] }
+    }
+
+    @ExperimentalUnsignedTypes
+    fun generateSeed(wordList: List<String>): ByteArray {
+
+        val spec = PBEKeySpec(
+            "".toCharArray(),
+            wordList.joinToString("") { it }.toByteArray(Charsets.UTF_8),
+            2048,
+            512
+        )
+        val keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512")
+
+        return keyFactory.generateSecret(spec).encoded
+    }
+
+    @ExperimentalUnsignedTypes
+    @Test
+    fun `gen_seed`() {
+        val seedWords = generateMnemonic()
+        println(seedWords)
+        val seedBytes = generateSeed(seedWords)
+        println(seedBytes.toUByteArray().toList())
+    }
+
+    @Test
+    fun `test wallet did seed diffs`() {
+        val seed = Base64.getEncoder().encode(generateSeed(generateMnemonic(128))).toString(Charsets.UTF_8)
+        println(seed)
+
+        val didJsonMap = mutableMapOf<String, Any?>(
+            Pair("did", null),
+            Pair("seed", seed.subSequence(0, 32)),
+            Pair("crypto_type", null),
+            Pair("cid", null),
+            Pair("method_name", null)
+        )
+
+        val didJson = JSONObject(didJsonMap)
+
+        println(didJson.toString())
+
+        val did1 = Did.createAndStoreMyDid(openWallet, didJson.toString()).get()
+        val did2 = Did.createAndStoreMyDid(openWallet2, didJson.toString()).get()
+
+        println("${did1.did} ${did2.did}\n${did1.verkey} ${did2.verkey}")
     }
 }

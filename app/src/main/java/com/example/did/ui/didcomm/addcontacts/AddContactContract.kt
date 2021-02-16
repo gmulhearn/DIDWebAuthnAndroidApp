@@ -18,6 +18,7 @@ interface AddContactContract {
          */
         fun showQR(bitmap: Bitmap)
 
+        fun setupCamera()
     }
 
     /**
@@ -55,6 +56,7 @@ interface AddContactContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
+        fun qrCodeRead(text: String?)
     }
 
     /**

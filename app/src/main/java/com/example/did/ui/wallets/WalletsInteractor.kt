@@ -1,10 +1,13 @@
 package com.example.did.ui.wallets
 
 import android.content.Context
+import android.os.Build
 import com.example.did.common.MSCoroutineScope
 import com.example.did.common.ObjectDelegate
 import android.os.Bundle
 import android.os.Parcelable
+import android.system.Os
+import androidx.annotation.RequiresApi
 import androidx.navigation.NavType
 import com.example.did.data.DidInfo
 import com.example.did.data.WalletInfo
@@ -15,6 +18,7 @@ import javax.inject.Inject
 import com.example.did.ui.wallets.WalletsModels.*
 import kotlinx.android.parcel.Parcelize
 import org.json.JSONObject
+import java.security.SecureRandom
 
 /**
  * Wallets VIPER Interactor Implementation
@@ -101,6 +105,12 @@ class WalletsInteractor @Inject constructor(
 
     private fun walletNameToInfo(walletName: String): WalletInfo {
         return wallets.first { JSONObject(it.config).getString("id") == walletName }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    internal fun generateSeed(): ByteArray? {
+        val ent = SecureRandom.getInstanceStrong().generateSeed(16)
+        return ent
     }
 
     // endregion

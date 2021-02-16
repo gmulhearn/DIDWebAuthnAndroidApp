@@ -37,6 +37,10 @@ class AddContactPresenter @Inject constructor(
         interactor.savePendingState(outState)
     }
 
+    override fun qrCodeRead(text: String?) {
+        TODO("Not yet implemented")
+    }
+
     // endregion
 
     // region view event handlers

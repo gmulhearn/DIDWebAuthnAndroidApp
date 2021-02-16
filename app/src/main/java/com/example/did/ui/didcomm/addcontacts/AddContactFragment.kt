@@ -10,6 +10,7 @@ import androidx.annotation.VisibleForTesting
 import dagger.android.support.AndroidSupportInjection
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import com.budiyev.android.codescanner.*
 import com.example.did.R
 import kotlinx.android.synthetic.main.fragment_add_contact.*
 import javax.inject.Inject
@@ -25,6 +26,8 @@ class AddContactFragment : Fragment(), AddContactContract.View {
     @VisibleForTesting
 
     internal val navigationArgs by navArgs<AddContactFragmentArgs>()
+
+    private lateinit var codeScanner: CodeScanner
 
     // region viper lifecycle
 
@@ -53,6 +56,9 @@ class AddContactFragment : Fragment(), AddContactContract.View {
 
         // Notify Presenter that the View is ready
         presenter.viewLoaded(savedInstanceState)
+
+        val scannerView = requireActivity().findViewById<CodeScannerView>(R.id.previewView)
+        codeScanner = CodeScanner(requireContext(), scannerView)
     }
 
     override fun onDestroyView() {
@@ -67,6 +73,26 @@ class AddContactFragment : Fragment(), AddContactContract.View {
 
     override fun showQR(bitmap: Bitmap) {
         qrCode.setImageBitmap(bitmap)
+    }
+
+    override fun setupCamera() {
+        codeScanner.camera = CodeScanner.CAMERA_BACK
+        codeScanner.formats = CodeScanner.ALL_FORMATS
+        codeScanner.autoFocusMode = AutoFocusMode.SAFE
+        codeScanner.scanMode = ScanMode.SINGLE
+        codeScanner.isAutoFocusEnabled = true
+        codeScanner.isFlashEnabled = false
+
+        // Callbacks
+        codeScanner.decodeCallback = DecodeCallback {
+            requireActivity().runOnUiThread {
+                println("QR code scanned: ${it.text}")
+                presenter.qrCodeRead(it.text)
+            }
+        }
+        codeScanner.errorCallback = ErrorCallback.SUPPRESS
+
+        codeScanner.startPreview()
     }
 
     // endregion
