@@ -1,7 +1,9 @@
 package com.example.did.ui.didselect
 
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.did.R
 import com.example.did.common.viewhelpers.animateVisibilityIn
 import com.example.did.common.viewhelpers.animateVisibilityOut
+import com.google.android.material.textfield.TextInputEditText
+import kotlinx.android.synthetic.main.did_seed_popup.*
 import kotlinx.android.synthetic.main.fragment_d_i_ds.*
 import org.json.JSONObject
 import javax.inject.Inject
@@ -65,6 +69,21 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
             presenter.genDIDClicked()
         }
 
+        seedButton.setOnClickListener {
+            seedPopup.visibility = when (seedPopup.visibility) {
+                View.VISIBLE -> View.GONE
+                else -> View.VISIBLE
+            }
+        }
+
+        reveal_seed.setOnClickListener {
+            seedText.visibility = View.VISIBLE
+        }
+
+        setSeed.setOnClickListener {
+            presenter.seedSetAttempt(seedText.text.toString())
+        }
+
         DIDSelectList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         DIDSelectList.adapter = adapter
 
@@ -93,6 +112,10 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
 
     override fun onGenerationError() {
         hideSpinner()
+    }
+
+    override fun onSeedWordSet(seedWords: String) {
+        seedText.setText(seedWords)
     }
 
     private fun showSpinner() {

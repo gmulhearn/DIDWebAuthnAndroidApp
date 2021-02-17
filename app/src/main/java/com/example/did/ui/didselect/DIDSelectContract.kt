@@ -23,6 +23,11 @@ interface DIDSelectContract {
          * TODO
          */
         fun onGenerationError()
+
+        /**
+         * TODO
+         */
+        fun onSeedWordSet(seedWords: String)
     }
 
     /**
@@ -70,6 +75,11 @@ interface DIDSelectContract {
          * TODO
          */
         fun didTabClicked(did: DIDSelectModels.DidDisplayModel, tabClicked: String)
+
+        /**
+         * TODO
+         */
+        fun seedSetAttempt(seedText: String)
     }
 
     /**
@@ -117,6 +127,11 @@ interface DIDSelectContract {
          */
         fun didTabClicked(did: DIDSelectModels.DidDisplayModel, tabClicked: String)
 
+        /**
+         * TODO
+         */
+        fun attemptToSetSeed(seedText: String)
+
     }
 
     /**
@@ -138,6 +153,11 @@ interface DIDSelectContract {
          * TODO
          */
         fun generationError()
+
+        /**
+         * TODO
+         */
+        fun seedWordsSet(seedWords: String)
 
     }
 

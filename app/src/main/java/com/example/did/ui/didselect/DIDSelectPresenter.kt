@@ -43,6 +43,10 @@ class DIDSelectPresenter @Inject constructor(
         interactor.didTabClicked(did, tabClicked)
     }
 
+    override fun seedSetAttempt(seedText: String) {
+        interactor.attemptToSetSeed(seedText)
+    }
+
     // endregion
 
     // region view event handlers
@@ -63,6 +67,10 @@ class DIDSelectPresenter @Inject constructor(
 
     override fun generationError() {
         view.onGenerationError()
+    }
+
+    override fun seedWordsSet(seedWords: String) {
+        view.onSeedWordSet(seedWords)
     }
 
     // TODO Add interactor outputs

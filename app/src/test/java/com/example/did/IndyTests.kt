@@ -15,8 +15,7 @@ import java.security.SecureRandom
 import java.util.*
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
-import kotlin.collections.HashMap
-
+import com.example.did.util.generateSeed
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -179,19 +178,19 @@ class IndyTests {
         return wordIntList.map { index -> wordList[index] }
     }
 
-    @ExperimentalUnsignedTypes
-    fun generateSeed(wordList: List<String>): ByteArray {
-
-        val spec = PBEKeySpec(
-            "".toCharArray(),
-            wordList.joinToString("") { it }.toByteArray(Charsets.UTF_8),
-            2048,
-            512
-        )
-        val keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512")
-
-        return keyFactory.generateSecret(spec).encoded
-    }
+//    @ExperimentalUnsignedTypes
+//    fun generateSeed(wordList: List<String>): ByteArray {
+//
+//        val spec = PBEKeySpec(
+//            "".toCharArray(),
+//            wordList.joinToString("") { it }.toByteArray(Charsets.UTF_8),
+//            2048,
+//            512
+//        )
+//        val keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512")
+//
+//        return keyFactory.generateSecret(spec).encoded
+//    }
 
     @ExperimentalUnsignedTypes
     @Test

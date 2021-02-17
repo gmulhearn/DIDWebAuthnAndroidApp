@@ -1,11 +1,17 @@
 package com.example.did.ui.didselect
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import com.example.did.common.MSCoroutineScope
 import com.example.did.common.ObjectDelegate
+import com.example.did.common.di.ViewContext
 import com.example.did.common.di.qualifier.WalletInformation
 import com.example.did.data.DidInfo
 import com.example.did.data.WalletInfo
+import com.example.did.util.generateMnemonic
+import com.example.did.util.generateSeed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,6 +19,7 @@ import kotlinx.coroutines.withContext
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
 import org.hyperledger.indy.sdk.wallet.WalletAlreadyOpenedException
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -21,7 +28,8 @@ import javax.inject.Inject
 class DIDSelectInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
     @WalletInformation internal var walletInfo: WalletInfo,
-    private val router: DIDSelectRouter
+    private val router: DIDSelectRouter,
+    private val context: Context
 ) : DIDSelectContract.InteractorInput, CoroutineScope by coroutineScope {
 
     companion object {
@@ -33,6 +41,9 @@ class DIDSelectInteractor @Inject constructor(
 
     private var wallet: Wallet? = null
     private var dids: MutableList<DidInfo> = mutableListOf()
+
+    private var seedWords: List<String> = listOf()
+    private var seedHex: String = ""
 
     
     // region viper lifecycle
@@ -46,12 +57,15 @@ class DIDSelectInteractor @Inject constructor(
         outputDelegate.detach()
     }
 
+    @ExperimentalUnsignedTypes
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun loadData(savedState: Bundle?) {
         println("loading data")
         savedState?.getParcelable<WalletInfo>(WALLET_INFO)?.let {
             walletInfo = it
         }
         openWallet()
+        generateSeedWords()
     }
 
     override fun savePendingState(outState: Bundle) {
@@ -72,7 +86,7 @@ class DIDSelectInteractor @Inject constructor(
                         openWallet()
                     }
 
-                    Did.createAndStoreMyDid(wallet!!, "{}").get()
+                    Did.createAndStoreMyDid(wallet!!, "{\"seed\": \"${(dids.size.toString() + seedHex).subSequence(0, 32)}\"}").get()
                 }
                 dids.add(DidInfo(did.did, did.verkey))
             } catch (e: Exception) {
@@ -108,6 +122,19 @@ class DIDSelectInteractor @Inject constructor(
         }
     }
 
+    @ExperimentalUnsignedTypes
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun attemptToSetSeed(seedText: String) {
+        val newSeedWords = seedText.split(" ")
+        try { // TODO fix this to actually catch
+            seedWords = newSeedWords
+            seedHex = Base64.getEncoder().encodeToString(generateSeed(seedWords)).substring(0, 32)
+        } catch (e: java.lang.Exception) {
+
+        }
+        output.seedWordsSet(seedWords.joinToString(" "))
+    }
+
     private fun transformDidInfoToModel(didInfo: DidInfo): DIDSelectModels.DidDisplayModel {
         return DIDSelectModels.DidDisplayModel(didInfo.did, didInfo.verkey)
     }
@@ -123,6 +150,14 @@ class DIDSelectInteractor @Inject constructor(
         } catch (e: java.lang.Exception) {
             println(e)
         }
+    }
+
+    @ExperimentalUnsignedTypes
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun generateSeedWords() {
+        seedWords = generateMnemonic(128, context)
+        seedHex = Base64.getEncoder().encodeToString(generateSeed(seedWords)).substring(0, 32)
+        output.seedWordsSet(seedWords.joinToString(" "))
     }
 
     // endregion
