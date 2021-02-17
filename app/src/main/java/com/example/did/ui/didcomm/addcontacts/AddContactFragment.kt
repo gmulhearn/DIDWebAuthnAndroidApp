@@ -54,11 +54,20 @@ class AddContactFragment : Fragment(), AddContactContract.View {
 
         // TODO setup view, event listeners etc.
 
-        // Notify Presenter that the View is ready
-        presenter.viewLoaded(savedInstanceState)
-
         val scannerView = requireActivity().findViewById<CodeScannerView>(R.id.previewView)
         codeScanner = CodeScanner(requireContext(), scannerView)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.viewLoaded(null)
+    }
+
+    override fun onPause() {
+        if (::codeScanner.isInitialized) {
+            codeScanner.releaseResources()
+        }
+        super.onPause()
     }
 
     override fun onDestroyView() {

@@ -68,6 +68,10 @@ class AddContactInteractor @Inject constructor(
         output.generatedQR(imageBitmap)
     }
 
+    override fun processQrScan(text: String?) {
+        println(text)
+    }
+
     override fun loadData(savedState: Bundle?) {
         // TODO implement this. Call output with results of a data load or load existing state
     }

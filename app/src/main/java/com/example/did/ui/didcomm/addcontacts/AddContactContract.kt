@@ -56,6 +56,10 @@ interface AddContactContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
+
+        /**
+         * TODO
+         */
         fun qrCodeRead(text: String?)
     }
 
@@ -95,6 +99,11 @@ interface AddContactContract {
         fun savePendingState(outState: Bundle)
 
         fun generateQR()
+
+        /**
+         * TODO
+         */
+        fun processQrScan(text: String?)
     }
 
     /**

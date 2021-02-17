@@ -31,6 +31,7 @@ class AddContactPresenter @Inject constructor(
     override fun viewLoaded(savedState: Bundle?) {
         interactor.loadData(savedState)
         interactor.generateQR()
+        view.setupCamera()
     }
 
     override fun saveState(outState: Bundle) {
@@ -38,7 +39,7 @@ class AddContactPresenter @Inject constructor(
     }
 
     override fun qrCodeRead(text: String?) {
-        TODO("Not yet implemented")
+        interactor.processQrScan(text)
     }
 
     // endregion
