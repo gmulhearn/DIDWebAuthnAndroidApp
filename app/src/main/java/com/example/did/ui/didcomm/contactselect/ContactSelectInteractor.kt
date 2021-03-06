@@ -31,9 +31,6 @@ class ContactSelectInteractor @Inject constructor(
     internal val outputDelegate = ObjectDelegate<ContactSelectContract.InteractorOutput>()
     internal val output by outputDelegate
 
-    // QR code stuff
-    private val qrCodeWriter = QRCodeWriter()
-    internal val barcodeFormatQRCode = BarcodeFormat.QR_CODE
 
     // region viper lifecycle
 

@@ -1,9 +1,12 @@
 package com.example.did.ui.didcomm.AddContact
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.core.graphics.createBitmap
 import com.example.did.common.MSCoroutineScope
 import com.example.did.common.ObjectDelegate
@@ -11,10 +14,17 @@ import com.example.did.common.di.qualifier.DidInformation
 import com.example.did.common.di.qualifier.WalletInformation
 import com.example.did.data.DidInfo
 import com.example.did.data.WalletInfo
+import com.example.did.protocols.DIDExchange
+import com.example.did.protocols.DIDExchange.generateInvitation
+import com.example.did.protocols.DIDExchange.generateInvitationUrl
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.hyperledger.indy.sdk.wallet.Wallet
 import java.util.*
 import javax.inject.Inject
 
@@ -24,7 +34,8 @@ import javax.inject.Inject
 class AddContactInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
     @WalletInformation internal val walletInfo: WalletInfo,
-    @DidInformation internal val didInfo: DidInfo
+    @DidInformation internal val didInfo: DidInfo,
+    private val context: Context
 ) : AddContactContract.InteractorInput, CoroutineScope by coroutineScope {
     
     internal val outputDelegate = ObjectDelegate<AddContactContract.InteractorOutput>()
@@ -33,6 +44,8 @@ class AddContactInteractor @Inject constructor(
     // QR code stuff
     private val qrCodeWriter = QRCodeWriter()
     internal val barcodeFormatQRCode = BarcodeFormat.QR_CODE
+
+    internal var wallet: Wallet? = null
 
     // region viper lifecycle
 
@@ -45,27 +58,41 @@ class AddContactInteractor @Inject constructor(
         outputDelegate.detach()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun generateQR() {
         val width = 200
         val height = 200
         val imageBitmap = createBitmap(width, height)
 
-        try {
-            val hintMap: MutableMap<EncodeHintType, Any> = EnumMap(EncodeHintType::class.java)
-            hintMap[EncodeHintType.MARGIN] = 0
+        println("GENERATING QR")
+        launch {
+            withContext(Dispatchers.IO) {
 
-            val bitmapMatrix = qrCodeWriter.encode(didInfo.toString(), barcodeFormatQRCode, width, height, hintMap)
+                if (wallet == null) {
+                    openWallet()
+                }
 
-            for (i in 0 until width) {
-                for (j in 0 until height) {
-                    imageBitmap.setPixel(i, j, if (bitmapMatrix.get(i, j)) Color.BLACK else Color.WHITE)
+                try {
+                    val hintMap: MutableMap<EncodeHintType, Any> = EnumMap(EncodeHintType::class.java)
+                    hintMap[EncodeHintType.MARGIN] = 0
+
+                    val invite = generateInvitation(wallet!!, didInfo, context, "test-label")
+
+                    val inviteUrl = generateInvitationUrl(invite)
+
+                    val bitmapMatrix = qrCodeWriter.encode(inviteUrl, barcodeFormatQRCode, width, height, hintMap)
+
+                    for (i in 0 until width) {
+                        for (j in 0 until height) {
+                            imageBitmap.setPixel(i, j, if (bitmapMatrix.get(i, j)) Color.BLACK else Color.WHITE)
+                        }
+                    }
+                } catch (error: Exception) {
+                    println("EXCEPTION IN QR GENERATION: $error")
                 }
             }
-        } catch (error: Throwable) {
-
+            output.generatedQR(imageBitmap)
         }
-
-        output.generatedQR(imageBitmap)
     }
 
     override fun processQrScan(text: String?) {
@@ -78,6 +105,11 @@ class AddContactInteractor @Inject constructor(
 
     override fun savePendingState(outState: Bundle) {
         // TODO save interactor state to bundle and output success if required
+    }
+
+    private fun openWallet() {
+        wallet = Wallet.openWallet(walletInfo.config, walletInfo.credentials).get()
+        println("OPENED WALLET")
     }
 
     // endregion
