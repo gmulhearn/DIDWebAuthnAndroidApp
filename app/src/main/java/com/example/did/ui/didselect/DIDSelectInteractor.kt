@@ -6,19 +6,17 @@ import android.os.Bundle
 import androidx.annotation.RequiresApi
 import com.example.did.common.MSCoroutineScope
 import com.example.did.common.ObjectDelegate
-import com.example.did.common.di.ViewContext
 import com.example.did.common.di.qualifier.WalletInformation
 import com.example.did.data.DidInfo
 import com.example.did.data.WalletInfo
-import com.example.did.util.generateMnemonic
-import com.example.did.util.generateSeed
+import com.example.did.protocols.BIP0039.generateMnemonic
+import com.example.did.protocols.BIP0039.generateSeed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
-import org.hyperledger.indy.sdk.wallet.WalletAlreadyOpenedException
 import java.util.*
 import javax.inject.Inject
 
@@ -128,7 +126,11 @@ class DIDSelectInteractor @Inject constructor(
         val newSeedWords = seedText.split(" ")
         try { // TODO fix this to actually catch
             seedWords = newSeedWords
-            seedHex = Base64.getEncoder().encodeToString(generateSeed(seedWords)).substring(0, 32)
+            seedHex = Base64.getEncoder().encodeToString(
+                generateSeed(
+                    seedWords
+                )
+            ).substring(0, 32)
         } catch (e: java.lang.Exception) {
 
         }
@@ -156,7 +158,11 @@ class DIDSelectInteractor @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     private fun generateSeedWords() {
         seedWords = generateMnemonic(128, context)
-        seedHex = Base64.getEncoder().encodeToString(generateSeed(seedWords)).substring(0, 32)
+        seedHex = Base64.getEncoder().encodeToString(
+            generateSeed(
+                seedWords
+            )
+        ).substring(0, 32)
         output.seedWordsSet(seedWords.joinToString(" "))
     }
 

@@ -1,5 +1,6 @@
 package com.example.did
 
+import com.example.did.protocols.BIP0039.generateSeed
 import org.hyperledger.indy.sdk.LibIndy
 import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did
@@ -13,9 +14,7 @@ import java.io.File
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.*
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.PBEKeySpec
-import com.example.did.util.generateSeed
+import com.example.did.protocols.BIP0039.generateMnemonic
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -53,7 +52,6 @@ class IndyTests {
         val credentials = "{\"key\":\"$key\"}"
         println(credentials)
         val wallet = Wallet.createWallet(config, credentials)
-
         println(wallet)
     }
 
@@ -201,9 +199,14 @@ class IndyTests {
         println(seedBytes.toUByteArray().toList())
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun `test wallet did seed diffs`() {
-        val seed = Base64.getEncoder().encode(generateSeed(generateMnemonic(128))).toString(Charsets.UTF_8)
+        val seed = Base64.getEncoder().encode(
+            generateSeed(
+                generateMnemonic(128)
+            )
+        ).toString(Charsets.UTF_8)
         println(seed)
 
         val didJsonMap = mutableMapOf<String, Any?>(

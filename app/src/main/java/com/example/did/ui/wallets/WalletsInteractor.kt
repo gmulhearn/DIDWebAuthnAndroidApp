@@ -6,16 +6,20 @@ import com.example.did.common.MSCoroutineScope
 import com.example.did.common.ObjectDelegate
 import android.os.Bundle
 import android.os.Parcelable
+import android.provider.Settings
 import android.system.Os
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.NavType
 import com.example.did.data.DidInfo
 import com.example.did.data.WalletInfo
+import com.example.did.transport.FirebaseRelay
 import kotlinx.coroutines.*
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
 import javax.inject.Inject
 import com.example.did.ui.wallets.WalletsModels.*
+import com.google.firebase.FirebaseApp
 import kotlinx.android.parcel.Parcelize
 import org.json.JSONObject
 import java.security.SecureRandom
@@ -57,6 +61,18 @@ class WalletsInteractor @Inject constructor(
         (savedState?.getParcelable<ParcelableWalletInfoList>(WALLETS_OUTSTATE))?.wallets?.let {
             wallets = it
         }
+
+        val firebaseRelay = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
+
+        println("FIREBASE!")
+        val androidId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        val endpoint = firebaseRelay.getServiceEndpoint(androidId)
+
+        launch {
+            println(firebaseRelay.transmitData("secret! woohoo", endpoint))
+            firebaseRelay.readAllMessages(androidId)
+        }
+
     }
 
     override fun savePendingState(outState: Bundle) {
