@@ -11,6 +11,7 @@ import com.example.did.data.WalletInfo
 import com.example.did.transport.FirebaseRelay
 import com.google.firebase.FirebaseApp
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
 import org.json.JSONObject
@@ -54,16 +55,6 @@ object DIDExchange {
     }
 }
 
-private fun Invitation.toJsonString(): String {
-    val inviteJson = mutableMapOf<String, Any>()
-
-    // TODO: FIX - THIS DOESNT WRAP JSON WITH STRING QUOTES " "
-    inviteJson["routingKeys"] = routingKeys
-    inviteJson["serviceEndpoint"] = serviceEndpoint
-    inviteJson["@type"] = type
-    inviteJson["recipientKeys"] = recipientKeys
-    inviteJson["label"] = label
-    inviteJson["@id"] = id
-
-    return inviteJson.toString()
+fun Invitation.toJsonString(): String {
+    return Gson().toJson(this)
 }
