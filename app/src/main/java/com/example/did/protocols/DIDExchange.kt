@@ -5,13 +5,12 @@ import android.content.Context
 import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
-import com.example.did.data.DidInfo
-import com.example.did.data.Invitation
-import com.example.did.data.WalletInfo
+import com.example.did.data.*
 import com.example.did.transport.FirebaseRelay
 import com.google.firebase.FirebaseApp
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
+import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
 import org.json.JSONObject
@@ -43,13 +42,85 @@ object DIDExchange {
         )
     }
 
+    fun generateDIDDoc(did: DidInfo, context: Context): DIDDoc {
+
+        val firebaseRelay = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
+
+        val androidId =
+            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        val endpoint = firebaseRelay.getServiceEndpoint(androidId)
+
+        val publicKey = DIDDocPublicKey(
+            id = did.did + "#keys-1",
+            publicKeyBase58 = did.verkey,
+            controller = did.did
+        )
+
+        val service = DIDDocService(
+            id = did.did + ";indy",
+            routingKeys = listOf(),
+            serviceEndpoint = endpoint,
+            recipientKeys = listOf(did.verkey)
+        )
+
+        return DIDDoc(
+            id = did.did,
+            publicKey = listOf(publicKey),
+            service = listOf(service)
+        )
+    }
+
+    fun generateRequest(label: String, did: DidInfo, context: Context): DIDCommMessage {
+        val androidId =
+            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+
+        val didDoc = generateDIDDoc(did, context)
+
+        val didRequest = DIDRequest(
+            did = did.did,
+            didDoc = didDoc
+        )
+
+        return DIDCommMessage(
+            label = label,
+            connection = didRequest,
+            type = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
+            id = androidId
+        )
+    }
+
+    fun generateEncryptedRequestMessage(
+        label: String,
+        myWallet: Wallet,
+        myDid: DidInfo,
+        theirDid: DidInfo,
+        context: Context
+    ): ByteArray {
+        val didCommMessage = generateRequest(label, myDid, context)
+
+        // val message = Message(didCommMessage, theirDid.verkey, myDid.verkey)
+
+        val jsonMessage = Gson().toJson(didCommMessage).replace("""\u003d""", "=")
+
+        println(didCommMessage)
+        println(jsonMessage)
+
+        return Crypto.packMessage(
+            myWallet,
+            "[\"${theirDid.verkey}\"]",
+            myDid.verkey,
+            jsonMessage.toByteArray(Charsets.UTF_8)
+        ).get()
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun generateInvitationUrl(invitation: Invitation): String {
         val baseUrl = "https://ssisample.sudoplatform.com/?c_i="
         val inviteJsonString = invitation.toJsonString()
         println(inviteJsonString)
         val encodedInvite =
-            Base64.getEncoder().encode(inviteJsonString.toByteArray(Charsets.UTF_8)).toString(Charsets.UTF_8)
+            Base64.getEncoder().encode(inviteJsonString.toByteArray(Charsets.UTF_8))
+                .toString(Charsets.UTF_8)
 
         return baseUrl + encodedInvite
     }

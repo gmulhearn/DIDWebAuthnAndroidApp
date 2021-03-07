@@ -12,11 +12,14 @@ import com.example.did.common.ObjectDelegate
 import com.example.did.common.di.qualifier.DidInformation
 import com.example.did.common.di.qualifier.WalletInformation
 import com.example.did.data.DidInfo
+import com.example.did.data.Invitation
 import com.example.did.data.WalletInfo
+import com.example.did.protocols.DIDExchange.generateEncryptedRequestMessage
 import com.example.did.protocols.DIDExchange.generateInvitation
 import com.example.did.protocols.DIDExchange.generateInvitationUrl
 import com.example.did.transport.FirebaseRelay
 import com.google.firebase.FirebaseApp
+import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
@@ -26,6 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.wallet.Wallet
+import org.json.JSONObject
 import java.sql.Blob
 import java.util.*
 import javax.inject.Inject
@@ -39,7 +43,7 @@ class AddContactInteractor @Inject constructor(
     @DidInformation internal val didInfo: DidInfo,
     private val context: Context
 ) : AddContactContract.InteractorInput, CoroutineScope by coroutineScope {
-    
+
     internal val outputDelegate = ObjectDelegate<AddContactContract.InteractorOutput>()
     internal val output by outputDelegate
 
@@ -54,7 +58,7 @@ class AddContactInteractor @Inject constructor(
     override fun attachOutput(output: AddContactContract.InteractorOutput) {
         outputDelegate.attach(output)
     }
-    
+
     override fun detachOutput() {
         coroutineScope.cancelJobs()
         outputDelegate.detach()
@@ -75,18 +79,24 @@ class AddContactInteractor @Inject constructor(
                 }
 
                 try {
-                    val hintMap: MutableMap<EncodeHintType, Any> = EnumMap(EncodeHintType::class.java)
+                    val hintMap: MutableMap<EncodeHintType, Any> =
+                        EnumMap(EncodeHintType::class.java)
                     hintMap[EncodeHintType.MARGIN] = 0
 
                     val invite = generateInvitation(wallet!!, didInfo, context, "test-label")
 
                     val inviteUrl = generateInvitationUrl(invite)
 
-                    val bitmapMatrix = qrCodeWriter.encode(inviteUrl, barcodeFormatQRCode, width, height, hintMap)
+                    val bitmapMatrix =
+                        qrCodeWriter.encode(inviteUrl, barcodeFormatQRCode, width, height, hintMap)
 
                     for (i in 0 until width) {
                         for (j in 0 until height) {
-                            imageBitmap.setPixel(i, j, if (bitmapMatrix.get(i, j)) Color.BLACK else Color.WHITE)
+                            imageBitmap.setPixel(
+                                i,
+                                j,
+                                if (bitmapMatrix.get(i, j)) Color.BLACK else Color.WHITE
+                            )
                         }
                     }
                 } catch (error: Exception) {
@@ -97,8 +107,32 @@ class AddContactInteractor @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun processQrScan(text: String?) {
-        println(text)
+
+        val inviteEncoded = text?.split("?c_i=")?.last()?.removeSuffix("%3D")
+        println(inviteEncoded)
+        var invite = ""
+        try {
+            invite = Base64.getDecoder().decode(inviteEncoded).toString(Charsets.UTF_8)
+            println(invite)
+
+            val invitationObj = Gson().fromJson(invite, Invitation::class.java)
+            launch {
+                replyToInvitation(invitationObj)
+            }
+        } catch (e: java.lang.Exception) {
+            println(e)
+            return
+        }
+    }
+
+    private suspend fun replyToInvitation(invitation: Invitation) {
+        val theirDid = DidInfo("unnecessary", invitation.recipientKeys.first())
+        val replyEncrypted =
+            generateEncryptedRequestMessage("todo", wallet!!, didInfo, theirDid, context)
+        val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
+        firebase.transmitData(replyEncrypted, invitation.serviceEndpoint)
     }
 
     override fun loadData(savedState: Bundle?) {
@@ -136,7 +170,7 @@ class AddContactInteractor @Inject constructor(
     }
 
     // endregion
-    
+
     // region interactor inputs
 
 

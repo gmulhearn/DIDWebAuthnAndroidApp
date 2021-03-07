@@ -1,0 +1,10 @@
+{
+  "message": {
+    "sent_time": "2021-03-07T11:21:29Z",
+    "content": "Hi",
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/basicmessage/1.0/message",
+    "@id": "31385A45-BB9A-4124-AA45-B70808978784"
+  },
+  "recipient_verkey": "4mFcGKKDUEzCrVN7Hx5PaeRdQDvhzj8wYUDvruJwHYTG",
+  "sender_verkey": "Ca48o7VdbTjXvmEMEVMe3DucFnXN5nksWc6NfYyi2RGb"
+}

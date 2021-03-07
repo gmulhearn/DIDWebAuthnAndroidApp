@@ -67,7 +67,7 @@ class FirebaseRelay(app: FirebaseApp) {
         }
     }
 
-    suspend fun transmitData(data: String, endpoint: String): Boolean {
+    suspend fun transmitData(data: ByteArray, endpoint: String): Boolean {
         val endpointURL = URL(endpoint)
 
         val urlConnection = endpointURL.openConnection() as HttpURLConnection
@@ -75,16 +75,14 @@ class FirebaseRelay(app: FirebaseApp) {
         urlConnection.connectTimeout = 300000
         urlConnection.doOutput = true
 
-        val requestData = data.toByteArray()
-
         urlConnection.setRequestProperty("charset", "utf-8")
-        urlConnection.setRequestProperty("Content-length", requestData.size.toString())
+        urlConnection.setRequestProperty("Content-length", data.size.toString())
         urlConnection.setRequestProperty("Content-Type", "application/ssi-agent-wire")
 
         val result: Boolean = withContext(Dispatchers.IO) {
             try {
                 val outputStream = DataOutputStream(urlConnection.outputStream)
-                outputStream.write(requestData)
+                outputStream.write(data)
                 outputStream.flush()
             } catch (exception: Exception) {
                 println("failed to write outstream $exception")

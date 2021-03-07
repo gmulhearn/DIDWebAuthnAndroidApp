@@ -33,7 +33,7 @@ data class DIDDoc(
     val id: String,
     val publicKey: List<DIDDocPublicKey>,
     @SerializedName("@context") val context: String = "https://www.w3.org/ns/did/v1",
-    val service: DIDDocService
+    val service: List<DIDDocService>
 
 )
 

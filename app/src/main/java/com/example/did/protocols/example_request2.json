@@ -1,0 +1,45 @@
+[{
+  "message": {
+    "connection": {
+      "DID": "KkuBtXCiWjyxsPZ55KQpMy",
+      "DIDDoc": {
+        "@context": "https://www.w3.org/ns/did/v1",
+        "id": "KkuBtXCiWjyxsPZ55KQpMy",
+        "publicKey": [
+          {
+            "controller": "KkuBtXCiWjyxsPZ55KQpMy",
+            "id": "KkuBtXCiWjyxsPZ55KQpMy#keys-1",
+            "publicKeyBase58": "BDwf76MA3TohomeqyffkQNwqAueLrkwjfziT6M3B2Muw",
+            "type": "Ed25519VerificationKey2018"
+          }
+        ],
+        "service": {
+          "id": "KkuBtXCiWjyxsPZ55KQpMy;indy",
+          "recipientKeys": [
+            "BDwf76MA3TohomeqyffkQNwqAueLrkwjfziT6M3B2Muw"
+          ],
+          "routingKeys": [],
+          "serviceEndpoint": "https://us-central1-didsample-62976.cloudfunctions.net/endpoint?p\u003dc2b35c59f64ffff0",
+          "type": "IndyAgent"
+        }
+      }
+    },
+    "@id": "c2b35c59f64ffff0",
+    "label": "todo",
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request"
+  },
+  "recipient_verkey": "5Egkni9ek7MjmPJ82zKWgBZocLVdnDpRRnGrZVBysD9G",
+  "sender_verkey": "BDwf76MA3TohomeqyffkQNwqAueLrkwjfziT6M3B2Muw"
+},
+
+
+
+{”message”:{”connection”:{”DID”:”8ftzJ9wZcGPPoY7WUWN2jP”,”DIDDoc”:{”@context”:”https://www.w3.org/ns/did/v1”,”id”:”8ftzJ9wZcGPPoY7WUWN2jP”,”publicKey”:[{”controller”:”8ftzJ9wZcGPPoY7WUWN2jP”,”id”:”8ftzJ9wZcGPPoY7WUWN2jP#keys-1”,”publicKeyBase58”:”5BV3vhUdib3b8UXcurz9HEgSXPFAtHnzzHMo1iU8JEkH”,”type”:”Ed25519VerificationKey2018”}],”service”:{”id”:”8ftzJ9wZcGPPoY7WUWN2jP;indy”,”recipientKeys”:[”5BV3vhUdib3b8UXcurz9HEgSXPFAtHnzzHMo1iU8JEkH”],”routingKeys”:[],”serviceEndpoint”:”https://us-central1-didsample-62976.cloudfunctions.net/endpoint?p=c2b35c59f64ffff0”,”type”:”IndyAgent”}}},”@id”:”c2b35c59f64ffff0”,”label”:”todo”,”@type”:”did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request”},”recipient_verkey”:”H5vHsw2ZrpfsQj7TYkyC62XmPUewcc5qzm1NE3koM2Jv”,”sender_verkey”:”5BV3vhUdib3b8UXcurz9HEgSXPFAtHnzzHMo1iU8JEkH”},
+
+{”label”:”George’s iPhone”,”connection”:{”DID”:”YYjqyhSMj5QuM2ReXSzASW”,”DIDDoc”:{”id”:”YYjqyhSMj5QuM2ReXSzASW”,”publicKey”:[{”id”:”YYjqyhSMj5QuM2ReXSzASW#keys-1”,”publicKeyBase58”:”JCGeYfFQPHW9CRQyBu2ijzktzinuzu5rDkqV5oPdDLyC”,”type”:”Ed25519VerificationKey2018”,”controller”:”YYjqyhSMj5QuM2ReXSzASW”}],”@context”:”https://www.w3.org/ns/did/v1”,”service”:[{”id”:”YYjqyhSMj5QuM2ReXSzASW;indy”,”routingKeys”:[],”type”:”IndyAgent”,”serviceEndpoint”:”https://us-central1-didsample-62976.cloudfunctions.net/endpoint?p=8588F336-2660-40F5-A6B7-337ED32C6C83”,”recipientKeys”:[”JCGeYfFQPHW9CRQyBu2ijzktzinuzu5rDkqV5oPdDLyC”]}]}},”@type”:”did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request”,”@id”:”09282CF7-8BE3-4325-8833-A4F2031FB20C”}
+]
+
+
+
+
+

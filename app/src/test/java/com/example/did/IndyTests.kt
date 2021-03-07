@@ -129,12 +129,16 @@ class IndyTests {
         val theirDids = Did.getListMyDidsWithMeta(openWallet2).get()
         val theirDid = JSONObject("{ \"dids\": $theirDids}").getJSONArray("dids").getJSONObject(0)
 
+        val message = """
+            {"message":{"connection":{"DID":"KkuBtXCiWjyxsPZ55KQpMy","DIDDoc":{"@context":"https://www.w3.org/ns/did/v1","id":"KkuBtXCiWjyxsPZ55KQpMy","publicKey":[{"controller":"KkuBtXCiWjyxsPZ55KQpMy","id":"KkuBtXCiWjyxsPZ55KQpMy#keys-1","publicKeyBase58":"BDwf76MA3TohomeqyffkQNwqAueLrkwjfziT6M3B2Muw","type":"Ed25519VerificationKey2018"}],"service":{"id":"KkuBtXCiWjyxsPZ55KQpMy;indy","recipientKeys":["BDwf76MA3TohomeqyffkQNwqAueLrkwjfziT6M3B2Muw"],"routingKeys":[],"serviceEndpoint":"https://us-central1-didsample-62976.cloudfunctions.net/endpoint?p=c2b35c59f64ffff0","type":"IndyAgent"}}},"@id":"c2b35c59f64ffff0","label":"todo","@type":"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request"},"recipient_verkey":"5Egkni9ek7MjmPJ82zKWgBZocLVdnDpRRnGrZVBysD9G","sender_verkey":"BDwf76MA3TohomeqyffkQNwqAueLrkwjfziT6M3B2Muw"}
+        """.trimIndent()
+
         val recipVKs = "[\"${theirDid.getString("verkey")}\"]"
         val encryptedMsg = Crypto.packMessage(
             openWallet,
             recipVKs,
             myDid.getString("verkey"),
-            "hello world".toByteArray(Charsets.UTF_8)
+            message.toByteArray(Charsets.UTF_8)
         ).get()
 
         println(encryptedMsg.toString(Charsets.UTF_8))
