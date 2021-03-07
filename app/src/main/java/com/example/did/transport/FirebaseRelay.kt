@@ -4,7 +4,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.Blob
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.auth.FirebaseAuthCredentialsProvider
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,6 +14,7 @@ import java.io.InputStreamReader
 import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.reflect.KFunction1
 
 class FirebaseRelay(app: FirebaseApp) {
     private val app = app
@@ -42,6 +42,27 @@ class FirebaseRelay(app: FirebaseApp) {
                         val blob = it.data?.get("message") as Blob
                         println(blob.toBytes().toString(Charsets.UTF_8))
                     }
+                }
+        }
+    }
+
+    suspend fun waitForMessage(
+        postboxID: String, onComplete: KFunction1<@ParameterName(
+            name = "data"
+        ) Map<String, Any?>, Unit>
+    ) {
+        val firestore = FirebaseFirestore.getInstance(app)
+
+        Firebase.auth.signInAnonymously().addOnCompleteListener {
+            firestore
+                .collection("postboxes")
+                .document(postboxID)
+                .collection("messages")
+                .addSnapshotListener { value, error ->
+                    if (error != null) {
+                        return@addSnapshotListener
+                    }
+                    value?.documentChanges?.first()?.document?.data?.let { it1 -> onComplete(it1) }
                 }
         }
     }

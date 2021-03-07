@@ -1,11 +1,10 @@
 package com.example.did.ui.didcomm.AddContact
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Bitmap.createBitmap
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.createBitmap
 import com.example.did.common.MSCoroutineScope
@@ -14,9 +13,10 @@ import com.example.did.common.di.qualifier.DidInformation
 import com.example.did.common.di.qualifier.WalletInformation
 import com.example.did.data.DidInfo
 import com.example.did.data.WalletInfo
-import com.example.did.protocols.DIDExchange
 import com.example.did.protocols.DIDExchange.generateInvitation
 import com.example.did.protocols.DIDExchange.generateInvitationUrl
+import com.example.did.transport.FirebaseRelay
+import com.google.firebase.FirebaseApp
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
@@ -24,7 +24,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.wallet.Wallet
+import java.sql.Blob
 import java.util.*
 import javax.inject.Inject
 
@@ -100,7 +102,28 @@ class AddContactInteractor @Inject constructor(
     }
 
     override fun loadData(savedState: Bundle?) {
-        // TODO implement this. Call output with results of a data load or load existing state
+        val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
+        val androidId =
+            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        launch {
+            firebase.waitForMessage(androidId, ::onMessage)
+        }
+
+    }
+
+    private fun onMessage(data: Map<String, Any?>) {
+        if (wallet == null) {
+            openWallet()
+        }
+        println(data)
+        val message = data["message"] as com.google.firebase.firestore.Blob
+        try {
+            val unencryptedMsg =
+                Crypto.unpackMessage(wallet!!, message.toBytes()).get().toString(Charsets.UTF_8)
+            println(unencryptedMsg)
+        } catch (e: java.lang.Exception) {
+            println("failed to decrypt: $e")
+        }
     }
 
     override fun savePendingState(outState: Bundle) {

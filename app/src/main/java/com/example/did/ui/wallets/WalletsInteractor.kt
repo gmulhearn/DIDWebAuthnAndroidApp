@@ -61,18 +61,6 @@ class WalletsInteractor @Inject constructor(
         (savedState?.getParcelable<ParcelableWalletInfoList>(WALLETS_OUTSTATE))?.wallets?.let {
             wallets = it
         }
-
-        val firebaseRelay = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
-
-        println("FIREBASE!")
-        val androidId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        val endpoint = firebaseRelay.getServiceEndpoint(androidId)
-
-        launch {
-            println(firebaseRelay.transmitData("secret! woohoo", endpoint))
-            firebaseRelay.readAllMessages(androidId)
-        }
-
     }
 
     override fun savePendingState(outState: Bundle) {
