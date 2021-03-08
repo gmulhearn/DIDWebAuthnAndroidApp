@@ -1,35 +1,31 @@
 {
-  "message": {
-    "label": "George’s iPhone",
-    "connection": {
-      "DID": "Wu8hqjAnKGr2mfnK9BYviY",
-      "DIDDoc": {
-        "id": "Wu8hqjAnKGr2mfnK9BYviY",
-        "publicKey": [
-          {
-            "id": "Wu8hqjAnKGr2mfnK9BYviY#keys-1",
-            "publicKeyBase58": "HJAMjJX56J5uqEgNZNYwT8TLDYpcFRwgHVgzVd7ktiiH",
-            "type": "Ed25519VerificationKey2018",
-            "controller": "Wu8hqjAnKGr2mfnK9BYviY"
-          }
-        ],
-        "@context": "https://www.w3.org/ns/did/v1",
-        "service": [
-          {
-            "id": "Wu8hqjAnKGr2mfnK9BYviY;indy",
-            "routingKeys": [],
-            "type": "IndyAgent",
-            "serviceEndpoint": "https://us-central1-didsample-62976.cloudfunctions.net/endpoint?p=43F1C208-E0D3-4571-A7FE-30F798DF78B1",
-            "recipientKeys": [
-              "HJAMjJX56J5uqEgNZNYwT8TLDYpcFRwgHVgzVd7ktiiH"
-            ]
-          }
-        ]
-      }
-    },
-    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
-    "@id": "0F86A9FB-8EB3-40B9-9046-F94C6F9C7172"
+  "label": "George’s iPhone",
+  "connection": {
+    "DID": "Wu8hqjAnKGr2mfnK9BYviY",
+    "DIDDoc": {
+      "id": "Wu8hqjAnKGr2mfnK9BYviY",
+      "publicKey": [
+        {
+          "id": "Wu8hqjAnKGr2mfnK9BYviY#keys-1",
+          "publicKeyBase58": "HJAMjJX56J5uqEgNZNYwT8TLDYpcFRwgHVgzVd7ktiiH",
+          "type": "Ed25519VerificationKey2018",
+          "controller": "Wu8hqjAnKGr2mfnK9BYviY"
+        }
+      ],
+      "@context": "https://www.w3.org/ns/did/v1",
+      "service": [
+        {
+          "id": "Wu8hqjAnKGr2mfnK9BYviY;indy",
+          "routingKeys": [],
+          "type": "IndyAgent",
+          "serviceEndpoint": "https://us-central1-didsample-62976.cloudfunctions.net/endpoint?p=43F1C208-E0D3-4571-A7FE-30F798DF78B1",
+          "recipientKeys": [
+            "HJAMjJX56J5uqEgNZNYwT8TLDYpcFRwgHVgzVd7ktiiH"
+          ]
+        }
+      ]
+    }
   },
-  "recipient_verkey": "G59jUzC5AWg8LnQdZAb1NAiLrsvpz55HMj88hDDHNT6g",
-  "sender_verkey": "HJAMjJX56J5uqEgNZNYwT8TLDYpcFRwgHVgzVd7ktiiH"
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
+  "@id": "0F86A9FB-8EB3-40B9-9046-F94C6F9C7172"
 }

@@ -11,9 +11,7 @@ import com.example.did.common.MSCoroutineScope
 import com.example.did.common.ObjectDelegate
 import com.example.did.common.di.qualifier.DidInformation
 import com.example.did.common.di.qualifier.WalletInformation
-import com.example.did.data.DidInfo
-import com.example.did.data.Invitation
-import com.example.did.data.WalletInfo
+import com.example.did.data.*
 import com.example.did.protocols.DIDExchange.generateEncryptedRequestMessage
 import com.example.did.protocols.DIDExchange.generateInvitation
 import com.example.did.protocols.DIDExchange.generateInvitationUrl
@@ -130,7 +128,7 @@ class AddContactInteractor @Inject constructor(
     private suspend fun replyToInvitation(invitation: Invitation) {
         val theirDid = DidInfo("unnecessary", invitation.recipientKeys.first())
         val replyEncrypted =
-            generateEncryptedRequestMessage("todo", wallet!!, didInfo, theirDid, context)
+            generateEncryptedRequestMessage("android-device-todo", wallet!!, didInfo, theirDid, context)
         val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
         firebase.transmitData(replyEncrypted, invitation.serviceEndpoint)
     }
@@ -149,15 +147,48 @@ class AddContactInteractor @Inject constructor(
         if (wallet == null) {
             openWallet()
         }
-        println(data)
+        println("onMessage: $data")
         val message = data["message"] as com.google.firebase.firestore.Blob
+        var didCommMessage: DIDCommMessage
         try {
             val unencryptedMsg =
                 Crypto.unpackMessage(wallet!!, message.toBytes()).get().toString(Charsets.UTF_8)
-            println(unencryptedMsg)
+            println("unencrypted: $unencryptedMsg")
+
+            didCommMessage = Gson().fromJson(unencryptedMsg, DIDCommMessage::class.java)
         } catch (e: java.lang.Exception) {
             println("failed to decrypt: $e")
+            return
         }
+
+        // TODO: this won't work android to android bcus it's not wrapped in a DIDCommMessage
+
+        // Try as request
+        try {
+            val request = Gson().fromJson(didCommMessage.message.toString(), DIDRequestMessage::class.java)
+            checkNotNull(request.connection)
+            handleRequest(request)
+            return
+        } catch (e: java.lang.Exception) {
+            println("faile to decode as request $e")
+        }
+
+        // Try as response
+        try {
+            val response = Gson().fromJson(didCommMessage.message.toString(), DIDResponseMessage::class.java)
+            checkNotNull(response.connectionSig)
+            handleResponse(response)
+        } catch (e: java.lang.Exception) {
+            println("faile to decode as response $e")
+        }
+    }
+
+    private fun handleRequest(didRequest: DIDRequestMessage) {
+        println(didRequest)
+    }
+
+    private fun handleResponse(didResponse: DIDResponseMessage) {
+        println(didResponse)
     }
 
     override fun savePendingState(outState: Bundle) {

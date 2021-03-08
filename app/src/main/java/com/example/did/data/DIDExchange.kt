@@ -11,20 +11,20 @@ data class Invitation(
     val routingKeys: List<String>
 )
 
-data class Message(
+data class DIDCommMessage(
     val message: Any,
     @SerializedName("recipient_verkey") val recipientVerkey: String,
     @SerializedName("sender_verkey") val senderVerkey: String
 )
 
-data class DIDCommMessage(
+data class DIDRequestMessage(
     val label: String,
-    val connection: Any,
+    val connection: DIDRequestConnection,
     @SerializedName("@type") val type: String,
     @SerializedName("@id") val id: String
 )
 
-data class DIDRequest(
+data class DIDRequestConnection(
     @SerializedName("DID") val did: String,
     @SerializedName("DIDDoc") val didDoc: DIDDoc
 )
@@ -50,4 +50,22 @@ data class DIDDocService(
     val type: String = "IndyAgent",
     val serviceEndpoint: String,
     val recipientKeys: List<String>
+)
+
+data class DIDResponseMessage(
+    @SerializedName("connection~sig") val connectionSig: DIDResponseConnectionSig,
+    @SerializedName("~thread") val thread: DIDResponseThread,
+    @SerializedName("@type") val type: String,
+    @SerializedName("@id") val id: String
+)
+
+data class DIDResponseConnectionSig(
+    val signer: String,
+    val signature: String,
+    @SerializedName("sig_data") val sigData: String,
+    @SerializedName("@type") val type: String = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ed25519Sha512_single"
+)
+
+data class DIDResponseThread(
+    val thid: String
 )

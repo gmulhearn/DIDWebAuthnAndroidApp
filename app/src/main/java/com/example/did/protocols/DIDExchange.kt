@@ -8,14 +8,10 @@ import androidx.annotation.RequiresApi
 import com.example.did.data.*
 import com.example.did.transport.FirebaseRelay
 import com.google.firebase.FirebaseApp
-import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
-import org.json.JSONObject
-import java.net.URL
-import java.net.URLEncoder
 import java.util.*
 
 object DIDExchange {
@@ -70,20 +66,20 @@ object DIDExchange {
         )
     }
 
-    fun generateRequest(label: String, did: DidInfo, context: Context): DIDCommMessage {
+    fun generateRequest(label: String, did: DidInfo, context: Context): DIDRequestMessage {
         val androidId =
             Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
 
         val didDoc = generateDIDDoc(did, context)
 
-        val didRequest = DIDRequest(
+        val didRequestConnection = DIDRequestConnection(
             did = did.did,
             didDoc = didDoc
         )
 
-        return DIDCommMessage(
+        return DIDRequestMessage(
             label = label,
-            connection = didRequest,
+            connection = didRequestConnection,
             type = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
             id = androidId
         )
@@ -97,8 +93,6 @@ object DIDExchange {
         context: Context
     ): ByteArray {
         val didCommMessage = generateRequest(label, myDid, context)
-
-        // val message = Message(didCommMessage, theirDid.verkey, myDid.verkey)
 
         val jsonMessage = Gson().toJson(didCommMessage).replace("""\u003d""", "=")
 
