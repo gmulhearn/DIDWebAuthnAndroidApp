@@ -69,3 +69,12 @@ data class DIDResponseConnectionSig(
 data class DIDResponseThread(
     val thid: String
 )
+
+enum class ProtocolStage {
+    SCANNED_QR,
+    REPLYING,
+    RESPONDING,
+    PROCESSING_RESPONSE,
+    SUCCESS,
+    FAILED
+}

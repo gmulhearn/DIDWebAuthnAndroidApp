@@ -111,7 +111,6 @@ class AddContactInteractor @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun processQrScan(text: String?) {
-
         val inviteEncoded = text?.split("?c_i=")?.last()?.removeSuffix("%3D")
         println(inviteEncoded)
         var invite = ""
@@ -121,12 +120,14 @@ class AddContactInteractor @Inject constructor(
 
             val invitationObj = Gson().fromJson(invite, Invitation::class.java)
             launch {
+                output.updateProtocolState(ProtocolStage.REPLYING)
                 replyToInvitation(invitationObj)
                 theirLabel = invitationObj.label
                 theirVerkey = invitationObj.recipientKeys.first()
             }
         } catch (e: java.lang.Exception) {
             println(e)
+            output.updateProtocolState(ProtocolStage.FAILED)
             return
         }
     }
@@ -136,7 +137,7 @@ class AddContactInteractor @Inject constructor(
         val replyEncrypted =
             generateEncryptedRequestMessage(
                 "android-device-todo",
-                wallet!!,
+                wallet,
                 didInfo,
                 theirDid,
                 context
@@ -163,7 +164,7 @@ class AddContactInteractor @Inject constructor(
         var didCommMessage: DIDCommMessage
         try {
             val unencryptedMsg =
-                Crypto.unpackMessage(wallet!!, message.toBytes()).get().toString(Charsets.UTF_8)
+                Crypto.unpackMessage(wallet, message.toBytes()).get().toString(Charsets.UTF_8)
             println("unencrypted: $unencryptedMsg")
 
             didCommMessage = Gson().fromJson(unencryptedMsg, DIDCommMessage::class.java)
@@ -179,6 +180,7 @@ class AddContactInteractor @Inject constructor(
             val request =
                 Gson().fromJson(didCommMessage.message.toString(), DIDRequestMessage::class.java)
             checkNotNull(request.connection)
+            output.updateProtocolState(ProtocolStage.RESPONDING)
             handleRequest(request)
             return
         } catch (e: java.lang.Exception) {
@@ -190,7 +192,9 @@ class AddContactInteractor @Inject constructor(
             val response =
                 Gson().fromJson(didCommMessage.message.toString(), DIDResponseMessage::class.java)
             checkNotNull(response.connectionSig)
+            output.updateProtocolState(ProtocolStage.PROCESSING_RESPONSE)
             handleResponse(response)
+            output.updateProtocolState(ProtocolStage.SUCCESS)
         } catch (e: java.lang.Exception) {
             println("faile to decode as response $e")
         }
@@ -213,7 +217,7 @@ class AddContactInteractor @Inject constructor(
 
 
         Did.storeTheirDid(
-            wallet!!,
+            wallet,
             "{\"did\":\"%s\",\"verkey\":\"%s\"}".format(theirDid, theirVerkey)
         ).get()
 
@@ -226,7 +230,7 @@ class AddContactInteractor @Inject constructor(
 
         println(metadata)
 
-        Pairwise.createPairwise(wallet!!, theirDid, didInfo.did, metadata).get()
+        Pairwise.createPairwise(wallet, theirDid, didInfo.did, metadata).get()
     }
 
     override fun savePendingState(outState: Bundle) {

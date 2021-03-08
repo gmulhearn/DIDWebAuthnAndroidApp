@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.budiyev.android.codescanner.*
 import com.example.did.R
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_add_contact.*
 import javax.inject.Inject
 
@@ -102,6 +103,10 @@ class AddContactFragment : Fragment(), AddContactContract.View {
         codeScanner.errorCallback = ErrorCallback.SUPPRESS
 
         codeScanner.startPreview()
+    }
+
+    override fun showSnackbar(status: String) {
+        Snackbar.make(this.requireView(), status, Snackbar.LENGTH_SHORT).show()
     }
 
     // endregion

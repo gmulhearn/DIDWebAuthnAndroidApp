@@ -3,6 +3,7 @@ package com.example.did.ui.didcomm.AddContact
 import android.graphics.Bitmap
 import android.os.Bundle
 import com.example.did.common.ObjectDelegate
+import com.example.did.data.ProtocolStage
 import javax.inject.Inject
 
 /**
@@ -58,6 +59,10 @@ class AddContactPresenter @Inject constructor(
 
     override fun generatedQR(bitmap: Bitmap) {
         view.showQR(bitmap)
+    }
+
+    override fun updateProtocolState(stage: ProtocolStage) {
+        view.showSnackbar(stage.name)
     }
 
     // TODO Add interactor outputs

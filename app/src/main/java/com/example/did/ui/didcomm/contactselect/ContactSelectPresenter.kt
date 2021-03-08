@@ -40,6 +40,10 @@ class ContactSelectPresenter @Inject constructor(
         interactor.toAddContact()
     }
 
+    override fun contactClicked(pairwiseContact: PairwiseContact) {
+        interactor.toChat(pairwiseContact)
+    }
+
     // endregion
 
     // region view event handlers
@@ -52,6 +56,10 @@ class ContactSelectPresenter @Inject constructor(
 
     override fun loadDataResult() {
         // TODO handle result
+    }
+
+    override fun updateContactList(myContacts: List<PairwiseContact>) {
+        view.updateContactList(myContacts)
     }
 
 

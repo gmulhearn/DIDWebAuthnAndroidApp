@@ -13,6 +13,7 @@ interface ContactSelectContract {
      * Passive view interface. This interface declares behaviors that can modify the View
      */
     interface View {
+        fun updateContactList(contacts: List<PairwiseContact>)
 
     }
 
@@ -52,6 +53,7 @@ interface ContactSelectContract {
          */
         fun saveState(outState: Bundle)
         fun addContactClicked()
+        fun contactClicked(pairwiseContact: PairwiseContact)
     }
 
     /**
@@ -89,6 +91,7 @@ interface ContactSelectContract {
          */
         fun savePendingState(outState: Bundle)
         fun toAddContact()
+        fun toChat(pairwiseContact: PairwiseContact)
     }
 
     /**
@@ -100,6 +103,9 @@ interface ContactSelectContract {
          * Called after [InteractorInput.loadData] completes successfully
          */
         fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
+
+        // TODO
+        fun updateContactList(myContacts: List<PairwiseContact>)
     }
 
     /**

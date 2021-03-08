@@ -10,8 +10,12 @@ import androidx.annotation.VisibleForTesting
 import dagger.android.support.AndroidSupportInjection
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.did.R
+import com.example.did.ui.didselect.DIDAdapter
 import kotlinx.android.synthetic.main.fragment_contact_select.*
+import kotlinx.android.synthetic.main.fragment_d_i_ds.*
 import javax.inject.Inject
 
 /**
@@ -24,6 +28,15 @@ class ContactSelectFragment : Fragment(), ContactSelectContract.View {
 
     @VisibleForTesting
     internal val navigationArgs by navArgs<ContactSelectFragmentArgs>()
+
+    internal var adapter =
+        ContactAdapter { pairwiseContact ->
+            contactClicked(pairwiseContact)
+        }
+
+    private fun contactClicked(pairwiseContact: PairwiseContact) {
+        presenter.contactClicked(pairwiseContact)
+    }
 
     // region viper lifecycle
 
@@ -54,6 +67,9 @@ class ContactSelectFragment : Fragment(), ContactSelectContract.View {
             presenter.addContactClicked()
         }
 
+        ContactSelectList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        ContactSelectList.adapter = adapter
+
         // Notify Presenter that the View is ready
         presenter.viewLoaded(savedInstanceState)
     }
@@ -66,6 +82,10 @@ class ContactSelectFragment : Fragment(), ContactSelectContract.View {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         presenter.saveState(outState)
+    }
+
+    override fun updateContactList(contacts: List<PairwiseContact>) {
+        adapter.submitList(contacts)
     }
 
     // endregion

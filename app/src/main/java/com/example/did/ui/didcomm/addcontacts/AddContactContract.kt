@@ -3,6 +3,7 @@ package com.example.did.ui.didcomm.AddContact
 import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.example.did.data.ProtocolStage
 
 /**
  * AddContactContract VIPER contract
@@ -19,6 +20,7 @@ interface AddContactContract {
         fun showQR(bitmap: Bitmap)
 
         fun setupCamera()
+        fun showSnackbar(status: String)
     }
 
     /**
@@ -117,6 +119,7 @@ interface AddContactContract {
         fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
 
         fun generatedQR(bitmap: Bitmap)
+        fun updateProtocolState(stage: ProtocolStage)
     }
 
     /**
