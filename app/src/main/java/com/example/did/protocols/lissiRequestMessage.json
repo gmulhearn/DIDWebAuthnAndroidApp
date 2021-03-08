@@ -1,0 +1,41 @@
+{
+  "message": {
+    "label": "lissi",
+    "imageUrl": null,
+    "connection": {
+      "DID": "4USaqSZmacnCh8bjPwqknB",
+      "DIDDoc": {
+        "@context": "https://w3id.org/did/v1",
+        "id": "4USaqSZmacnCh8bjPwqknB",
+        "publicKey": [
+          {
+            "id": "4USaqSZmacnCh8bjPwqknB#keys-1",
+            "type": "Ed25519VerificationKey2018",
+            "controller": "4USaqSZmacnCh8bjPwqknB",
+            "publicKeyBase58": "2tnx6ycWf1P1AF7T9zAfoBiUm4BSGed5rvqw6Z33iGDz"
+          }
+        ],
+        "service": [
+          {
+            "id": "4USaqSZmacnCh8bjPwqknB;indy",
+            "type": "IndyAgent",
+            "recipientKeys": [
+              "2tnx6ycWf1P1AF7T9zAfoBiUm4BSGed5rvqw6Z33iGDz"
+            ],
+            "routingKeys": [
+              "2v6Aido9CtKUi92ZqQYjfhw4228YksjuJatGCXGKYeyS"
+            ],
+            "serviceEndpoint": "http://35.246.226.0"
+          }
+        ]
+      }
+    },
+    "@id": "404a69df-d9c3-4fed-8138-1785e2f86b7c",
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
+    "~transport": {
+      "return_route": "all"
+    }
+  },
+  "recipient_verkey": "8XNwAT1ZFkovfpRP4uXaN8Mke1gydv5xG78BTo4GeDM",
+  "sender_verkey": "2tnx6ycWf1P1AF7T9zAfoBiUm4BSGed5rvqw6Z33iGDz"
+}
