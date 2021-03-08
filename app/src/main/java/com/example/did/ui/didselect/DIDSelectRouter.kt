@@ -5,7 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.did.data.DidInfo
 import com.example.did.data.WalletInfo
-import com.example.did.ui.wallets.WalletsFragmentDirections
 import javax.inject.Inject
 
 /**
@@ -14,18 +13,16 @@ import javax.inject.Inject
 class DIDSelectRouter @Inject constructor(
     private val fragment: DIDSelectFragment
 ) : DIDSelectContract.Router {
-    override fun toSigning(didInfo: DidInfo, walletInfo: WalletInfo) {
+    override fun toSigning(didInfo: DidInfo) {
         val directions = DIDSelectFragmentDirections.actionDIDSelectFragmentToSigningFragment(
-            didInfo,
-            walletInfo
+            didInfo
         )
         findNavController().navigate(directions)
     }
 
-    override fun toContacts(didInfo: DidInfo, walletInfo: WalletInfo) {
+    override fun toContacts(didInfo: DidInfo) {
         val directions = DIDSelectFragmentDirections.actionDIDSelectFragmentToContactSelectFragment(
-            didInfo,
-            walletInfo
+            didInfo
         )
         findNavController().navigate(directions)
     }

@@ -1,13 +1,12 @@
-package com.example.did.ui.didcomm.contactselect
+package com.example.did.ui.didcomm.chat
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.example.did.data.DidInfo
 
 /**
- * ContactSelectContract VIPER contract
+ * ChatContract VIPER contract
  */
-interface ContactSelectContract {
+interface ChatContract {
 
     /**
      * Passive view interface. This interface declares behaviors that can modify the View
@@ -51,7 +50,6 @@ interface ContactSelectContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
-        fun addContactClicked()
     }
 
     /**
@@ -88,7 +86,7 @@ interface ContactSelectContract {
          * @param outState Bundle to save Interactor state to
          */
         fun savePendingState(outState: Bundle)
-        fun toAddContact()
+
     }
 
     /**
@@ -100,6 +98,7 @@ interface ContactSelectContract {
          * Called after [InteractorInput.loadData] completes successfully
          */
         fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
+
     }
 
     /**
@@ -107,6 +106,5 @@ interface ContactSelectContract {
      */
     interface Router {
 
-        fun toAddContact(didInfo: DidInfo)
     }
 }

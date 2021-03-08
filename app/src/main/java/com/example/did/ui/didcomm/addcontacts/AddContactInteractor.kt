@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.graphics.createBitmap
 import com.example.did.common.MSCoroutineScope
 import com.example.did.common.ObjectDelegate
+import com.example.did.common.WalletProvider
 import com.example.did.common.di.qualifier.DidInformation
 import com.example.did.common.di.qualifier.WalletInformation
 import com.example.did.data.*
@@ -26,6 +27,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.hyperledger.indy.sdk.crypto.Crypto
+import org.hyperledger.indy.sdk.did.Did
+import org.hyperledger.indy.sdk.pairwise.Pairwise
 import org.hyperledger.indy.sdk.wallet.Wallet
 import org.json.JSONObject
 import java.sql.Blob
@@ -37,9 +40,9 @@ import javax.inject.Inject
  */
 class AddContactInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
-    @WalletInformation internal val walletInfo: WalletInfo,
     @DidInformation internal val didInfo: DidInfo,
-    private val context: Context
+    private val context: Context,
+    private val walletProvider: WalletProvider
 ) : AddContactContract.InteractorInput, CoroutineScope by coroutineScope {
 
     internal val outputDelegate = ObjectDelegate<AddContactContract.InteractorOutput>()
@@ -49,7 +52,12 @@ class AddContactInteractor @Inject constructor(
     private val qrCodeWriter = QRCodeWriter()
     internal val barcodeFormatQRCode = BarcodeFormat.QR_CODE
 
-    internal var wallet: Wallet? = null
+    internal var wallet: Wallet = walletProvider.getWallet()
+
+    // TEMPORARY BELOW!!!
+    internal var theirLabel = "todo-label"
+    internal var theirDid = "todo"
+    internal var theirVerkey = "todo"
 
     // region viper lifecycle
 
@@ -71,10 +79,6 @@ class AddContactInteractor @Inject constructor(
         println("GENERATING QR")
         launch {
             withContext(Dispatchers.IO) {
-
-                if (wallet == null) {
-                    openWallet()
-                }
 
                 try {
                     val hintMap: MutableMap<EncodeHintType, Any> =
@@ -118,6 +122,8 @@ class AddContactInteractor @Inject constructor(
             val invitationObj = Gson().fromJson(invite, Invitation::class.java)
             launch {
                 replyToInvitation(invitationObj)
+                theirLabel = invitationObj.label
+                theirVerkey = invitationObj.recipientKeys.first()
             }
         } catch (e: java.lang.Exception) {
             println(e)
@@ -128,7 +134,13 @@ class AddContactInteractor @Inject constructor(
     private suspend fun replyToInvitation(invitation: Invitation) {
         val theirDid = DidInfo("unnecessary", invitation.recipientKeys.first())
         val replyEncrypted =
-            generateEncryptedRequestMessage("android-device-todo", wallet!!, didInfo, theirDid, context)
+            generateEncryptedRequestMessage(
+                "android-device-todo",
+                wallet!!,
+                didInfo,
+                theirDid,
+                context
+            )
         val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
         firebase.transmitData(replyEncrypted, invitation.serviceEndpoint)
     }
@@ -143,10 +155,9 @@ class AddContactInteractor @Inject constructor(
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun onMessage(data: Map<String, Any?>) {
-        if (wallet == null) {
-            openWallet()
-        }
+
         println("onMessage: $data")
         val message = data["message"] as com.google.firebase.firestore.Blob
         var didCommMessage: DIDCommMessage
@@ -165,7 +176,8 @@ class AddContactInteractor @Inject constructor(
 
         // Try as request
         try {
-            val request = Gson().fromJson(didCommMessage.message.toString(), DIDRequestMessage::class.java)
+            val request =
+                Gson().fromJson(didCommMessage.message.toString(), DIDRequestMessage::class.java)
             checkNotNull(request.connection)
             handleRequest(request)
             return
@@ -175,7 +187,8 @@ class AddContactInteractor @Inject constructor(
 
         // Try as response
         try {
-            val response = Gson().fromJson(didCommMessage.message.toString(), DIDResponseMessage::class.java)
+            val response =
+                Gson().fromJson(didCommMessage.message.toString(), DIDResponseMessage::class.java)
             checkNotNull(response.connectionSig)
             handleResponse(response)
         } catch (e: java.lang.Exception) {
@@ -185,19 +198,39 @@ class AddContactInteractor @Inject constructor(
 
     private fun handleRequest(didRequest: DIDRequestMessage) {
         println(didRequest)
+        // send response
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun handleResponse(didResponse: DIDResponseMessage) {
-        println(didResponse)
+        println("handle response: $didResponse")
+        val connectionJson =
+            Base64.getDecoder().decode(didResponse.connectionSig.sigData).toString(Charsets.UTF_8)
+                .drop(8)
+        val connection = Gson().fromJson(connectionJson, DIDRequestConnection::class.java)
+
+        theirDid = connection.did
+
+
+        Did.storeTheirDid(
+            wallet!!,
+            "{\"did\":\"%s\",\"verkey\":\"%s\"}".format(theirDid, theirVerkey)
+        ).get()
+
+        val metadata = Gson().toJson(
+            PairwiseData(
+                theirLabel,
+                connection.didDoc.service.first().serviceEndpoint
+            )
+        ).replace("""\u003d""", "=")
+
+        println(metadata)
+
+        Pairwise.createPairwise(wallet!!, theirDid, didInfo.did, metadata).get()
     }
 
     override fun savePendingState(outState: Bundle) {
         // TODO save interactor state to bundle and output success if required
-    }
-
-    private fun openWallet() {
-        wallet = Wallet.openWallet(walletInfo.config, walletInfo.credentials).get()
-        println("OPENED WALLET")
     }
 
     // endregion

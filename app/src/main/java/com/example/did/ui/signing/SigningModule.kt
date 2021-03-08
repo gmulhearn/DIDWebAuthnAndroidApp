@@ -24,8 +24,4 @@ class SigningModule: BaseFragmentModule<SigningFragment>() {
     @Provides
     @DidInformation
     fun provideDidInfo(fragment: SigningFragment) = fragment.navigationArgs.didInfo
-
-    @Provides
-    @WalletInformation
-    fun provideWalletInfo(fragment: SigningFragment) = fragment.navigationArgs.walletInfo
 }

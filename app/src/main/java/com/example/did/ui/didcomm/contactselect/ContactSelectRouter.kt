@@ -4,9 +4,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.did.data.DidInfo
-import com.example.did.data.WalletInfo
-import com.example.did.ui.didselect.DIDSelectFragmentDirections
-import org.hyperledger.indy.sdk.did.Did
 import javax.inject.Inject
 
 /**
@@ -15,10 +12,9 @@ import javax.inject.Inject
 class ContactSelectRouter @Inject constructor(
     internal val fragment: ContactSelectFragment
 ) : ContactSelectContract.Router {
-    override fun toAddContact(didInfo: DidInfo, walletInfo: WalletInfo) {
+    override fun toAddContact(didInfo: DidInfo) {
         val directions = ContactSelectFragmentDirections.actionContactSelectFragmentToAddContactFragment(
-            didInfo,
-            walletInfo
+            didInfo
         )
         findNavController().navigate(directions)
     }

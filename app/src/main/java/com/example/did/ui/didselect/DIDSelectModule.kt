@@ -19,8 +19,4 @@ class DIDSelectModule: BaseFragmentModule<DIDSelectFragment>() {
 
     @Provides
     fun provideRouter(impl: DIDSelectRouter): DIDSelectContract.Router = impl
-
-    @Provides
-    @WalletInformation
-    fun provideDidInfo(fragment: DIDSelectFragment) = fragment.navigationArgs.walletInfo
 }

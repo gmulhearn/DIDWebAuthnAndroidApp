@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_WalletsFragment"
             app:destination="@id/WalletsFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_DIDSelectFragment"
+            app:destination="@id/DIDSelectFragment" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -49,18 +52,12 @@
         <argument
             android:name="didInfo"
             app:argType="com.example.did.data.DidInfo" />
-        <argument
-            android:name="walletInfo"
-            app:argType="com.example.did.data.WalletInfo" />
     </fragment>
     <fragment
         android:id="@+id/DIDSelectFragment"
         android:name="com.example.did.ui.didselect.DIDSelectFragment"
         android:label="fragment_d_i_ds"
         tools:layout="@layout/fragment_d_i_ds">
-        <argument
-            android:name="walletInfo"
-            app:argType="com.example.did.data.WalletInfo" />
         <action
             android:id="@+id/action_DIDSelectFragment_to_signingFragment"
             app:destination="@id/signingFragment" />
@@ -76,9 +73,6 @@
         <argument
             android:name="didInfo"
             app:argType="com.example.did.data.DidInfo" />
-        <argument
-            android:name="walletInfo"
-            app:argType="com.example.did.data.WalletInfo" />
         <action
             android:id="@+id/action_contactSelectFragment_to_addContactFragment"
             app:destination="@id/addContactFragment" />
@@ -90,8 +84,5 @@
         <argument
             android:name="didInfo"
             app:argType="com.example.did.data.DidInfo" />
-        <argument
-            android:name="walletInfo"
-            app:argType="com.example.did.data.WalletInfo" />
     </fragment>
 </navigation>

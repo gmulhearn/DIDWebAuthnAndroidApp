@@ -1,5 +1,7 @@
 package com.example.did
 
+import com.example.did.data.DIDRequestConnection
+import com.example.did.data.PairwiseData
 import com.example.did.protocols.BIP0039.generateSeed
 import org.hyperledger.indy.sdk.LibIndy
 import org.hyperledger.indy.sdk.crypto.Crypto
@@ -15,6 +17,8 @@ import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.*
 import com.example.did.protocols.BIP0039.generateMnemonic
+import com.google.gson.Gson
+
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -118,7 +122,11 @@ class IndyTests {
             "{\"did\":\"%s\",\"verkey\":\"%s\"}".format(theirDid.did, theirDid.verkey)
         ).get()
 
-        Pairwise.createPairwise(openWallet, theirDid.did, myDid.did, null).get()
+        println("their key: ${Did.keyForLocalDid(openWallet, theirDid.did).get()}")
+
+        val metadata = Gson().toJson(PairwiseData("johnno", "https://ssi-sample.com/?p=blah")).replace("""\u003d""", "=")
+
+        Pairwise.createPairwise(openWallet, theirDid.did, myDid.did, metadata).get()
         println(Pairwise.listPairwise(openWallet).get())
     }
 
@@ -129,9 +137,7 @@ class IndyTests {
         val theirDids = Did.getListMyDidsWithMeta(openWallet2).get()
         val theirDid = JSONObject("{ \"dids\": $theirDids}").getJSONArray("dids").getJSONObject(0)
 
-        val message = """
-            {"message":{"connection":{"DID":"KkuBtXCiWjyxsPZ55KQpMy","DIDDoc":{"@context":"https://www.w3.org/ns/did/v1","id":"KkuBtXCiWjyxsPZ55KQpMy","publicKey":[{"controller":"KkuBtXCiWjyxsPZ55KQpMy","id":"KkuBtXCiWjyxsPZ55KQpMy#keys-1","publicKeyBase58":"BDwf76MA3TohomeqyffkQNwqAueLrkwjfziT6M3B2Muw","type":"Ed25519VerificationKey2018"}],"service":{"id":"KkuBtXCiWjyxsPZ55KQpMy;indy","recipientKeys":["BDwf76MA3TohomeqyffkQNwqAueLrkwjfziT6M3B2Muw"],"routingKeys":[],"serviceEndpoint":"https://us-central1-didsample-62976.cloudfunctions.net/endpoint?p=c2b35c59f64ffff0","type":"IndyAgent"}}},"@id":"c2b35c59f64ffff0","label":"todo","@type":"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request"},"recipient_verkey":"5Egkni9ek7MjmPJ82zKWgBZocLVdnDpRRnGrZVBysD9G","sender_verkey":"BDwf76MA3TohomeqyffkQNwqAueLrkwjfziT6M3B2Muw"}
-        """.trimIndent()
+        val message = "hello world"
 
         val recipVKs = "[\"${theirDid.getString("verkey")}\"]"
         val encryptedMsg = Crypto.packMessage(
@@ -229,5 +235,15 @@ class IndyTests {
         val did2 = Did.createAndStoreMyDid(openWallet2, didJson.toString()).get()
 
         println("${did1.did} ${did2.did}\n${did1.verkey} ${did2.verkey}")
+    }
+
+    @Test
+    fun base_64_test_random() {
+        val encoded = "AAAAAGBF2w17IkRJRCI6IlI2SnJ4WDduREo1YUhkdUw2ampzODMiLCJESUREb2MiOnsiaWQiOiJSNkpyeFg3bkRKNWFIZHVMNmpqczgzIiwicHVibGljS2V5IjpbeyJpZCI6IlI2SnJ4WDduREo1YUhkdUw2ampzODMja2V5cy0xIiwicHVibGljS2V5QmFzZTU4IjoiRThhZkU1VjEzd1dyMUJSZEcxSllIRFZWMkdoZFhpdURZS3A1a1I1Y0dIVWQiLCJ0eXBlIjoiRWQyNTUxOVZlcmlmaWNhdGlvbktleTIwMTgiLCJjb250cm9sbGVyIjoiUjZKcnhYN25ESjVhSGR1TDZqanM4MyJ9XSwiQGNvbnRleHQiOiJodHRwczpcL1wvd3d3LnczLm9yZ1wvbnNcL2RpZFwvdjEiLCJzZXJ2aWNlIjpbeyJpZCI6IlI2SnJ4WDduREo1YUhkdUw2ampzODM7aW5keSIsInJvdXRpbmdLZXlzIjpbXSwidHlwZSI6IkluZHlBZ2VudCIsInNlcnZpY2VFbmRwb2ludCI6Imh0dHBzOlwvXC91cy1jZW50cmFsMS1kaWRzYW1wbGUtNjI5NzYuY2xvdWRmdW5jdGlvbnMubmV0XC9lbmRwb2ludD9wPTE3RDBDNEUwLTNGNzgtNEQ4QS05NTEzLUQ4MjcyNzc0Rjk0QSIsInJlY2lwaWVudEtleXMiOlsiRThhZkU1VjEzd1dyMUJSZEcxSllIRFZWMkdoZFhpdURZS3A1a1I1Y0dIVWQiXX1dfX0"
+        val result = (Base64.getDecoder().decode(encoded).toString(Charsets.UTF_8)).drop(8)
+        val obj = Gson().fromJson(result, DIDRequestConnection::class.java)
+        println(obj.did)
+        println(obj)
+
     }
 }

@@ -71,7 +71,7 @@ class FirstFragment : Fragment() {
 //            val badVerify = Crypto.cryptoVerify(did.verkey, "fake message".toByteArray(Charsets.UTF_8), signature).get()
 //
 //            println("verify message \"fake message\": $badVerify")
-            findNavController().navigate(R.id.action_FirstFragment_to_WalletsFragment)
+            findNavController().navigate(R.id.action_FirstFragment_to_DIDSelectFragment)
             // findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
     }

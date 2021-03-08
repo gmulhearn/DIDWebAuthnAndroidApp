@@ -4,6 +4,7 @@ package com.example.did.ui.signing
 import android.os.Bundle
 import com.example.did.common.MSCoroutineScope
 import com.example.did.common.ObjectDelegate
+import com.example.did.common.WalletProvider
 import com.example.did.common.di.qualifier.DidInformation
 import com.example.did.common.di.qualifier.WalletInformation
 import com.example.did.data.DidInfo
@@ -22,13 +23,13 @@ import javax.inject.Inject
 class SigningInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
     @DidInformation internal val didInfo: DidInfo,
-    @WalletInformation internal val walletInfo: WalletInfo
+    private val walletProvider: WalletProvider
 ) : SigningContract.InteractorInput, CoroutineScope by coroutineScope {
 
     internal val outputDelegate = ObjectDelegate<SigningContract.InteractorOutput>()
     internal val output by outputDelegate
 
-    internal var wallet: Wallet? = null
+    internal var wallet: Wallet = walletProvider.getWallet()
 
     // region viper lifecycle
 
@@ -37,7 +38,6 @@ class SigningInteractor @Inject constructor(
     }
 
     override fun detachOutput() {
-        wallet?.closeWallet()?.get()
         coroutineScope.cancelJobs()
         outputDelegate.detach()
     }
@@ -53,20 +53,12 @@ class SigningInteractor @Inject constructor(
     override fun signText(text: String) {
         launch {
             val signature = withContext(Dispatchers.IO) {
-                if (wallet == null) {
-                    openWallet()
-                }
-
 
                 Crypto.cryptoSign(wallet, didInfo.verkey, text.toByteArray(Charsets.UTF_8))
                         .get()
             }
             output.signTextResult(signature.toString(Charsets.UTF_8))
         }
-    }
-
-    private fun openWallet() {
-        wallet = Wallet.openWallet(walletInfo.config, walletInfo.credentials).get()
     }
 
     // endregion

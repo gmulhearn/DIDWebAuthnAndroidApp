@@ -28,9 +28,4 @@ class AddContactModule: BaseFragmentModule<AddContactFragment>() {
     @Provides
     @DidInformation
     fun provideDidInfo(fragment: AddContactFragment) = fragment.navigationArgs.didInfo
-
-    @Provides
-    @WalletInformation
-    fun provideWalletInfo(fragment: AddContactFragment) = fragment.navigationArgs.walletInfo
-
 }

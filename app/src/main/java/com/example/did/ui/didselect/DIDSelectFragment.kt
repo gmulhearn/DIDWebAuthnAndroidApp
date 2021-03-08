@@ -30,9 +30,6 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
     @Inject
     internal lateinit var presenter: DIDSelectContract.Presenter
 
-    @VisibleForTesting
-    internal val navigationArgs by navArgs<DIDSelectFragmentArgs>()
-
     internal var adapter =
         DIDAdapter { did, tab  ->
             didTabOnClick(did, tab)
@@ -63,7 +60,7 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
 
         // TODO setup view, event listeners etc.
 
-        walletTitle.text = JSONObject(navigationArgs.walletInfo.config).getString("id")
+        walletTitle.text = "MyWallet"
         genDIDButton.setOnClickListener {
             showSpinner()
             presenter.genDIDClicked()

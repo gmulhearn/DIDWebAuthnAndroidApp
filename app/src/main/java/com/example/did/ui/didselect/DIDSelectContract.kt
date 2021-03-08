@@ -3,7 +3,6 @@ package com.example.did.ui.didselect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.example.did.data.DidInfo
-import com.example.did.data.WalletInfo
 
 /**
  * DIDSelectContract VIPER contract
@@ -168,11 +167,11 @@ interface DIDSelectContract {
         /**
          * TODO
          */
-        fun toSigning(didInfo: DidInfo, walletInfo: WalletInfo)
+        fun toSigning(didInfo: DidInfo)
 
         /**
          * TODO
          */
-        fun toContacts(didInfo: DidInfo, walletInfo: WalletInfo)
+        fun toContacts(didInfo: DidInfo)
     }
 }

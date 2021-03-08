@@ -2,6 +2,8 @@ package com.example.did.common.di
 
 import com.example.did.ui.didcomm.AddContact.AddContactFragment
 import com.example.did.ui.didcomm.AddContact.AddContactModule
+import com.example.did.ui.didcomm.chat.ChatFragment
+import com.example.did.ui.didcomm.chat.ChatModule
 import com.example.did.ui.didcomm.contactselect.ContactSelectFragment
 import com.example.did.ui.didcomm.contactselect.ContactSelectModule
 import com.example.did.ui.didselect.DIDSelectFragment
@@ -34,4 +36,8 @@ abstract class FragmentBindingModule {
     @ActivityScope
     @ContributesAndroidInjector(modules = [AddContactModule::class])
     abstract fun bindAddContactFragment(): AddContactFragment
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [ChatModule::class])
+    abstract fun bindChatFragment(): ChatFragment
 }
