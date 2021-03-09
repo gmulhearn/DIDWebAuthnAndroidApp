@@ -11,7 +11,6 @@ import com.example.did.common.MSCoroutineScope
 import com.example.did.common.ObjectDelegate
 import com.example.did.common.WalletProvider
 import com.example.did.common.di.qualifier.DidInformation
-import com.example.did.common.di.qualifier.WalletInformation
 import com.example.did.data.*
 import com.example.did.protocols.DIDExchange.generateEncryptedRequestMessage
 import com.example.did.protocols.DIDExchange.generateInvitation
@@ -30,8 +29,6 @@ import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.pairwise.Pairwise
 import org.hyperledger.indy.sdk.wallet.Wallet
-import org.json.JSONObject
-import java.sql.Blob
 import java.util.*
 import javax.inject.Inject
 
@@ -85,7 +82,7 @@ class AddContactInteractor @Inject constructor(
                         EnumMap(EncodeHintType::class.java)
                     hintMap[EncodeHintType.MARGIN] = 0
 
-                    val invite = generateInvitation(wallet!!, didInfo, context, "test-label")
+                    val invite = generateInvitation(wallet, didInfo, context, "test-label")
 
                     val inviteUrl = generateInvitationUrl(invite)
 
@@ -136,7 +133,7 @@ class AddContactInteractor @Inject constructor(
         val theirDid = DidInfo("unnecessary", invitation.recipientKeys.first())
         val replyEncrypted =
             generateEncryptedRequestMessage(
-                "android-device-todo",
+                "android-device-prototype",
                 wallet,
                 didInfo,
                 theirDid,
@@ -153,7 +150,6 @@ class AddContactInteractor @Inject constructor(
         launch {
             firebase.waitForMessage(androidId, ::onMessage)
         }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -161,13 +157,13 @@ class AddContactInteractor @Inject constructor(
 
         println("onMessage: $data")
         val message = data["message"] as com.google.firebase.firestore.Blob
-        var didCommMessage: DIDCommMessage
+        var didCommContainer: DIDCommContainer
         try {
             val unencryptedMsg =
                 Crypto.unpackMessage(wallet, message.toBytes()).get().toString(Charsets.UTF_8)
             println("unencrypted: $unencryptedMsg")
 
-            didCommMessage = Gson().fromJson(unencryptedMsg, DIDCommMessage::class.java)
+            didCommContainer = Gson().fromJson(unencryptedMsg, DIDCommContainer::class.java)
         } catch (e: java.lang.Exception) {
             println("failed to decrypt: $e")
             return
@@ -178,7 +174,7 @@ class AddContactInteractor @Inject constructor(
         // Try as request
         try {
             val request =
-                Gson().fromJson(didCommMessage.message.toString(), DIDRequestMessage::class.java)
+                Gson().fromJson(didCommContainer.message.toString(), DIDRequestMessage::class.java)
             checkNotNull(request.connection)
             output.updateProtocolState(ProtocolStage.RESPONDING)
             handleRequest(request)
@@ -190,7 +186,7 @@ class AddContactInteractor @Inject constructor(
         // Try as response
         try {
             val response =
-                Gson().fromJson(didCommMessage.message.toString(), DIDResponseMessage::class.java)
+                Gson().fromJson(didCommContainer.message.toString(), DIDResponseMessage::class.java)
             checkNotNull(response.connectionSig)
             output.updateProtocolState(ProtocolStage.PROCESSING_RESPONSE)
             handleResponse(response)

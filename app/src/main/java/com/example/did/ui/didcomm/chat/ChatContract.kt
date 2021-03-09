@@ -2,6 +2,7 @@ package com.example.did.ui.didcomm.chat
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.example.did.data.DIDCommMessage
 
 /**
  * ChatContract VIPER contract
@@ -12,6 +13,7 @@ interface ChatContract {
      * Passive view interface. This interface declares behaviors that can modify the View
      */
     interface View {
+        fun updateMessagesList(messageList: MutableList<MessageDisplayModel>)
 
     }
 
@@ -50,6 +52,7 @@ interface ChatContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
+        fun sendClicked(textField: String)
     }
 
     /**
@@ -86,6 +89,7 @@ interface ChatContract {
          * @param outState Bundle to save Interactor state to
          */
         fun savePendingState(outState: Bundle)
+        fun sendMessage(message: String)
 
     }
 
@@ -98,6 +102,7 @@ interface ChatContract {
          * Called after [InteractorInput.loadData] completes successfully
          */
         fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
+        fun updateMessages(messageList: MutableList<MessageDisplayModel>)
 
     }
 

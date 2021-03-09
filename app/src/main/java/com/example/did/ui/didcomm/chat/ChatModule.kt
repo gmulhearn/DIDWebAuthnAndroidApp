@@ -19,4 +19,6 @@ class ChatModule: BaseFragmentModule<ChatFragment>() {
     @Provides
     fun provideRouter(impl: ChatRouter): ChatContract.Router = impl
 
+    @Provides
+    fun providePairwiseContact(fragment: ChatFragment) = fragment.navigationArgs.pairwiseContact
 }

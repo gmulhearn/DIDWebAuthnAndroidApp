@@ -11,7 +11,7 @@ data class Invitation(
     val routingKeys: List<String>
 )
 
-data class DIDCommMessage(
+data class DIDCommContainer(
     val message: Any,
     @SerializedName("recipient_verkey") val recipientVerkey: String,
     @SerializedName("sender_verkey") val senderVerkey: String
@@ -68,6 +68,13 @@ data class DIDResponseConnectionSig(
 
 data class DIDResponseThread(
     val thid: String
+)
+
+data class DIDCommMessage(
+    @SerializedName("sent_time") val sentTime: String,
+    val content: String,
+    @SerializedName("@type") val type: String = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/basicmessage/1.0/message",
+    @SerializedName("@id") val id: String
 )
 
 enum class ProtocolStage {

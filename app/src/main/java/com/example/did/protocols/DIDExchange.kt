@@ -107,6 +107,33 @@ object DIDExchange {
         ).get()
     }
 
+    fun generateEncryptedDIDCommMessage(
+        myWallet: Wallet,
+        pairwiseContact: PairwiseContact,
+        time: String,
+        message: String,
+        context: Context
+    ): ByteArray {
+
+
+        val androidId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        val didCommMessage = DIDCommMessage(
+            sentTime = time,
+            content = message,
+            id = androidId
+        )
+
+        val jsonMessage = Gson().toJson(didCommMessage)
+        println("jsonMessage: $jsonMessage")
+
+        return Crypto.packMessage(
+            myWallet,
+            "[\"${pairwiseContact.metadata.theirVerkey}\"]",
+            pairwiseContact.metadata.myVerkey,
+            jsonMessage.toByteArray(Charsets.UTF_8)
+        ).get()
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun generateInvitationUrl(invitation: Invitation): String {
         val baseUrl = "https://ssisample.sudoplatform.com/?c_i="

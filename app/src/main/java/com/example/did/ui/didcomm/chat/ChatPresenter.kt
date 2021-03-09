@@ -2,6 +2,7 @@ package com.example.did.ui.didcomm.chat
 
 import android.os.Bundle
 import com.example.did.common.ObjectDelegate
+import com.example.did.data.DIDCommMessage
 import javax.inject.Inject
 
 /**
@@ -35,6 +36,10 @@ class ChatPresenter @Inject constructor(
         interactor.savePendingState(outState)
     }
 
+    override fun sendClicked(textField: String) {
+        interactor.sendMessage(textField)
+    }
+
     // endregion
 
     // region view event handlers
@@ -47,6 +52,10 @@ class ChatPresenter @Inject constructor(
 
     override fun loadDataResult() {
         // TODO handle result
+    }
+
+    override fun updateMessages(messageList: MutableList<MessageDisplayModel>) {
+        view.updateMessagesList(messageList)
     }
 
     // TODO Add interactor outputs
