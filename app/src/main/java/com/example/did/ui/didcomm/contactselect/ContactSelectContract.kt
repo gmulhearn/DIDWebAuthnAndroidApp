@@ -3,6 +3,7 @@ package com.example.did.ui.didcomm.contactselect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.example.did.data.DidInfo
+import com.example.did.data.PairwiseContact
 
 /**
  * ContactSelectContract VIPER contract
@@ -114,5 +115,6 @@ interface ContactSelectContract {
     interface Router {
 
         fun toAddContact(didInfo: DidInfo)
+        fun toChat(pairwiseContact: PairwiseContact)
     }
 }

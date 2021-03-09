@@ -13,6 +13,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.did.R
+import com.example.did.data.PairwiseContact
 import com.example.did.ui.didselect.DIDAdapter
 import kotlinx.android.synthetic.main.fragment_contact_select.*
 import kotlinx.android.synthetic.main.fragment_d_i_ds.*

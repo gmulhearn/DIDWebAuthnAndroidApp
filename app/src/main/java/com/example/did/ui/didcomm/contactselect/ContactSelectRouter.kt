@@ -4,6 +4,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.did.data.DidInfo
+import com.example.did.data.PairwiseContact
 import javax.inject.Inject
 
 /**
@@ -16,6 +17,14 @@ class ContactSelectRouter @Inject constructor(
         val directions = ContactSelectFragmentDirections.actionContactSelectFragmentToAddContactFragment(
             didInfo
         )
+        findNavController().navigate(directions)
+    }
+
+    override fun toChat(pairwiseContact: PairwiseContact) {
+        val directions = ContactSelectFragmentDirections.actionContactSelectFragmentToChatFragment(
+            pairwiseContact
+        )
+
         findNavController().navigate(directions)
     }
 

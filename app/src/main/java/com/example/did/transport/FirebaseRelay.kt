@@ -62,7 +62,7 @@ class FirebaseRelay(app: FirebaseApp) {
                     if (error != null) {
                         return@addSnapshotListener
                     }
-                    value?.documentChanges?.first()?.document?.data?.let { it1 -> onComplete(it1) }
+                    value?.documentChanges?.firstOrNull()?.document?.data?.let { it1 -> onComplete(it1) }
                 }
         }
     }

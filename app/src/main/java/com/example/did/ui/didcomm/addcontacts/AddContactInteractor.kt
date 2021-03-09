@@ -224,7 +224,9 @@ class AddContactInteractor @Inject constructor(
         val metadata = Gson().toJson(
             PairwiseData(
                 theirLabel,
-                connection.didDoc.service.first().serviceEndpoint
+                connection.didDoc.service.first().serviceEndpoint,
+                theirVerkey,
+                didInfo.verkey
             )
         ).replace("""\u003d""", "=")
 

@@ -3,6 +3,7 @@ package com.example.did.ui.didcomm.contactselect
 import android.graphics.Bitmap
 import android.os.Bundle
 import com.example.did.common.ObjectDelegate
+import com.example.did.data.PairwiseContact
 import javax.inject.Inject
 
 /**

@@ -76,6 +76,9 @@
         <action
             android:id="@+id/action_contactSelectFragment_to_addContactFragment"
             app:destination="@id/addContactFragment" />
+        <action
+            android:id="@+id/action_contactSelectFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
     </fragment>
     <fragment
         android:id="@+id/addContactFragment"
@@ -84,5 +87,14 @@
         <argument
             android:name="didInfo"
             app:argType="com.example.did.data.DidInfo" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.did.ui.didcomm.chat.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat">
+        <argument
+            android:name="pairwiseContact"
+            app:argType="com.example.did.data.PairwiseContact" />
     </fragment>
 </navigation>

@@ -6,6 +6,7 @@ import com.example.did.common.ObjectDelegate
 import com.example.did.common.WalletProvider
 import com.example.did.common.di.qualifier.DidInformation
 import com.example.did.data.DidInfo
+import com.example.did.data.PairwiseContact
 import com.example.did.data.PairwiseData
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -23,11 +24,6 @@ import javax.inject.Inject
  * ContactSelect VIPER Interactor Implementation
  */
 
-data class PairwiseContact(
-    @SerializedName("my_did") val myDid: String,
-    @SerializedName("their_did") val theirDid: String,
-    val metadata: PairwiseData
-)
 
 data class PairwiseContactList(
     val list: List<PairwiseContact>
@@ -94,6 +90,7 @@ class ContactSelectInteractor @Inject constructor(
 
     override fun toChat(pairwiseContact: PairwiseContact) {
         println("CHAT CLICKED: $pairwiseContact")
+        router.toChat(pairwiseContact)
     }
 
     // endregion

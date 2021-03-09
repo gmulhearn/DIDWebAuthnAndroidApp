@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import com.example.did.R
+import com.example.did.data.PairwiseContact
 
 class ContactAdapter(private val onClick: (PairwiseContact) -> Unit) :
     ListAdapter<PairwiseContact, ContactAdapter.ContactViewHolder>(
