@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context="com.example.did.ui.didcomm.contactselect.ContactSelectFragment">
 
+    <include
+        android:id="@+id/labelPopup"
+        layout="@layout/contact_label_popup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cameraContainer"
         android:layout_width="match_parent"
@@ -47,4 +58,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.88"
         tools:src="@tools:sample/avatars" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

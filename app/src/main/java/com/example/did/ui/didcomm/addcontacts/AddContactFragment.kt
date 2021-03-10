@@ -13,6 +13,7 @@ import androidx.navigation.fragment.navArgs
 import com.budiyev.android.codescanner.*
 import com.example.did.R
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.contact_label_popup.*
 import kotlinx.android.synthetic.main.fragment_add_contact.*
 import javax.inject.Inject
 
@@ -53,7 +54,10 @@ class AddContactFragment : Fragment(), AddContactContract.View {
         super.onViewCreated(view, savedInstanceState)
         presenter.attachView(this)
 
-        // TODO setup view, event listeners etc.
+        setLabel.setOnClickListener {
+            presenter.setLabelClicked(labelText.text.toString())
+            labelPopup.visibility = View.GONE
+        }
 
         val scannerView = requireActivity().findViewById<CodeScannerView>(R.id.previewView)
         codeScanner = CodeScanner(requireContext(), scannerView)

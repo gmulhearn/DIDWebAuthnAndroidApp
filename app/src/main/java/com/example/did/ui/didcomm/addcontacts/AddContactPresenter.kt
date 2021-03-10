@@ -43,6 +43,10 @@ class AddContactPresenter @Inject constructor(
         interactor.processQrScan(text)
     }
 
+    override fun setLabelClicked(label: String) {
+        interactor.setLabel(label)
+    }
+
     // endregion
 
     // region view event handlers

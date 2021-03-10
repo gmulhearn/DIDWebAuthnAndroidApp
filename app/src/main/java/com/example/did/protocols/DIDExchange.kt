@@ -9,10 +9,14 @@ import com.example.did.data.*
 import com.example.did.transport.FirebaseRelay
 import com.google.firebase.FirebaseApp
 import com.google.gson.Gson
+import com.google.protobuf.UInt64Value
 import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
+import org.spongycastle.jcajce.provider.symmetric.ARC4
+import java.nio.ByteBuffer
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 object DIDExchange {
     @SuppressLint("HardwareIds")
@@ -116,7 +120,8 @@ object DIDExchange {
     ): ByteArray {
 
 
-        val androidId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        val androidId =
+            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
         val didCommMessage = DIDCommMessage(
             sentTime = time,
             content = message,
@@ -130,6 +135,65 @@ object DIDExchange {
             myWallet,
             "[\"${pairwiseContact.metadata.theirVerkey}\"]",
             pairwiseContact.metadata.myVerkey,
+            jsonMessage.toByteArray(Charsets.UTF_8)
+        ).get()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun generateEncryptedResponseMessage(
+        myWallet: Wallet,
+        myDid: DidInfo,
+        theirDid: DidInfo,
+        context: Context
+    ): ByteArray {
+        val connection = DIDRequestConnection(
+            myDid.did,
+            generateDIDDoc(myDid, context)
+        )
+
+        val connectionJson = Gson().toJson(connection).replace("""\u003d""", "=")
+
+        val timestamp = Date().time
+        val buffer = ByteBuffer.allocate(8)
+        val timestampBytes = buffer.putLong(timestamp).array()
+        val dataToSign = timestampBytes + connectionJson.toByteArray(Charsets.UTF_8)
+        val connectionBase64 =
+            Base64.getUrlEncoder().encode(dataToSign).toString(Charsets.UTF_8)
+
+        val signature =
+            Base64.getUrlEncoder().encode(
+                Crypto.cryptoSign(
+                    myWallet,
+                    myDid.verkey,
+                    dataToSign // connectionBase64.toByteArray(Charsets.UTF_8)
+                ).get()
+            ).toString(Charsets.UTF_8)
+
+        val connectionSig = DIDResponseConnectionSig(
+            signer = myDid.verkey,
+            signature = signature,
+            sigData = connectionBase64
+        )
+
+        val thread = DIDResponseThread(
+            thid = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        )
+        val response = DIDResponseMessage(
+            connectionSig,
+            thread,
+            id = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        )
+
+        println(response)
+
+        val jsonMessage = Gson().toJson(response).replace("""\u003d""", "=")
+
+        println(jsonMessage)
+
+        return Crypto.packMessage(
+            myWallet,
+            "[\"${theirDid.verkey}\"]",
+            myDid.verkey,
             jsonMessage.toByteArray(Charsets.UTF_8)
         ).get()
     }

@@ -55,7 +55,7 @@ data class DIDDocService(
 data class DIDResponseMessage(
     @SerializedName("connection~sig") val connectionSig: DIDResponseConnectionSig,
     @SerializedName("~thread") val thread: DIDResponseThread,
-    @SerializedName("@type") val type: String,
+    @SerializedName("@type") val type: String = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/response",
     @SerializedName("@id") val id: String
 )
 

@@ -13,6 +13,7 @@ import com.example.did.common.WalletProvider
 import com.example.did.common.di.qualifier.DidInformation
 import com.example.did.data.*
 import com.example.did.protocols.DIDExchange.generateEncryptedRequestMessage
+import com.example.did.protocols.DIDExchange.generateEncryptedResponseMessage
 import com.example.did.protocols.DIDExchange.generateInvitation
 import com.example.did.protocols.DIDExchange.generateInvitationUrl
 import com.example.did.transport.FirebaseRelay
@@ -56,6 +57,8 @@ class AddContactInteractor @Inject constructor(
     internal var theirDid = "todo"
     internal var theirVerkey = "todo"
 
+    internal var myLabel = "Android Sample Device"
+
     // region viper lifecycle
 
     override fun attachOutput(output: AddContactContract.InteractorOutput) {
@@ -82,7 +85,7 @@ class AddContactInteractor @Inject constructor(
                         EnumMap(EncodeHintType::class.java)
                     hintMap[EncodeHintType.MARGIN] = 0
 
-                    val invite = generateInvitation(wallet, didInfo, context, "test-label")
+                    val invite = generateInvitation(wallet, didInfo, context, myLabel)
 
                     val inviteUrl = generateInvitationUrl(invite)
 
@@ -129,11 +132,19 @@ class AddContactInteractor @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun setLabel(label: String) {
+        if (label.isNotBlank()) {
+            myLabel = label
+            generateQR()
+        }
+    }
+
     private suspend fun replyToInvitation(invitation: Invitation) {
         val theirDid = DidInfo("unnecessary", invitation.recipientKeys.first())
         val replyEncrypted =
             generateEncryptedRequestMessage(
-                "android-device-prototype",
+                myLabel,
                 wallet,
                 didInfo,
                 theirDid,
@@ -177,10 +188,13 @@ class AddContactInteractor @Inject constructor(
                 Gson().fromJson(didCommContainer.message.toString(), DIDRequestMessage::class.java)
             checkNotNull(request.connection)
             output.updateProtocolState(ProtocolStage.RESPONDING)
-            handleRequest(request)
+            launch {
+                handleRequest(request)
+                output.updateProtocolState(ProtocolStage.SUCCESS) // todo: could be failed tho...
+            }
             return
         } catch (e: java.lang.Exception) {
-            println("faile to decode as request $e")
+            println("failed to decode as request $e")
         }
 
         // Try as response
@@ -196,9 +210,40 @@ class AddContactInteractor @Inject constructor(
         }
     }
 
-    private fun handleRequest(didRequest: DIDRequestMessage) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun handleRequest(didRequest: DIDRequestMessage) {
         println(didRequest)
-        // send response
+
+        val theirDid = DidInfo(
+            didRequest.connection.did,
+            didRequest.connection.didDoc.service.first().recipientKeys.first()
+        )
+
+        val encryptedResponse = generateEncryptedResponseMessage(
+            myWallet = wallet,
+            myDid = didInfo,
+            theirDid = theirDid,
+            context = context
+        )
+
+        val result = withContext(Dispatchers.IO) {
+            val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
+            firebase.transmitData(
+                encryptedResponse,
+                didRequest.connection.didDoc.service.first().serviceEndpoint
+            )
+        }
+        if (result) {
+            saveContactPairwise(
+                theirDidInfo = theirDid,
+                myDidInfo = didInfo,
+                theirEndpoint = didRequest.connection.didDoc.service.first().serviceEndpoint,
+                label = didRequest.label
+            )
+        } else {
+            // failed to send
+            println("http error sending response")
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -211,24 +256,37 @@ class AddContactInteractor @Inject constructor(
 
         theirDid = connection.did
 
+        saveContactPairwise(
+            theirDidInfo = DidInfo(connection.did, theirVerkey),
+            myDidInfo = didInfo,
+            theirEndpoint = connection.didDoc.service.first().serviceEndpoint,
+            label = theirLabel
+        )
+    }
 
+    private fun saveContactPairwise(
+        theirDidInfo: DidInfo,
+        myDidInfo: DidInfo,
+        theirEndpoint: String,
+        label: String
+    ) {
         Did.storeTheirDid(
             wallet,
-            "{\"did\":\"%s\",\"verkey\":\"%s\"}".format(theirDid, theirVerkey)
+            "{\"did\":\"%s\",\"verkey\":\"%s\"}".format(theirDidInfo.did, theirDidInfo.verkey)
         ).get()
 
         val metadata = Gson().toJson(
             PairwiseData(
-                theirLabel,
-                connection.didDoc.service.first().serviceEndpoint,
-                theirVerkey,
-                didInfo.verkey
+                label,
+                theirEndpoint,
+                theirDidInfo.verkey,
+                myDidInfo.verkey
             )
         ).replace("""\u003d""", "=")
 
         println(metadata)
 
-        Pairwise.createPairwise(wallet, theirDid, didInfo.did, metadata).get()
+        Pairwise.createPairwise(wallet, theirDidInfo.did, myDidInfo.did, metadata).get()
     }
 
     override fun savePendingState(outState: Bundle) {

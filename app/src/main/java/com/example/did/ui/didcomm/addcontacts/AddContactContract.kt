@@ -63,6 +63,7 @@ interface AddContactContract {
          * TODO
          */
         fun qrCodeRead(text: String?)
+        fun setLabelClicked(label: String)
     }
 
     /**
@@ -106,6 +107,7 @@ interface AddContactContract {
          * TODO
          */
         fun processQrScan(text: String?)
+        fun setLabel(label: String)
     }
 
     /**
