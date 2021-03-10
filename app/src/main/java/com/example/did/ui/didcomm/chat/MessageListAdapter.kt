@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.DiffUtil
 import com.example.did.R
 import com.example.did.data.PairwiseContact
@@ -21,8 +20,10 @@ class MessageListAdapter(private val onClick: (PairwiseContact) -> Unit) :
     /* ViewHolder for Wallet, takes in the inflated view and the onClick behavior. */
     class MessageViewHolder(itemView: View, val onClick: (PairwiseContact) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
-        private val messageTextView: TextView = itemView.findViewById(R.id.message_text)
-        private val messageItem: ConstraintLayout = itemView.findViewById(R.id.messageItem)
+        private val leftmessageTextView: TextView = itemView.findViewById(R.id.message_left_text)
+        private val leftMessageItem: ConstraintLayout = itemView.findViewById(R.id.messageItemLeft)
+        private val rightMessageTextView: TextView = itemView.findViewById(R.id.message_right_text)
+        private val rightMessageItem: ConstraintLayout = itemView.findViewById(R.id.messageItemRight)
         private var currentMessage: MessageDisplayModel? = null
 
         init {
@@ -37,9 +38,15 @@ class MessageListAdapter(private val onClick: (PairwiseContact) -> Unit) :
         fun bind(message: MessageDisplayModel) {
             currentMessage = message
 
-            messageTextView.text = message.didCommMessage.content
+            // todo: this could be done better with a single item and constraints
             if (message.isSender) {
-                messageItem.setBackgroundColor(itemView.context.resources.getColor(R.color.purple_200))
+                leftMessageItem.visibility = View.GONE
+                rightMessageItem.visibility = View.VISIBLE
+                rightMessageTextView.text = message.didCommMessage.content
+            } else {
+                rightMessageItem.visibility = View.GONE
+                leftMessageItem.visibility = View.VISIBLE
+                leftmessageTextView.text = message.didCommMessage.content
             }
         }
     }
