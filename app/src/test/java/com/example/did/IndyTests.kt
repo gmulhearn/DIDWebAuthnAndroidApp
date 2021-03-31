@@ -124,7 +124,7 @@ class IndyTests {
 
         println("their key: ${Did.keyForLocalDid(openWallet, theirDid.did).get()}")
 
-        val metadata = Gson().toJson(PairwiseData("johnno", "https://ssi-sample.com/?p=blah")).replace("""\u003d""", "=")
+        val metadata = Gson().toJson(PairwiseData("johnno", "https://ssi-sample.com/?p=blah", theirDid.verkey, myDid.verkey)).replace("""\u003d""", "=")
 
         Pairwise.createPairwise(openWallet, theirDid.did, myDid.did, metadata).get()
         println(Pairwise.listPairwise(openWallet).get())

@@ -1,0 +1,9 @@
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
+  "@id": "1C7F075F-EE85-4F75-89ED-71D20E85E789",
+  "label": "XYZ’s Phone",
+  "routingKeys": [],
+  "serviceEndpoint": "https://us-central1-didsample-62976.cloudfunctions.net/endpoint?p=F6F95B1E-2DC8-4789-BFA0-7CF0A3612794",
+  "recipientKeys": ["FKfMa4jvi1jTNvJbQkqoMXxudbEMvDp3xC32H3dskZAH"]
+}
+

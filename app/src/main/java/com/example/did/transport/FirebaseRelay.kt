@@ -104,8 +104,9 @@ class FirebaseRelay(app: FirebaseApp) {
                     println("http request failed: $output")
                     return@withContext false
                 } catch (exception: Exception) {
-                    println("errrrrr")
-                    return@withContext false
+                    println("$exception     errrrrr")
+                    // TODO: fix below...
+                    return@withContext true
                 }
             } else {
                 println("urlResponse ${urlConnection.responseCode}")
