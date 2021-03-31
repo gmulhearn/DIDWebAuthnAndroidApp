@@ -73,6 +73,10 @@ class DIDSelectPresenter @Inject constructor(
         view.onSeedWordSet(seedWords)
     }
 
+    override fun walletFinishedLoading() {
+        view.onWalletLoaded()
+    }
+
     // TODO Add interactor outputs
 
     // endregion

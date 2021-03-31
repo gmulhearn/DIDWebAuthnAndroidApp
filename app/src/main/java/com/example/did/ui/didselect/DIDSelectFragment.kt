@@ -43,7 +43,7 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
     }
 
     internal fun inject() {
-        AndroidSupportInjection.inject(this) // TODO inject with the default Application injector or the Kit injector if inside a UI Kit
+        AndroidSupportInjection.inject(this)
     }
 
     // endregion
@@ -57,8 +57,6 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter.attachView(this)
-
-        // TODO setup view, event listeners etc.
 
         walletTitle.text = "MyWallet"
         genDIDButton.setOnClickListener {
@@ -85,6 +83,7 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
         DIDSelectList.adapter = adapter
 
         // Notify Presenter that the View is ready
+        showWalletLoading()
         presenter.viewLoaded(savedInstanceState)
     }
 
@@ -102,6 +101,10 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
         presenter.saveState(outState)
     }
 
+    // endregion
+
+    // region View contract
+
     override fun updateDidList(dids: MutableList<DIDSelectModels.DidDisplayModel>) {
         adapter.submitList(dids)
         hideSpinner()
@@ -115,6 +118,20 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
         seedText.setText(seedWords)
     }
 
+    override fun onWalletLoaded() {
+        greyout.animateVisibilityOut()
+        genDIDButton.isClickable = true
+        loadingWalletText.animateVisibilityOut()
+        hideSpinner()
+    }
+
+    private fun showWalletLoading() {
+        greyout.animateVisibilityIn()
+        genDIDButton.isClickable = false
+        loadingWalletText.animateVisibilityIn()
+        showSpinner()
+    }
+
     private fun showSpinner() {
         DIDGeneratingSpinner.animateVisibilityIn()
     }
@@ -122,12 +139,6 @@ class DIDSelectFragment : Fragment(), DIDSelectContract.View {
     private fun hideSpinner() {
         DIDGeneratingSpinner.animateVisibilityOut()
     }
-
-    // endregion
-
-    // region View contract
-
-    // TODO Add view contract overrides
 
     // endregion
 

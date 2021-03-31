@@ -32,7 +32,7 @@ class DIDSelectInteractor @Inject constructor(
     internal val outputDelegate = ObjectDelegate<DIDSelectContract.InteractorOutput>()
     internal val output by outputDelegate
 
-    private var wallet: Wallet = walletProvider.getWallet()
+    private lateinit var wallet: Wallet
     private var dids: MutableList<DidInfo> = mutableListOf()
 
     private var seedWords: List<String> = listOf()
@@ -53,7 +53,17 @@ class DIDSelectInteractor @Inject constructor(
     @ExperimentalUnsignedTypes
     @RequiresApi(Build.VERSION_CODES.O)
     override fun loadData(savedState: Bundle?) {
+        loadWallet()
         generateSeedWords()
+    }
+
+    private fun loadWallet() {
+        launch {
+            wallet = withContext(Dispatchers.IO) {
+                walletProvider.getWallet()
+            }
+            output.walletFinishedLoading()
+        }
     }
 
     override fun savePendingState(outState: Bundle) {

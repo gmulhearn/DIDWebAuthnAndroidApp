@@ -6,6 +6,22 @@
     android:layout_height="match_parent"
     tools:context="com.example.did.ui.didselect.DIDSelectFragment">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/greyout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#7C5A5A5A"
+        android:clickable="false"
+        android:translationZ="3dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <Button
         android:id="@+id/genDIDButton"
         android:layout_width="wrap_content"
@@ -35,11 +51,26 @@
         android:layout_height="80dp"
         android:layout_gravity="center"
         android:indeterminateTint="@color/teal_200"
+        android:translationZ="4dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/loadingWalletText"
+        android:layout_width="wrap_content"
+        android:layout_height="19dp"
+        android:layout_marginTop="10dp"
+        android:text="Loading Wallet..."
+        android:textStyle="bold"
+        android:translationZ="4dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/DIDGeneratingSpinner"
         tools:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView

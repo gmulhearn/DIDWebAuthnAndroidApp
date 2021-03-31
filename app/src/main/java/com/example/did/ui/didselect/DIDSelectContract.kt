@@ -27,6 +27,7 @@ interface DIDSelectContract {
          * TODO
          */
         fun onSeedWordSet(seedWords: String)
+        fun onWalletLoaded()
     }
 
     /**
@@ -157,6 +158,7 @@ interface DIDSelectContract {
          * TODO
          */
         fun seedWordsSet(seedWords: String)
+        fun walletFinishedLoading()
 
     }
 
