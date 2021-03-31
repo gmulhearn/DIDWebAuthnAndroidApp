@@ -5,6 +5,10 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.Blob
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.squareup.okhttp.MediaType
+import com.squareup.okhttp.OkHttpClient
+import com.squareup.okhttp.Request
+import com.squareup.okhttp.RequestBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
@@ -68,54 +72,17 @@ class FirebaseRelay(app: FirebaseApp) {
     }
 
     suspend fun transmitData(data: ByteArray, endpoint: String): Boolean {
-        val endpointURL = URL(endpoint)
+        println("TRANSMITTING DATA: ${data.toString(Charsets.UTF_8)}")
+        val postRequest = Request.Builder()
+            .url(endpoint)
+            .post(RequestBody.create(MediaType.parse("application/ssi-agent-wire"), data))
+            .build()
 
-        val urlConnection = endpointURL.openConnection() as HttpURLConnection
-        urlConnection.requestMethod = "POST"
-        urlConnection.connectTimeout = 300000
-        urlConnection.doOutput = true
-
-        urlConnection.setRequestProperty("charset", "utf-8")
-        urlConnection.setRequestProperty("Content-length", data.size.toString())
-        urlConnection.setRequestProperty("Content-Type", "application/ssi-agent-wire")
-
-        val result: Boolean = withContext(Dispatchers.IO) {
-            try {
-                val outputStream = DataOutputStream(urlConnection.outputStream)
-                outputStream.write(data)
-                outputStream.flush()
-            } catch (exception: Exception) {
-                println("failed to write outstream $exception")
-                return@withContext false
-            }
-
-            if (urlConnection.responseCode != HttpURLConnection.HTTP_OK
-                && urlConnection.responseCode != HttpURLConnection.HTTP_ACCEPTED
-                && urlConnection.responseCode != HttpURLConnection.HTTP_CREATED
-            ) {
-                try {
-                    val inputStream = DataInputStream(urlConnection.inputStream)
-                    val output = BufferedReader(InputStreamReader(inputStream)).readLine()
-
-                    println(inputStream.toString())
-                    println(urlConnection.responseMessage)
-                    println(urlConnection.responseCode)
-                    println()
-                    println("http request failed: $output")
-                    return@withContext false
-                } catch (exception: Exception) {
-                    println("$exception     errrrrr")
-                    // TODO: fix below...
-                    return@withContext true
-                }
-            } else {
-                println("urlResponse ${urlConnection.responseCode}")
-            }
-            return@withContext true
+        val client = OkHttpClient()
+        val response = withContext(Dispatchers.IO) {
+            client.newCall(postRequest).execute()
         }
-
-        return result
+        println(response)
+        return true
     }
-
-
 }
