@@ -62,11 +62,14 @@ class ChatFragment : Fragment(), ChatContract.View {
 
         messageInput.sendButton.setOnClickListener {
             presenter.sendClicked(messageInput.textField.text.toString())
+            messageInput.textField.setText("")
         }
 
         chatTitle.text = navigationArgs.pairwiseContact.metadata.label
 
-        messageList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        val linearLayoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        linearLayoutManager.stackFromEnd = true
+        messageList.layoutManager = linearLayoutManager
         messageList.adapter = adapter
 
         // Notify Presenter that the View is ready
@@ -83,11 +86,14 @@ class ChatFragment : Fragment(), ChatContract.View {
         presenter.saveState(outState)
     }
 
-    override fun updateMessagesList(messageList: MutableList<MessageDisplayModel>) {
-        println(messageList)
+    override fun updateMessagesList(updatedMessageList: MutableList<MessageDisplayModel>) {
+        println(updatedMessageList)
         val startMessageList = mutableListOf(MessageDisplayModel(DIDCommMessage("", "start",id="n/a"), false))
-        startMessageList.addAll(messageList)
+        startMessageList.addAll(updatedMessageList)
         adapter.submitList(startMessageList)
+        messageList.post {
+            messageList.scrollToPosition(updatedMessageList.size)
+        }
     }
 
     // endregion

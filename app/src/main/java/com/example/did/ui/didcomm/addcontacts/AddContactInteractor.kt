@@ -22,10 +22,7 @@ import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.pairwise.Pairwise
@@ -192,6 +189,8 @@ class AddContactInteractor @Inject constructor(
             launch {
                 handleRequest(request)
                 output.updateProtocolState(ProtocolStage.SUCCESS) // todo: could be failed tho...
+                delay(1000)
+                output.onSuccessUpdate()
             }
             return
         } catch (e: java.lang.Exception) {
@@ -206,6 +205,10 @@ class AddContactInteractor @Inject constructor(
             output.updateProtocolState(ProtocolStage.PROCESSING_RESPONSE)
             handleResponse(response)
             output.updateProtocolState(ProtocolStage.SUCCESS)
+            launch {
+                delay(1000)
+                output.onSuccessUpdate()
+            }
         } catch (e: java.lang.Exception) {
             println("faile to decode as response $e")
         }

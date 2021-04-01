@@ -69,6 +69,10 @@ class AddContactPresenter @Inject constructor(
         view.showSnackbar(stage.name)
     }
 
+    override fun onSuccessUpdate() {
+        router.back()
+    }
+
     // TODO Add interactor outputs
 
     // endregion

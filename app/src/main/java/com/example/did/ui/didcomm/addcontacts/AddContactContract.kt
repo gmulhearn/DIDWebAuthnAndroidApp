@@ -122,6 +122,7 @@ interface AddContactContract {
 
         fun generatedQR(bitmap: Bitmap)
         fun updateProtocolState(stage: ProtocolStage)
+        fun onSuccessUpdate()
     }
 
     /**
@@ -129,5 +130,9 @@ interface AddContactContract {
      */
     interface Router {
 
+        /**
+         * TODO
+         */
+        fun back()
     }
 }

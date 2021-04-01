@@ -110,6 +110,9 @@ interface ChatContract {
      * Declares all routes out of the module
      */
     interface Router {
-
+        /**
+         * TODO
+         */
+        fun back()
     }
 }
