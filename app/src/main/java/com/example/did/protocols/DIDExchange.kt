@@ -204,7 +204,7 @@ object DIDExchange {
         val inviteJsonString = invitation.toJsonString()
         println(inviteJsonString)
         val encodedInvite =
-            Base64.getEncoder().encode(inviteJsonString.toByteArray(Charsets.UTF_8))
+            Base64.getUrlEncoder().encode(inviteJsonString.toByteArray(Charsets.UTF_8))
                 .toString(Charsets.UTF_8)
 
         return baseUrl + encodedInvite

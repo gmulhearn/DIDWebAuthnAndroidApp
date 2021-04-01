@@ -115,7 +115,7 @@ class AddContactInteractor @Inject constructor(
         println(inviteEncoded)
         var invite = ""
         try {
-            invite = Base64.getDecoder().decode(inviteEncoded).toString(Charsets.UTF_8)
+            invite = Base64.getUrlDecoder().decode(inviteEncoded).toString(Charsets.UTF_8)
             println(invite)
 
             val invitationObj = Gson().fromJson(invite, Invitation::class.java)
@@ -250,7 +250,7 @@ class AddContactInteractor @Inject constructor(
     private fun handleResponse(didResponse: DIDResponseMessage) {
         println("handle response: $didResponse")
         val connectionJson =
-            Base64.getDecoder().decode(didResponse.connectionSig.sigData).toString(Charsets.UTF_8)
+            Base64.getUrlDecoder().decode(didResponse.connectionSig.sigData).toString(Charsets.UTF_8)
                 .drop(8)
         val connection = Gson().fromJson(connectionJson, DIDRequestConnection::class.java)
 
