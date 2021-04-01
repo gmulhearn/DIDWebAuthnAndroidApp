@@ -111,7 +111,7 @@ class AddContactInteractor @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun processQrScan(text: String?) {
-        val inviteEncoded = text?.split("?c_i=")?.last()?.removeSuffix("%3D")
+        val inviteEncoded = text?.split("?c_i=")?.last()?.split("%")?.first()  // sometimes suffixed with %3D...
         println(inviteEncoded)
         var invite = ""
         try {
@@ -148,6 +148,7 @@ class AddContactInteractor @Inject constructor(
                 wallet,
                 didInfo,
                 theirDid,
+                invitation.routingKeys,
                 context
             )
         val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
@@ -219,17 +220,18 @@ class AddContactInteractor @Inject constructor(
             didRequest.connection.didDoc.service.first().recipientKeys.first()
         )
 
-        val encryptedResponse = generateEncryptedResponseMessage(
+        val encryptedResponseRaw = generateEncryptedResponseMessage(
             myWallet = wallet,
             myDid = didInfo,
             theirDid = theirDid,
+            theirRoutingKeys = didRequest.connection.didDoc.service.first().routingKeys,
             context = context
         )
 
         val result = withContext(Dispatchers.IO) {
             val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
             firebase.transmitData(
-                encryptedResponse,
+                encryptedResponseRaw, // encryptedResponse,
                 didRequest.connection.didDoc.service.first().serviceEndpoint
             )
         }
@@ -238,6 +240,7 @@ class AddContactInteractor @Inject constructor(
                 theirDidInfo = theirDid,
                 myDidInfo = didInfo,
                 theirEndpoint = didRequest.connection.didDoc.service.first().serviceEndpoint,
+                theirRoutingKeys = didRequest.connection.didDoc.service.first().routingKeys,
                 label = didRequest.label
             )
         } else {
@@ -250,7 +253,8 @@ class AddContactInteractor @Inject constructor(
     private fun handleResponse(didResponse: DIDResponseMessage) {
         println("handle response: $didResponse")
         val connectionJson =
-            Base64.getUrlDecoder().decode(didResponse.connectionSig.sigData).toString(Charsets.UTF_8)
+            Base64.getUrlDecoder().decode(didResponse.connectionSig.sigData)
+                .toString(Charsets.UTF_8)
                 .drop(8)
         val connection = Gson().fromJson(connectionJson, DIDRequestConnection::class.java)
 
@@ -260,6 +264,7 @@ class AddContactInteractor @Inject constructor(
             theirDidInfo = DidInfo(connection.did, theirVerkey),
             myDidInfo = didInfo,
             theirEndpoint = connection.didDoc.service.first().serviceEndpoint,
+            theirRoutingKeys = connection.didDoc.service.first().routingKeys,
             label = theirLabel
         )
     }
@@ -268,6 +273,7 @@ class AddContactInteractor @Inject constructor(
         theirDidInfo: DidInfo,
         myDidInfo: DidInfo,
         theirEndpoint: String,
+        theirRoutingKeys: List<String>,
         label: String
     ) {
         Did.storeTheirDid(
@@ -280,7 +286,8 @@ class AddContactInteractor @Inject constructor(
                 label,
                 theirEndpoint,
                 theirDidInfo.verkey,
-                myDidInfo.verkey
+                myDidInfo.verkey,
+                theirRoutingKeys
             )
         ).replace("""\u003d""", "=")
 

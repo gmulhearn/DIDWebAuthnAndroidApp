@@ -70,6 +70,87 @@ object DIDExchange {
         )
     }
 
+    fun routingForwardWrap(
+        packedMessage: PackedMessage,
+        myWallet: Wallet,
+        nextRecipientKey: String,
+        routingKeys: List<String>,
+        context: Context
+    ): PackedMessage {
+        println(
+            """
+            DEBUG ROUTING FORWARD:
+            $packedMessage
+            $nextRecipientKey
+            $routingKeys
+        """.trimIndent()
+        )
+
+        val currentRoutingKey =
+            routingKeys.firstOrNull() ?: return packedMessage  // end of wrapping
+        val androidId =
+            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+
+        val routingForwardMessage = RoutingForwardMessage(
+            id = androidId,
+            to = nextRecipientKey,
+            message = packedMessage
+        )
+
+        val jsonMessage = Gson().toJson(routingForwardMessage).replace("""\u003d""", "=")
+        println(
+            """
+            DEBUG ROUTING FORWARD (P2):
+            $jsonMessage
+        """.trimIndent()
+        )
+
+        val wrappedPackedMessageRaw = Crypto.packMessage(
+            myWallet,
+            "[\"${currentRoutingKey}\"]",
+            null,
+            jsonMessage.toByteArray(Charsets.UTF_8)
+        ).get()
+
+        val wrappedPackedMessage = Gson().fromJson(
+            wrappedPackedMessageRaw.toString(Charsets.UTF_8),
+            PackedMessage::class.java
+        )
+
+        return routingForwardWrap(
+            wrappedPackedMessage,
+            myWallet,
+            currentRoutingKey,
+            routingKeys.drop(1),
+            context
+        )
+    }
+
+    /**
+     * Helper function for generating raw byte array of packed routed message from raw byte array of original packed message
+     */
+    private fun packedBytesToRoutedPackedBytes(
+        rawMessagePacked: ByteArray,
+        myWallet: Wallet,
+        theirVerkey: String,
+        theirRoutingKeys: List<String>,
+        context: Context
+    ): ByteArray {
+        val messagePacked =
+            Gson().fromJson(rawMessagePacked.toString(Charsets.UTF_8), PackedMessage::class.java)
+        val routingWrappedMessage = routingForwardWrap(
+            messagePacked,
+            myWallet,
+            theirVerkey,
+            theirRoutingKeys,
+            context
+        )
+
+        val rawRoutingForwardMessage =
+            Gson().toJson(routingWrappedMessage).replace("""\u003d""", "=")
+        return rawRoutingForwardMessage.toByteArray(Charsets.UTF_8)
+    }
+
     fun generateRequest(label: String, did: DidInfo, context: Context): DIDRequestMessage {
         val androidId =
             Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
@@ -94,6 +175,7 @@ object DIDExchange {
         myWallet: Wallet,
         myDid: DidInfo,
         theirDid: DidInfo,
+        theirRoutingKeys: List<String>,
         context: Context
     ): ByteArray {
         val didCommMessage = generateRequest(label, myDid, context)
@@ -103,12 +185,20 @@ object DIDExchange {
         println(didCommMessage)
         println(jsonMessage)
 
-        return Crypto.packMessage(
+        val rawMessagePacked = Crypto.packMessage(
             myWallet,
             "[\"${theirDid.verkey}\"]",
             myDid.verkey,
             jsonMessage.toByteArray(Charsets.UTF_8)
         ).get()
+
+        return packedBytesToRoutedPackedBytes(
+            rawMessagePacked,
+            myWallet,
+            theirDid.verkey,
+            theirRoutingKeys,
+            context
+        )
     }
 
     fun generateEncryptedDIDCommMessage(
@@ -118,7 +208,6 @@ object DIDExchange {
         message: String,
         context: Context
     ): ByteArray {
-
 
         val androidId =
             Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
@@ -131,12 +220,20 @@ object DIDExchange {
         val jsonMessage = Gson().toJson(didCommMessage)
         println("jsonMessage: $jsonMessage")
 
-        return Crypto.packMessage(
+        val rawMessagePacked = Crypto.packMessage(
             myWallet,
             "[\"${pairwiseContact.metadata.theirVerkey}\"]",
             pairwiseContact.metadata.myVerkey,
             jsonMessage.toByteArray(Charsets.UTF_8)
         ).get()
+
+        return packedBytesToRoutedPackedBytes(
+            rawMessagePacked,
+            myWallet,
+            pairwiseContact.metadata.theirVerkey,
+            pairwiseContact.metadata.theirRoutingKeys,
+            context
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -144,6 +241,7 @@ object DIDExchange {
         myWallet: Wallet,
         myDid: DidInfo,
         theirDid: DidInfo,
+        theirRoutingKeys: List<String>,
         context: Context
     ): ByteArray {
         val connection = DIDRequestConnection(
@@ -190,12 +288,20 @@ object DIDExchange {
 
         println(jsonMessage)
 
-        return Crypto.packMessage(
+        val rawMessagePacked = Crypto.packMessage(
             myWallet,
             "[\"${theirDid.verkey}\"]",
             myDid.verkey,
             jsonMessage.toByteArray(Charsets.UTF_8)
         ).get()
+
+        return packedBytesToRoutedPackedBytes(
+            rawMessagePacked,
+            myWallet,
+            theirDid.verkey,
+            theirRoutingKeys,
+            context
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

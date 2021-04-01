@@ -11,7 +11,8 @@ data class PairwiseData(
     val label: String,
     val theirEndpoint: String,
     val theirVerkey: String,
-    val myVerkey: String
+    val myVerkey: String,
+    val theirRoutingKeys: List<String>
 ) : Parcelable
 
 @Keep

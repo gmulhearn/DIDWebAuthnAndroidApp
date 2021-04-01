@@ -1,6 +1,7 @@
 package com.example.did.data
 
 import com.google.gson.annotations.SerializedName
+import org.spongycastle.crypto.util.Pack
 
 data class Invitation(
     @SerializedName("@type") val type: String = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
@@ -15,6 +16,20 @@ data class DIDCommContainer(
     val message: Any,
     @SerializedName("recipient_verkey") val recipientVerkey: String,
     @SerializedName("sender_verkey") val senderVerkey: String
+)
+
+data class PackedMessage(
+    val protected: String,
+    val ciphertext: String,
+    val iv: String,
+    val tag: String
+)
+
+data class RoutingForwardMessage(
+    @SerializedName("@type") val type: String = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
+    @SerializedName("@id") val id: String,
+    val to: String,
+    @SerializedName("msg") val message: PackedMessage
 )
 
 data class DIDRequestMessage(

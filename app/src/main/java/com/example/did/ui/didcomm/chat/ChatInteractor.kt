@@ -77,8 +77,6 @@ class ChatInteractor @Inject constructor(
             // return
         }
 
-        // TODO: this won't work android to android bcus it's not wrapped in a DIDCommMessage
-
         // Try as request
         try {
             val didCommMessage =

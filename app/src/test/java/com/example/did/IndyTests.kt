@@ -49,6 +49,12 @@ class IndyTests {
     }
 
     @Test
+    fun test_split() {
+        val stringy = "helloworld"
+        println(stringy.split("=").first())
+    }
+
+    @Test
     fun `gen wallet`() {
         val config = "{\"id\":\"testID2\"}"
         val key = Wallet.generateWalletKey(null).get()
@@ -124,10 +130,10 @@ class IndyTests {
 
         println("their key: ${Did.keyForLocalDid(openWallet, theirDid.did).get()}")
 
-        val metadata = Gson().toJson(PairwiseData("johnno", "https://ssi-sample.com/?p=blah", theirDid.verkey, myDid.verkey)).replace("""\u003d""", "=")
-
-        Pairwise.createPairwise(openWallet, theirDid.did, myDid.did, metadata).get()
-        println(Pairwise.listPairwise(openWallet).get())
+//        val metadata = Gson().toJson(PairwiseData("johnno", "https://ssi-sample.com/?p=blah", theirDid.verkey, myDid.verkey)).replace("""\u003d""", "=")
+//
+//        Pairwise.createPairwise(openWallet, theirDid.did, myDid.did, metadata).get()
+//        println(Pairwise.listPairwise(openWallet).get())
     }
 
     @Test
