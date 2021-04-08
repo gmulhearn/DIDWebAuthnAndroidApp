@@ -1,17 +1,20 @@
 package com.example.did.ui.browser
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.SearchView
 import dagger.android.support.AndroidSupportInjection
 import androidx.fragment.app.Fragment
 import com.example.did.R
-import kotlinx.android.synthetic.main.chat_input_item.view.*
+import com.example.did.transport.WebAuthnBridgeWebView
 import kotlinx.android.synthetic.main.fragment_browser.*
 import javax.inject.Inject
 
@@ -22,6 +25,7 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
 
     @Inject
     internal lateinit var presenter: BrowserContract.Presenter
+    internal lateinit var webAuthnBridge: WebAuthnBridgeWebView
 
     // region viper lifecycle
 
@@ -31,7 +35,7 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
     }
 
     internal fun inject() {
-        AndroidSupportInjection.inject(this) // TODO inject with the default Application injector or the Kit injector if inside a UI Kit
+        AndroidSupportInjection.inject(this)
     }
 
     // endregion
@@ -42,11 +46,33 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
         val v =  inflater.inflate(R.layout.fragment_browser, container, false)
 
         val webViewer = v.findViewById<WebView>(R.id.webView)
-        webViewer.webViewClient = WebViewClient()
-        webViewer.loadUrl("https://google.com")
-        webViewer.settings.javaScriptEnabled = true
+        initInjectedWebView(webViewer)
 
         return v
+    }
+
+    private fun initInjectedWebView(webViewer: WebView) {
+        webViewer.settings.javaScriptEnabled = true
+        webViewer.loadUrl("https://google.com")
+        webAuthnBridge = WebAuthnBridgeWebView(this.requireContext(), webViewer)
+        webAuthnBridge.bindWebView()
+
+        webViewer.webViewClient = object : WebViewClient() {
+            override fun shouldInterceptRequest(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): WebResourceResponse? {
+                println("REQUEST: \n\t${request?.method}\n\t${request?.requestHeaders}")
+                webAuthnBridge.onWebViewRequest()
+                return super.shouldInterceptRequest(view, request)
+            }
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                println("PAGE STARTED")
+                webAuthnBridge.onPageStart()
+                super.onPageStarted(view, url, favicon)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
