@@ -5,15 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.SearchView
 import dagger.android.support.AndroidSupportInjection
 import androidx.fragment.app.Fragment
 import com.example.did.R
+import kotlinx.android.synthetic.main.chat_input_item.view.*
+import kotlinx.android.synthetic.main.fragment_browser.*
 import javax.inject.Inject
 
 /**
  * Browser VIPER Fragment Implementation
  */
-class BrowserFragment : Fragment(), BrowserContract.View {
+class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryTextListener {
 
     @Inject
     internal lateinit var presenter: BrowserContract.Presenter
@@ -34,15 +39,24 @@ class BrowserFragment : Fragment(), BrowserContract.View {
     // region view setup and state lifecycle
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_browser, container, false)
+        val v =  inflater.inflate(R.layout.fragment_browser, container, false)
+
+        val webViewer = v.findViewById<WebView>(R.id.webView)
+        webViewer.webViewClient = WebViewClient()
+        webViewer.loadUrl("https://google.com")
+        webViewer.settings.javaScriptEnabled = true
+
+        return v
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter.attachView(this)
 
-        // TODO setup view, event listeners etc.
-
+        searchbar.setOnSearchClickListener {
+            println(searchbar.query)
+        }
+        searchbar.setOnQueryTextListener(this)
         // Notify Presenter that the View is ready
         presenter.viewLoaded(savedInstanceState)
     }
@@ -57,12 +71,28 @@ class BrowserFragment : Fragment(), BrowserContract.View {
         presenter.saveState(outState)
     }
 
+    // SEARCHBAR LISTENER
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        query?.let {
+            presenter.querySubmitted(it)
+            // webView.loadUrl(query)
+        }
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        return false
+    }
+    // END SEARCHBAR LISTENER
+
     // endregion
 
     // region View contract
 
-    // TODO Add view contract overrides
+    override fun loadUrl(url: String) {
+        webView.loadUrl(url)
+    }
 
     // endregion
-
 }
+

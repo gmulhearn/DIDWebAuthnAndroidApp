@@ -35,6 +35,15 @@ class BrowserPresenter @Inject constructor(
         interactor.savePendingState(outState)
     }
 
+    override fun querySubmitted(query: String) {
+        // interactor.resolveQuery(query) TODO
+        if (query.commonPrefixWith("http") == "http") {
+            view.loadUrl(query)
+        } else {
+            view.loadUrl("https://$query")
+        }
+    }
+
     // endregion
 
     // region view event handlers

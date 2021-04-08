@@ -13,6 +13,7 @@ interface BrowserContract {
      */
     interface View {
 
+        fun loadUrl(url: String)
     }
 
     /**
@@ -50,6 +51,7 @@ interface BrowserContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
+        fun querySubmitted(query: String)
     }
 
     /**
