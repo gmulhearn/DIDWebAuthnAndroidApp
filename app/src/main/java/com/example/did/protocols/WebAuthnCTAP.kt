@@ -1,6 +1,10 @@
 package com.example.did.protocols
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.did.data.*
+import org.spongycastle.jcajce.provider.digest.SHA256
+import java.util.*
 
 fun Map<String, Int>.toByteArray(): ByteArray {
     val array = ByteArray(entries.size)
@@ -44,18 +48,33 @@ fun String.CCDToString(): String {
  * https://www.w3.org/TR/webauthn/#clientdatajson-serialization
  */
 fun CollectedClientData.hash(): ByteArray {
-    var result = "" // 1.
-    result += "{\"type\":" //2.
-
-    return result.toByteArray(Charsets.UTF_8) // TODO WRONG
+    var result = ""                                 // 1.
+    result += "{\"type\":"                          // 2.
+    result += type.CCDToString()                    // 3.
+    result += ",\"challenge\":"                     // 4.
+    result += challengeBase64URL.CCDToString()      // 5.
+    result += ",\"origin\":"                        // 6.
+    result += origin.CCDToString()                  // 7.
+    result += ",\"crossOrigin\":"                   // 8.
+    result += "false"                               // 9.
+    result += "}"                                   // 12.
+    println(result)
+    val rawResult = result.toByteArray(Charsets.UTF_8)
+    return SHA256.Digest().digest(rawResult)
 }
 
-fun CredentialCreationOptions.toAuthenticatorMakeCredentialOptions(): AuthenticatorMakeCredentialOptions {
-    val clientDataHash = ByteArray(1)
-    // TODO!!!!
-    val rp = PublicKeyCredentialRpEntity("", "")
-    val user = PublicKeyCredentialUserEntity(byteArrayOf(), "", "")
-    val pubKeyCredParams = listOf(Pair<String, Long>("public-key-todo", -8))
+@RequiresApi(Build.VERSION_CODES.O)
+fun CredentialCreationOptions.toAuthenticatorMakeCredentialOptions(origin: String): AuthenticatorMakeCredentialOptions {
+    val clientData = CollectedClientData(
+        type = "webauthn.create",
+        challengeBase64URL = Base64.getUrlEncoder().encodeToString(getChallenge()),
+        origin = origin
+    )
+
+    val clientDataHash = clientData.hash()
+    val rp = PublicKeyCredentialRpEntity(relyingPartyInfo.id, relyingPartyInfo.name)
+    val user = PublicKeyCredentialUserEntity(user.getId(), user.displayName, user.name)
+    val pubKeyCredParams = this.pubKeyCredParams.map { Pair(it.type, it.algorithm.toLong()) }
 
     return AuthenticatorMakeCredentialOptions(clientDataHash, rp, user, pubKeyCredParams)
 }
