@@ -2,6 +2,8 @@ package com.example.did.data
 
 import com.google.gson.annotations.SerializedName
 
+/************************ WEBAUTHN **************************/
+
 data class RelyingPartyInfo(
     val name: String,
     val id: String
@@ -37,3 +39,35 @@ data class CredentialCreationOptions(
 data class PublicKeyCredentialCreationOptions(
     val publicKey: CredentialCreationOptions
 )
+
+/************************ WEBAUTHN **************************/
+
+
+/************************** CTAP ****************************/
+
+data class PublicKeyCredentialRpEntity(
+    val id: String,
+    val name: String
+)
+
+data class PublicKeyCredentialUserEntity(
+    val id: ByteArray,
+    val displayName: String,
+    val name: String
+)
+
+data class AuthenticatorMakeCredentialOptions(
+    val clientDataHash: ByteArray,
+    val rp: PublicKeyCredentialRpEntity,
+    val user: PublicKeyCredentialUserEntity,
+    val pubKeyCredParams: List<Pair<String, Long>>
+)
+
+data class CollectedClientData(
+    val type: String,   // "webauthn.create" or "webauthn.get"
+    @SerializedName("challenge") val challengeBase64URL: String,
+    val origin: String,
+    val crossOrigin: Boolean = false
+)
+
+/************************** CTAP ****************************/
