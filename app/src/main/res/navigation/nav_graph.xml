@@ -64,12 +64,15 @@
         <action
             android:id="@+id/action_DIDSelectFragment_to_contactSelectFragment"
             app:destination="@id/contactSelectFragment" />
+        <action
+            android:id="@+id/action_DIDSelectFragment_to_browserFragment"
+            app:destination="@id/browserFragment" />
     </fragment>
     <fragment
         android:id="@+id/contactSelectFragment"
         android:name="com.example.did.ui.didcomm.contactselect.ContactSelectFragment"
         android:label="fragment_contact_select"
-        tools:layout="@layout/fragment_contact_select" >
+        tools:layout="@layout/fragment_contact_select">
         <argument
             android:name="didInfo"
             app:argType="com.example.did.data.DidInfo" />
@@ -97,4 +100,14 @@
             android:name="pairwiseContact"
             app:argType="com.example.did.data.PairwiseContact" />
     </fragment>
+    <fragment
+        android:id="@+id/browserFragment"
+        android:name="com.example.did.ui.browser.BrowserFragment"
+        android:label="fragment_browser"
+        tools:layout="@layout/fragment_browser">
+        <argument
+            android:name="didInfo"
+            app:argType="com.example.did.data.DidInfo" />
+    </fragment>
+
 </navigation>

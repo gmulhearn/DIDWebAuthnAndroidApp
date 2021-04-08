@@ -1,5 +1,7 @@
 package com.example.did.common.di
 
+import com.example.did.ui.browser.BrowserFragment
+import com.example.did.ui.browser.BrowserModule
 import com.example.did.ui.didcomm.AddContact.AddContactFragment
 import com.example.did.ui.didcomm.AddContact.AddContactModule
 import com.example.did.ui.didcomm.chat.ChatFragment
@@ -40,4 +42,8 @@ abstract class FragmentBindingModule {
     @ActivityScope
     @ContributesAndroidInjector(modules = [ChatModule::class])
     abstract fun bindChatFragment(): ChatFragment
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [BrowserModule::class])
+    abstract fun bindBrowserFragment(): BrowserFragment
 }

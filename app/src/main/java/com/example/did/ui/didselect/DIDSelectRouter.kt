@@ -27,6 +27,13 @@ class DIDSelectRouter @Inject constructor(
         findNavController().navigate(directions)
     }
 
+    override fun toBrowser(didInfo: DidInfo) {
+        val directions = DIDSelectFragmentDirections.actionDIDSelectFragmentToBrowserFragment(
+            didInfo
+        )
+        findNavController().navigate(directions)
+    }
+
 
     @VisibleForTesting
     internal fun findNavController(): NavController {

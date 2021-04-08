@@ -102,7 +102,7 @@ class DIDSelectInteractor @Inject constructor(
         when (tabClicked) {
             "sign" -> router.toSigning(didInfo)
             "comm" -> router.toContacts(didInfo)
-            "browser" -> {}
+            "browser" -> router.toBrowser(didInfo)
             else -> {}
         }
     }

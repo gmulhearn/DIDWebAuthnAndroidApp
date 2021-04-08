@@ -1,33 +1,18 @@
-package com.example.did.ui.didselect
+package com.example.did.ui.browser
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.example.did.data.DidInfo
 
 /**
- * DIDSelectContract VIPER contract
+ * BrowserContract VIPER contract
  */
-interface DIDSelectContract {
+interface BrowserContract {
 
     /**
      * Passive view interface. This interface declares behaviors that can modify the View
      */
     interface View {
-        /**
-         * TODO
-         */
-        fun updateDidList(dids: MutableList<DIDSelectModels.DidDisplayModel>)
 
-        /**
-         * TODO
-         */
-        fun onGenerationError()
-
-        /**
-         * TODO
-         */
-        fun onSeedWordSet(seedWords: String)
-        fun onWalletLoaded()
     }
 
     /**
@@ -65,21 +50,6 @@ interface DIDSelectContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
-
-        /**
-         * TODO
-         */
-        fun genDIDClicked()
-
-        /**
-         * TODO
-         */
-        fun didTabClicked(did: DIDSelectModels.DidDisplayModel, tabClicked: String)
-
-        /**
-         * TODO
-         */
-        fun seedSetAttempt(seedText: String)
     }
 
     /**
@@ -117,21 +87,6 @@ interface DIDSelectContract {
          */
         fun savePendingState(outState: Bundle)
 
-        /**
-         * TODO
-         */
-        fun generateDID()
-
-        /**
-         * TODO
-         */
-        fun didTabClicked(did: DIDSelectModels.DidDisplayModel, tabClicked: String)
-
-        /**
-         * TODO
-         */
-        fun attemptToSetSeed(seedText: String)
-
     }
 
     /**
@@ -144,41 +99,12 @@ interface DIDSelectContract {
          */
         fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
 
-        /**
-         * TODO
-         */
-        fun didGenerated(dids: MutableList<DIDSelectModels.DidDisplayModel>)
-
-        /**
-         * TODO
-         */
-        fun generationError()
-
-        /**
-         * TODO
-         */
-        fun seedWordsSet(seedWords: String)
-        fun walletFinishedLoading()
-
     }
 
     /**
      * Declares all routes out of the module
      */
     interface Router {
-        /**
-         * TODO
-         */
-        fun toSigning(didInfo: DidInfo)
 
-        /**
-         * TODO
-         */
-        fun toContacts(didInfo: DidInfo)
-
-        /**
-         * TODO
-         */
-        fun toBrowser(didInfo: DidInfo)
     }
 }
