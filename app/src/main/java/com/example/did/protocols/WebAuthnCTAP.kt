@@ -79,7 +79,7 @@ fun CollectedClientData.hash(): ByteArray {
 fun CredentialCreationOptions.toAuthenticatorMakeCredentialOptions(origin: String): AuthenticatorMakeCredentialOptions {
     val clientData = CollectedClientData(
         type = "webauthn.create",
-        challengeBase64URL = Base64.getUrlEncoder().encodeToString(getChallenge()),
+        challengeBase64URL = Base64.getUrlEncoder().encodeToString(getChallenge()).removeSuffix("="),
         origin = origin
     )
 
@@ -130,7 +130,7 @@ fun createPublicKeyCredential(
     )
     return PublicKeyCredential(
         rawId = rawId,
-        id = Base64.getUrlEncoder().encodeToString(rawId),
+        id = Base64.getUrlEncoder().encodeToString(rawId).removeSuffix("="),
         response = attestationResponse
     )
 }
