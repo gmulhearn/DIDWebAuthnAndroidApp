@@ -20,7 +20,7 @@ class WebAuthnBridgeWebView(
         val BRIDGE_JS = "WebAuthnBridge.js"
     }
 
-    private var origin: String? = null
+    var origin: String = ""
     private var loading = false
 
     fun bindWebView() {
@@ -95,7 +95,10 @@ class WebAuthnBridgeWebView(
     }
 
 
-    fun onPageStart() {
+    fun onPageStart(url: String?) {
         loading = true
+        if (url != null) {
+            origin = url
+        }
     }
 }

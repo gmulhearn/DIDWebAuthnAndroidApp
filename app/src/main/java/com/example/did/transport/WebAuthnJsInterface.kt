@@ -24,11 +24,11 @@ class WebAuthnJsInterface(private val context: Context, private val parent: WebA
         println(opts)
         println(opts.publicKey.getChallenge().toUByteArray().toList())
         println(opts.publicKey.user.getId().toUByteArray().toList())
-        val makeCredOpts = opts.publicKey.toAuthenticatorMakeCredentialOptions("https://gmulhearn.org") // TODO
+        val makeCredOpts = opts.publicKey.toAuthenticatorMakeCredentialOptions(parent.origin)
         val clientData = CollectedClientData(
             type = "webauthn.create",
             challengeBase64URL = Base64.getUrlEncoder().encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
-            origin = "https://gmulhearn.org" // TODO
+            origin = parent.origin
         )
         parent.JSResolve(DIDAuthenticator(context).makeCredentials(
             makeCredOpts,

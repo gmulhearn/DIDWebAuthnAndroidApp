@@ -66,7 +66,7 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 println("PAGE STARTED")
-                webAuthnBridge.onPageStart()
+                webAuthnBridge.onPageStart(url)
                 super.onPageStarted(view, url, favicon)
             }
         }
