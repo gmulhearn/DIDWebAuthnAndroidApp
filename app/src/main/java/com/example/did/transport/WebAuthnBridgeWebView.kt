@@ -18,7 +18,7 @@ class WebAuthnBridgeWebView(
     private var loading = false
 
     fun bindWebView() {
-        webView.addJavascriptInterface(WebAuthnJsInterface(), BRIDGE_INTERFACE)
+        webView.addJavascriptInterface(WebAuthnJsInterface(context), BRIDGE_INTERFACE)
     }
 
     fun onWebViewRequest() {

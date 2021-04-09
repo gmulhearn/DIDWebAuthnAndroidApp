@@ -3,6 +3,9 @@ package com.example.did.protocols
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.did.data.*
+import com.google.gson.Gson
+import duo.labs.webauthn.models.RpEntity
+import duo.labs.webauthn.models.UserEntity
 import org.spongycastle.jcajce.provider.digest.SHA256
 import java.util.*
 
@@ -77,4 +80,31 @@ fun CredentialCreationOptions.toAuthenticatorMakeCredentialOptions(origin: Strin
     val pubKeyCredParams = this.pubKeyCredParams.map { Pair(it.type, it.algorithm.toLong()) }
 
     return AuthenticatorMakeCredentialOptions(clientDataHash, rp, user, pubKeyCredParams)
+}
+
+/**
+ * TODO: BELOW IS TEMP FOR TESTING/DEBUGGING - REMOVE IN FUTURE
+ */
+fun AuthenticatorMakeCredentialOptions.toDuoLabsAuthn(
+): duo.labs.webauthn.models.AuthenticatorMakeCredentialOptions {
+    val duoLabs = duo.labs.webauthn.models.AuthenticatorMakeCredentialOptions()
+    val duoLabsRP = RpEntity()
+    duoLabsRP.id = rp.id
+    duoLabsRP.name = rp.name
+    val duoLabsUser = UserEntity()
+    duoLabsUser.displayName = user.displayName
+    duoLabsUser.id = user.id
+    duoLabsUser.name = user.name
+
+    duoLabs.clientDataHash = clientDataHash
+    duoLabs.rpEntity = duoLabsRP
+    duoLabs.userEntity = duoLabsUser
+
+    duoLabs.credTypesAndPubKeyAlgs = pubKeyCredParams as MutableList<android.util.Pair<String, Long>>
+    duoLabs.excludeCredentialDescriptorList = mutableListOf()
+    duoLabs.requireResidentKey = false
+    duoLabs.requireUserPresence = true  // ?? for wellformed()
+    duoLabs.requireUserVerification = false
+
+    return duoLabs
 }
