@@ -70,4 +70,16 @@ data class CollectedClientData(
     val crossOrigin: Boolean = false
 )
 
+data class AuthenticatorAttestationResponse(
+    val clientDataJSON: ByteArray,
+    val attestationObject: ByteArray
+)
+
+data class PublicKeyCredential(
+    val rawId: ByteArray,
+    val id: String,
+    val type: String = "public-key",
+    val response: AuthenticatorAttestationResponse
+)
+
 /************************** CTAP ****************************/

@@ -1,0 +1,31 @@
+[
+  {
+    "id": "ao3qmmZFrK75TVEeSr4K44cAQeiRtBa_ScqMwijF5DM",
+    "rawId": "ao3qmmZFrK75TVEeSr4K44cAQeiRtBa_ScqMwijF5DM",
+    "type": "public-key",
+    "response": {
+      "attestationObject": "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YVikdKbqkhPJnC90siSSsyDPQCYqlMGpUKA5fyklC2CEHvBBAAAAAQAAAAAAAAAAAAAAAAAAAAAAIGqN6ppmRayu-U1RHkq-CuOHAEHokbQWv0nKjMIoxeQzpQECAyYgASFYIPXm6IQeu_dL-heDdgwb_vF5HK0U_YHkrwhG8naWMNkkIlggIATFftaGAyeWNSD0-p1eVlnz47P-zeCSqfWNF_k0KKo",
+      "clientDataJSON": "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiQWtvYmtiR3c0SXJlNHVCekg4THRjWjJrRUFWY0JiSXlNaXN2bTc0djc5TSIsIm9yaWdpbiI6Imh0dHBzOi8vd2ViYXV0aG4uaW8iLCJjcm9zc09yaWdpbiI6ZmFsc2V9"
+    }
+  },
+  {
+    "debug-note": "android-9-april-to-gmulhearn",
+    "id": "onBRKROXmf68G9rdI5pV0H_XzLV59YIDU4a58EBd9WQ=",
+    "rawId": "onBRKROXmf68G9rdI5pV0H_XzLV59YIDU4a58EBd9WQ",
+    "type": "public-key",
+    "response": {
+      "attestationObject": "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YVikfxDfKASenwzyPMKfE0J0IAFFMM3ZRdjMjW45ZhffsTRBAAAAAAAAAAAAAAAAAAAAAAAAAAAAIKJwUSkTl5n-vBva3SOaVdB_18y1efWCA1OGufBAXfVkpQECAyYgASFYINMs2iZIqNOxkOpxLzzd8HloWVSTwEuAmY5zVOMMXf4uIlggbNGJgzYySA3fBsR4WCHjs7jBgUygup-_i9roZMjJl00",
+      "clientDataJSON": "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoicW1VeXZGVHBNQjV1NHIyUDNqMjloZnp3RE1vVjY5TExadGU0YVNGd3pmOD0iLCJvcmlnaW4iOiJ3ZWJhdXRobi5pbyIsImNyb3NzT3JpZ2luIjpmYWxzZX0"
+    }
+  },
+  {
+    "debug-note": "fingerprint-to-gmulhearn",
+    "id": "ASha2Rt8irXq8-4pWaw6e19WwKhVOAJ80PYH2AD-mpYvUSp1_IIUD5zB9jXFqKNCNomqwcaF",
+    "rawId": "ASha2Rt8irXq8-4pWaw6e19WwKhVOAJ80PYH2AD-mpYvUSp1_IIUD5zB9jXFqKNCNomqwcaF",
+    "type": "public-key",
+    "response": {
+      "attestationObject": "o2NmbXRmcGFja2VkZ2F0dFN0bXSiY2FsZyZjc2lnWEcwRQIhAMIh6aljJ1-CtfEDgfYAm_BDtRxkgoLymRNKFiQ5_vxGAiBWN0cuSWBpsgZmA-CTsq1aDndjfTLzU0WciYNqAXZ4X2hhdXRoRGF0YVi6fxDfKASenwzyPMKfE0J0IAFFMM3ZRdjMjW45ZhffsTRFYHAyxq3OAAI1vMYKZIsLJfHwVQMANgEoWtkbfIq16vPuKVmsOntfVsCoVTgCfND2B9gA_pqWL1EqdfyCFA-cwfY1xaijQjaJqsHGhaUBAgMmIAEhWCAhiCRKcAzRDyKL4aCQcsNlYsr2fX6CZGll9J5QuboIhiJYICSyy9UYpC-GnEbniBRogFubFuKk7RH4PJY1NfKUwMCh",
+      "clientDataJSON": "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiazZEQ2MyNk9sWjMwWnlLTkhhRmNWeVppVVZjS2dWdGdMbC1vbTdabGRjWSIsIm9yaWdpbiI6Imh0dHBzOi8vZ211bGhlYXJuLm9yZyIsImNyb3NzT3JpZ2luIjpmYWxzZX0"
+    }
+  }
+]

@@ -50,7 +50,7 @@ fun String.CCDToString(): String {
 /**
  * https://www.w3.org/TR/webauthn/#clientdatajson-serialization
  */
-fun CollectedClientData.hash(): ByteArray {
+fun CollectedClientData.JSON(): String {
     var result = ""                                 // 1.
     result += "{\"type\":"                          // 2.
     result += type.CCDToString()                    // 3.
@@ -61,11 +61,20 @@ fun CollectedClientData.hash(): ByteArray {
     result += ",\"crossOrigin\":"                   // 8.
     result += "false"                               // 9.
     result += "}"                                   // 12.
-    println(result)
-    val rawResult = result.toByteArray(Charsets.UTF_8)
+    return result
+}
+
+/**
+ * https://www.w3.org/TR/webauthn/#clientdatajson-serialization
+ */
+fun CollectedClientData.hash(): ByteArray {
+    val rawResult = JSON().toByteArray(Charsets.UTF_8)
     return SHA256.Digest().digest(rawResult)
 }
 
+/**
+ * Transform into AuthenticatorMakeCredentialOptions object for the authenticator
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 fun CredentialCreationOptions.toAuthenticatorMakeCredentialOptions(origin: String): AuthenticatorMakeCredentialOptions {
     val clientData = CollectedClientData(
@@ -84,6 +93,7 @@ fun CredentialCreationOptions.toAuthenticatorMakeCredentialOptions(origin: Strin
 
 /**
  * TODO: BELOW IS TEMP FOR TESTING/DEBUGGING - REMOVE IN FUTURE
+ * Transformer for converting this AuthenticatorMakeCredentialOptions to DuoLabs format
  */
 fun AuthenticatorMakeCredentialOptions.toDuoLabsAuthn(
 ): duo.labs.webauthn.models.AuthenticatorMakeCredentialOptions {
@@ -107,4 +117,24 @@ fun AuthenticatorMakeCredentialOptions.toDuoLabsAuthn(
     duoLabs.requireUserVerification = false
 
     return duoLabs
+}
+
+fun createPublicKeyCredential(
+    rawId: ByteArray,
+    attestationObject: ByteArray,
+    clientDataJson: ByteArray
+): PublicKeyCredential {
+    val attestationResponse = AuthenticatorAttestationResponse(
+        clientDataJSON = clientDataJson,
+        attestationObject = attestationObject
+    )
+    return PublicKeyCredential(
+        rawId = rawId,
+        id = Base64.getUrlEncoder().encodeToString(rawId),
+        response = attestationResponse
+    )
+}
+
+fun PublicKeyCredential.JSON(): String {
+    return Gson().toJson(this) ?: "{}"
 }

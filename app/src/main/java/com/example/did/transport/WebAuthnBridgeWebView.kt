@@ -3,7 +3,13 @@ package com.example.did.transport
 import android.content.Context
 import android.os.Handler
 import android.webkit.WebView
+import com.example.did.data.AuthenticatorAttestationResponse
+import com.example.did.data.PublicKeyCredential
+import com.google.gson.Gson
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.IOException
+import java.util.*
 
 class WebAuthnBridgeWebView(
     private val context: Context,
@@ -18,7 +24,7 @@ class WebAuthnBridgeWebView(
     private var loading = false
 
     fun bindWebView() {
-        webView.addJavascriptInterface(WebAuthnJsInterface(context), BRIDGE_INTERFACE)
+        webView.addJavascriptInterface(WebAuthnJsInterface(context, this), BRIDGE_INTERFACE)
     }
 
     fun onWebViewRequest() {
@@ -31,13 +37,63 @@ class WebAuthnBridgeWebView(
 
     private fun injectJS() {
         try {
-            val bridgeJS = context.assets.open("WebAuthnBridge.js").reader(Charsets.UTF_8).readText()
+            val bridgeJS =
+                context.assets.open("WebAuthnBridge.js").reader(Charsets.UTF_8).readText()
             println("evaluating JS: $bridgeJS")
             webView.evaluateJavascript("javascript:($bridgeJS)()", null)
-        } catch (e : IOException) {
+        } catch (e: IOException) {
 
         }
     }
+
+    fun JSResolve(publicKeyCredential: PublicKeyCredential) {
+        println(publicKeyCredential)
+        val pkcString = Gson().toJson(publicKeyCredential)
+        val hwSecurityJSONObj = publicKeyCredentialToJson(publicKeyCredential)
+        println(hwSecurityJSONObj)
+        webView.post {
+            webView.evaluateJavascript("javascript:webauthnbridge.handleResolve($hwSecurityJSONObj)", null)
+        }
+    }
+
+    /**
+     * TODO: HWSECURITY
+     */
+    private fun publicKeyCredentialToJson(publicKeyCredential: PublicKeyCredential): JSONObject? {
+        return try {
+            val result = JSONObject()
+            result.put("type", publicKeyCredential.type)
+            result.put("id", publicKeyCredential.id)
+            result.put("response", authenticatorResponseToJson(publicKeyCredential.response))
+            result
+        } catch (e: JSONException) {
+            throw IllegalArgumentException(e)
+        }
+    }
+
+    /**
+     * TODO: HWSECURITY
+     */
+    private fun authenticatorResponseToJson(authenticatorResponse: AuthenticatorAttestationResponse): JSONObject? {
+        return try {
+            val result = JSONObject()
+            result.put(
+                "clientDataJsonB64",
+                Base64.getUrlEncoder().encodeToString(authenticatorResponse.clientDataJSON)
+            )
+
+            val authenticatorAttestationResponse: AuthenticatorAttestationResponse =
+                authenticatorResponse as AuthenticatorAttestationResponse
+            val attestationObjectB64: String = Base64.getUrlEncoder().encodeToString(
+                authenticatorAttestationResponse.attestationObject
+            )
+            result.put("attestationObjectB64", attestationObjectB64)
+            result
+        } catch (e: JSONException) {
+            throw java.lang.IllegalArgumentException(e)
+        }
+    }
+
 
     fun onPageStart() {
         loading = true
