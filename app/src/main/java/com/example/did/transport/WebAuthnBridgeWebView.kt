@@ -25,7 +25,7 @@ class WebAuthnBridgeWebView(
 
     var origin: String = ""
     private var loading = false
-    public val authenticator = DIDAuthenticator(context)
+    val authenticator = DIDAuthenticator(context)
 
     fun bindWebView() {
         webView.addJavascriptInterface(WebAuthnJsInterface(this), BRIDGE_INTERFACE)
@@ -87,7 +87,7 @@ class WebAuthnBridgeWebView(
 
 
     /**
-     * TODO: HWSECURITY
+     * TODO: remove HWSECURITY
      */
     private fun publicKeyCredentialToJson(publicKeyCredentialAttestationResponse: PublicKeyCredentialAttestationResponse): JSONObject? {
         return try {
@@ -106,7 +106,7 @@ class WebAuthnBridgeWebView(
     }
 
     /**
-     * TODO: HWSECURITY
+     * TODO: remove HWSECURITY
      */
     private fun authenticatorResponseToJson(authenticatorResponse: AuthenticatorAttestationResponse): JSONObject? {
         return try {
@@ -129,7 +129,7 @@ class WebAuthnBridgeWebView(
     }
 
     /**
-     * TODO hwsecurity
+     * TODO remove hwsecurity
      */
     private fun publicKeyCredentialAssertionToJson(publicKeyCredential: PublicKeyCredentialAssertionResponse): JSONObject? {
         return try {
@@ -147,7 +147,7 @@ class WebAuthnBridgeWebView(
     }
 
     /**
-     * TODO hwsecurity
+     * TODO remove hwsecurity
      */
     private fun authenticatorAssertionResponseToJson(authenticatorResponse: AuthenticatorAssertionResponse): JSONObject? {
         return try {

@@ -12,6 +12,7 @@ import dagger.android.support.AndroidSupportInjection
 import androidx.fragment.app.Fragment
 import com.example.did.R
 import com.example.did.transport.WebAuthnBridgeWebView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_browser.*
 import javax.inject.Inject
 
@@ -70,6 +71,18 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
                 super.onPageStarted(view, url, favicon)
             }
         }
+
+        webViewer.webChromeClient = object : WebChromeClient() {
+            override fun onJsAlert(
+                view: WebView?,
+                url: String?,
+                message: String?,
+                result: JsResult?
+            ): Boolean {
+                showSnackbar("alert: $message")
+                return super.onJsAlert(view, url, message, result)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -107,6 +120,11 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
         return false
     }
     // END SEARCHBAR LISTENER
+
+
+    private fun showSnackbar(status: String) {
+        Snackbar.make(this.requireView(), status, Snackbar.LENGTH_LONG).show()
+    }
 
     // endregion
 
