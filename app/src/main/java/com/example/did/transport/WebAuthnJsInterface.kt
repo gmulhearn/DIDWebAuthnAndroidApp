@@ -25,11 +25,10 @@ class WebAuthnJsInterface(private val bridge: WebAuthnBridgeWebView) {
             origin = bridge.origin
         )
 
-        (bridge.authenticator.getAssertion(
+        bridge.JSResolve(bridge.authenticator.getAssertion(
             getAssertionOpts,
             clientData.JSON()
         ))
-        // TODO - do something with this
     }
 
     @JavascriptInterface

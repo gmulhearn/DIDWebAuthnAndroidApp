@@ -124,24 +124,45 @@ fun AuthenticatorMakeCredentialOptions.toDuoLabsAuthn(
     return duoLabs
 }
 
-fun createPublicKeyCredential(
+fun createPublicKeyCredentialAttestationResponse(
     rawId: ByteArray,
     attestationObject: ByteArray,
     clientDataJson: ByteArray
-): PublicKeyCredential {
+): PublicKeyCredentialAttestationResponse {
     val attestationResponse = AuthenticatorAttestationResponse(
         clientDataJSON = clientDataJson,
         attestationObject = attestationObject
     )
-    return PublicKeyCredential(
+    return PublicKeyCredentialAttestationResponse(
         rawId = rawId,
         id = Base64.getUrlEncoder().encodeToString(rawId).removeSuffix("="),
         response = attestationResponse
     )
 }
 
-fun PublicKeyCredential.JSON(): String {
+fun PublicKeyCredentialAttestationResponse.JSON(): String {
     return Gson().toJson(this) ?: "{}"
+}
+
+fun createPublicKeyCredentialAssertionResponse(
+    rawId: ByteArray,
+    authenticatorData: ByteArray,
+    clientDataJson: ByteArray,
+    signature: ByteArray,
+    userHandle: ByteArray
+): PublicKeyCredentialAssertionResponse {
+    val assertionResponse = AuthenticatorAssertionResponse(
+        authenticatorData = authenticatorData,
+        clientDataJSON = clientDataJson,
+        signature = signature,
+        userHandle = userHandle
+    )
+
+    return PublicKeyCredentialAssertionResponse(
+        rawId = rawId,
+        id = Base64.getUrlEncoder().encodeToString(rawId).removeSuffix("="),
+        response = assertionResponse
+    )
 }
 
 /*******************************************************************/

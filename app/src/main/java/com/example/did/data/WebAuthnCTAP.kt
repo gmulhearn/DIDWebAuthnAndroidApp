@@ -1,5 +1,6 @@
 package com.example.did.data
 
+import android.os.UserHandle
 import com.google.gson.annotations.SerializedName
 
 /************************ WEBAUTHN **************************/
@@ -91,7 +92,8 @@ data class AuthenticatorAttestationResponse(
     val attestationObject: ByteArray
 )
 
-data class PublicKeyCredential(
+// TODO - should probably convert to inheritted / interface with other publickeycredential
+data class PublicKeyCredentialAttestationResponse(
     val rawId: ByteArray,
     val id: String,
     val type: String = "public-key",
@@ -107,6 +109,22 @@ data class AuthenticatorGetAssertionOptions(
     val allowCredentialDescriptorList: List<AllowCredentialDescriptor>,
     val requireUserPresence: Boolean,
     val requireUserVerification: Boolean
+)
+
+data class AuthenticatorAssertionResponse(
+    val authenticatorData: ByteArray,
+    val clientDataJSON: ByteArray,
+    val signature: ByteArray,
+    val userHandle: ByteArray
+)
+
+// TODO - should probably convert to inheritted / interface with other publickeycredential
+data class PublicKeyCredentialAssertionResponse(
+    val rawId: ByteArray,
+    val id: String,
+    val type: String = "public-key",
+    val response: AuthenticatorAssertionResponse
+
 )
 
 /************************** CTAP ****************************/

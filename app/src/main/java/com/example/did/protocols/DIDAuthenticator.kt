@@ -4,7 +4,8 @@ import android.content.Context
 import android.util.Pair
 import com.example.did.data.AuthenticatorGetAssertionOptions
 import com.example.did.data.AuthenticatorMakeCredentialOptions
-import com.example.did.data.PublicKeyCredential
+import com.example.did.data.PublicKeyCredentialAssertionResponse
+import com.example.did.data.PublicKeyCredentialAttestationResponse
 import duo.labs.webauthn.Authenticator
 
 class DIDAuthenticator(
@@ -15,14 +16,14 @@ class DIDAuthenticator(
     fun makeCredentials(
         credOpts: AuthenticatorMakeCredentialOptions,
         clientDataJson: String
-    ): PublicKeyCredential {
+    ): PublicKeyCredentialAttestationResponse {
         return duoLabsMakeCredentials(credOpts, clientDataJson)
     }
 
     private fun duoLabsMakeCredentials(
         credOpts: AuthenticatorMakeCredentialOptions,
         clientDataJson: String
-    ): PublicKeyCredential {
+    ): PublicKeyCredentialAttestationResponse {
         val duoLabsMakeCreds = credOpts.toDuoLabsAuthn()
         println(duoLabsMakeCreds.credTypesAndPubKeyAlgs)
         println(
@@ -38,7 +39,7 @@ class DIDAuthenticator(
         println(attestationObject.credentialId)
         println(attestationObject.credentialIdBase64)
         println(attestationObject.asCBOR())
-        return createPublicKeyCredential(
+        return createPublicKeyCredentialAttestationResponse(
             rawId = attestationObject.credentialId,
             attestationObject = attestationObject.asCBOR(),
             clientDataJson = clientDataJson.toByteArray(Charsets.UTF_8)
@@ -47,18 +48,26 @@ class DIDAuthenticator(
 
     fun getAssertion(
         assertionOpts: AuthenticatorGetAssertionOptions,
-        clientDataJson: String  // TODO - check if i need this
-    ) {
-        duoLabsGetAssertion(assertionOpts, clientDataJson)
+        clientDataJson: String
+    ): PublicKeyCredentialAssertionResponse {
+        return duoLabsGetAssertion(assertionOpts, clientDataJson)
     }
 
     fun duoLabsGetAssertion(
         assertionOpts: AuthenticatorGetAssertionOptions,
         clientDataJson: String
-    ) {
+    ): PublicKeyCredentialAssertionResponse {
         val duoLabsGetAssertionOpts = assertionOpts.toDuoLabAuthn()
 
-        val something =
-            duoLabsAuthn.getAssertion(duoLabsGetAssertionOpts, null)  // todo: credentialselector...
+        val assertionResult =
+            duoLabsAuthn.getAssertion(duoLabsGetAssertionOpts, null)
+
+        return createPublicKeyCredentialAssertionResponse(
+            rawId = assertionResult.selectedCredentialId,
+            authenticatorData = assertionResult.authenticatorData,
+            clientDataJson = clientDataJson.toByteArray(Charsets.UTF_8),
+            signature = assertionResult.signature,
+            userHandle = assertionResult.selectedCredentialUserHandle
+        )
     }
 }
