@@ -18,6 +18,8 @@ import java.security.SecureRandom
 import java.util.*
 import com.example.did.protocols.BIP0039.generateMnemonic
 import com.google.gson.Gson
+import org.spongycastle.jcajce.provider.asymmetric.ec.KeyFactorySpi
+import java.security.spec.KeySpec
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -250,6 +252,9 @@ class IndyTests {
         val obj = Gson().fromJson(result, DIDRequestConnection::class.java)
         println(obj.did)
         println(obj)
+    }
 
+    @Test
+    fun keyspecTest() {
     }
 }
