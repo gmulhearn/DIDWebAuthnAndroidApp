@@ -2,6 +2,7 @@ package com.example.did.protocols
 
 import android.content.Context
 import android.util.Pair
+import com.example.did.data.AuthenticatorGetAssertionOptions
 import com.example.did.data.AuthenticatorMakeCredentialOptions
 import com.example.did.data.PublicKeyCredential
 import duo.labs.webauthn.Authenticator
@@ -9,6 +10,8 @@ import duo.labs.webauthn.Authenticator
 class DIDAuthenticator(
     private val context: Context
 ) {
+    private val duoLabsAuthn = Authenticator(context, false, false)
+
     fun makeCredentials(
         credOpts: AuthenticatorMakeCredentialOptions,
         clientDataJson: String
@@ -30,7 +33,6 @@ class DIDAuthenticator(
                 )
             )
         ) // TODO
-        val duoLabsAuthn = Authenticator(context, false, false)
         val attestationObject = duoLabsAuthn.makeCredential(duoLabsMakeCreds)
         println(attestationObject)
         println(attestationObject.credentialId)
@@ -41,5 +43,22 @@ class DIDAuthenticator(
             attestationObject = attestationObject.asCBOR(),
             clientDataJson = clientDataJson.toByteArray(Charsets.UTF_8)
         )
+    }
+
+    fun getAssertion(
+        assertionOpts: AuthenticatorGetAssertionOptions,
+        clientDataJson: String  // TODO - check if i need this
+    ) {
+        duoLabsGetAssertion(assertionOpts, clientDataJson)
+    }
+
+    fun duoLabsGetAssertion(
+        assertionOpts: AuthenticatorGetAssertionOptions,
+        clientDataJson: String
+    ) {
+        val duoLabsGetAssertionOpts = assertionOpts.toDuoLabAuthn()
+
+        val something =
+            duoLabsAuthn.getAssertion(duoLabsGetAssertionOpts, null)  // todo: credentialselector...
     }
 }

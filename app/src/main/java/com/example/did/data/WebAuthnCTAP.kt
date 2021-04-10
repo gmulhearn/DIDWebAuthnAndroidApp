@@ -40,6 +40,22 @@ data class PublicKeyCredentialCreationOptions(
     val publicKey: CredentialCreationOptions
 )
 
+data class AllowCredentialDescriptor(
+    val type: String = "public-key",
+    @SerializedName("id") val mappedId: Map<String, Int>
+)
+
+data class CredentialRequestOptions(
+    @SerializedName("challenge") val mappedChallenge: Map<String, Int>,
+    val timeout: Int,
+    val rpId: String,
+    val allowCredentials: List<AllowCredentialDescriptor>
+)
+
+data class PublicKeyCredentialRequestOptions(
+    val publicKey: CredentialRequestOptions
+)
+
 /************************ WEBAUTHN **************************/
 
 
@@ -80,6 +96,17 @@ data class PublicKeyCredential(
     val id: String,
     val type: String = "public-key",
     val response: AuthenticatorAttestationResponse
+)
+
+/**
+ * https://www.w3.org/TR/webauthn/#sctn-op-get-assertion
+ */
+data class AuthenticatorGetAssertionOptions(
+    val rpId: String,
+    val clientDataHash: ByteArray,
+    val allowCredentialDescriptorList: List<AllowCredentialDescriptor>,
+    val requireUserPresence: Boolean,
+    val requireUserVerification: Boolean
 )
 
 /************************** CTAP ****************************/

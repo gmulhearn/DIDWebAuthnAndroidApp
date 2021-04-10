@@ -5,6 +5,7 @@ import android.os.Handler
 import android.webkit.WebView
 import com.example.did.data.AuthenticatorAttestationResponse
 import com.example.did.data.PublicKeyCredential
+import com.example.did.protocols.DIDAuthenticator
 import com.google.gson.Gson
 import org.json.JSONException
 import org.json.JSONObject
@@ -22,9 +23,11 @@ class WebAuthnBridgeWebView(
 
     var origin: String = ""
     private var loading = false
+    public val authenticator = DIDAuthenticator(context)
 
     fun bindWebView() {
-        webView.addJavascriptInterface(WebAuthnJsInterface(context, this), BRIDGE_INTERFACE)
+        webView.addJavascriptInterface(WebAuthnJsInterface(this), BRIDGE_INTERFACE)
+
     }
 
     fun onWebViewRequest() {
@@ -83,7 +86,7 @@ class WebAuthnBridgeWebView(
             )
 
             val authenticatorAttestationResponse: AuthenticatorAttestationResponse =
-                authenticatorResponse as AuthenticatorAttestationResponse
+                authenticatorResponse
             val attestationObjectB64: String = Base64.getUrlEncoder().encodeToString(
                 authenticatorAttestationResponse.attestationObject
             )

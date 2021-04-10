@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.did.data.*
 import com.google.gson.Gson
+import duo.labs.webauthn.models.PublicKeyCredentialDescriptor
 import duo.labs.webauthn.models.RpEntity
 import duo.labs.webauthn.models.UserEntity
 import org.spongycastle.jcajce.provider.digest.SHA256
@@ -15,14 +16,6 @@ fun Map<String, Int>.toByteArray(): ByteArray {
         array[entry.key.toInt()] = entry.value.toByte()
     }
     return array
-}
-
-fun UserInfo.getId(): ByteArray {
-    return mappedId.toByteArray()
-}
-
-fun CredentialCreationOptions.getChallenge(): ByteArray {
-    return mappedChallenge.toByteArray()
 }
 
 /**
@@ -72,6 +65,16 @@ fun CollectedClientData.hash(): ByteArray {
     return SHA256.Digest().digest(rawResult)
 }
 
+/***************************** Credential Creation ***********************/
+
+fun UserInfo.getId(): ByteArray {
+    return mappedId.toByteArray()
+}
+
+fun CredentialCreationOptions.getChallenge(): ByteArray {
+    return mappedChallenge.toByteArray()
+}
+
 /**
  * Transform into AuthenticatorMakeCredentialOptions object for the authenticator
  */
@@ -79,7 +82,8 @@ fun CollectedClientData.hash(): ByteArray {
 fun CredentialCreationOptions.toAuthenticatorMakeCredentialOptions(origin: String): AuthenticatorMakeCredentialOptions {
     val clientData = CollectedClientData(
         type = "webauthn.create",
-        challengeBase64URL = Base64.getUrlEncoder().encodeToString(getChallenge()).removeSuffix("="),
+        challengeBase64URL = Base64.getUrlEncoder().encodeToString(getChallenge())
+            .removeSuffix("="),
         origin = origin
     )
 
@@ -110,7 +114,8 @@ fun AuthenticatorMakeCredentialOptions.toDuoLabsAuthn(
     duoLabs.rpEntity = duoLabsRP
     duoLabs.userEntity = duoLabsUser
 
-    duoLabs.credTypesAndPubKeyAlgs = pubKeyCredParams as MutableList<android.util.Pair<String, Long>>
+    duoLabs.credTypesAndPubKeyAlgs =
+        pubKeyCredParams as MutableList<android.util.Pair<String, Long>>
     duoLabs.excludeCredentialDescriptorList = mutableListOf()
     duoLabs.requireResidentKey = false
     duoLabs.requireUserPresence = true  // ?? for wellformed()
@@ -138,3 +143,55 @@ fun createPublicKeyCredential(
 fun PublicKeyCredential.JSON(): String {
     return Gson().toJson(this) ?: "{}"
 }
+
+/*******************************************************************/
+
+/***************************** Credential Fetch ***********************/
+
+fun AllowCredentialDescriptor.getId(): ByteArray {
+    return mappedId.toByteArray()
+}
+
+fun CredentialRequestOptions.getChallenge(): ByteArray {
+    return mappedChallenge.toByteArray()
+}
+
+fun CredentialRequestOptions.toAuthenticatorGetAssertionOptions(origin: String): AuthenticatorGetAssertionOptions {
+    val clientData = CollectedClientData(
+        type = "webauthn.get",
+        challengeBase64URL = Base64.getUrlEncoder().encodeToString(getChallenge())
+            .removeSuffix("="),
+        origin = origin
+    )
+    val clientDataHash = clientData.hash()
+
+    return AuthenticatorGetAssertionOptions(
+        rpId = origin.split("//")[1].split("/").first(), // TODO need to check this works
+        clientDataHash = clientDataHash,
+        allowCredentialDescriptorList = allowCredentials,
+        requireUserPresence = true,
+        requireUserVerification = false
+    )
+}
+
+/**
+ * todo: temp func to convert for duolabs authenticator
+ */
+fun AuthenticatorGetAssertionOptions.toDuoLabAuthn(): duo.labs.webauthn.models.AuthenticatorGetAssertionOptions {
+    val duoLabs = duo.labs.webauthn.models.AuthenticatorGetAssertionOptions()
+    duoLabs.clientDataHash = clientDataHash
+    duoLabs.requireUserPresence = requireUserPresence
+    duoLabs.requireUserVerification = requireUserVerification
+    duoLabs.rpId = rpId
+    duoLabs.allowCredentialDescriptorList = allowCredentialDescriptorList.map {
+        PublicKeyCredentialDescriptor(
+            it.type,
+            it.getId(),
+            mutableListOf()  // TODO - check this is ok
+        )
+    }
+
+    return duoLabs
+}
+
+/*******************************************************************/
