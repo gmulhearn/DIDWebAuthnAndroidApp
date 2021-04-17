@@ -14,24 +14,6 @@ import java.util.*
 class WebAuthnJsInterface(private val bridge: WebAuthnBridgeWebView) {
 
     @JavascriptInterface
-    fun publicKeyCredentialGet(data: String) {
-        println(data)
-        val opts = Gson().fromJson(data, PublicKeyCredentialRequestOptions::class.java)
-        println(opts)
-        val getAssertionOpts = opts.publicKey.toAuthenticatorGetAssertionOptions(bridge.origin)
-        val clientData = CollectedClientData(
-            type = "webauthn.get",
-            challengeBase64URL = Base64.getUrlEncoder().encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
-            origin = bridge.origin
-        )
-
-        bridge.JSResolve(bridge.authenticator.getAssertion(
-            getAssertionOpts,
-            clientData.JSON()
-        ))
-    }
-
-    @JavascriptInterface
     fun publicKeyCredentialCreate(data: String) {
         println(data)
         val opts = Gson().fromJson(data, PublicKeyCredentialCreationOptions::class.java)
@@ -44,8 +26,26 @@ class WebAuthnJsInterface(private val bridge: WebAuthnBridgeWebView) {
             challengeBase64URL = Base64.getUrlEncoder().encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
             origin = bridge.origin
         )
-        bridge.JSResolve(bridge.authenticator.makeCredentials(
+        bridge.resolveAttestation(bridge.authenticator.makeCredentials(
             makeCredOpts,
+            clientData.JSON()
+        ))
+    }
+
+    @JavascriptInterface
+    fun publicKeyCredentialGet(data: String) {
+        println(data)
+        val opts = Gson().fromJson(data, PublicKeyCredentialRequestOptions::class.java)
+        println(opts)
+        val getAssertionOpts = opts.publicKey.toAuthenticatorGetAssertionOptions(bridge.origin)
+        val clientData = CollectedClientData(
+            type = "webauthn.get",
+            challengeBase64URL = Base64.getUrlEncoder().encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
+            origin = bridge.origin
+        )
+
+        bridge.resolveAssertion(bridge.authenticator.getAssertion(
+            getAssertionOpts,
             clientData.JSON()
         ))
     }
