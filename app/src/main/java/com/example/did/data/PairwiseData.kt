@@ -13,7 +13,7 @@ data class PairwiseData(
     val theirVerkey: String,
     val myVerkey: String,
     val theirRoutingKeys: List<String>?,
-    val userDeleted: Boolean?
+    var userDeleted: Boolean?
 ) : Parcelable
 
 @Keep

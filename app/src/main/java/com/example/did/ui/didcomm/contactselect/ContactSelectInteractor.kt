@@ -114,6 +114,24 @@ class ContactSelectInteractor @Inject constructor(
         router.toChat(pairwiseContact)
     }
 
+    override fun deleteContact(pairwiseContact: PairwiseContact) {
+        launch {
+            val metadata = Gson().toJson(
+                PairwiseData(
+                    pairwiseContact.metadata.label,
+                    pairwiseContact.metadata.theirEndpoint,
+                    pairwiseContact.metadata.theirVerkey,
+                    pairwiseContact.metadata.myVerkey,
+                    pairwiseContact.metadata.theirRoutingKeys,
+                    userDeleted = true
+                )
+            ).replace("""\u003d""", "=")
+            Pairwise.setPairwiseMetadata(wallet, pairwiseContact.theirDid, metadata).get()
+
+            getPairwiseContacts()
+        }
+    }
+
     // endregion
 
     // region interactor inputs

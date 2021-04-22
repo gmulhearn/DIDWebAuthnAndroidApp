@@ -28,9 +28,14 @@ class ContactSelectFragment : Fragment(), ContactSelectContract.View {
     internal lateinit var presenter: ContactSelectContract.Presenter
 
     internal var adapter =
-        ContactAdapter { pairwiseContact ->
-            contactClicked(pairwiseContact)
-        }
+        ContactAdapter(
+            { pairwiseContact -> contactClicked(pairwiseContact) },
+            { pairwiseContact -> deleteClicked(pairwiseContact) }
+        )
+
+    private fun deleteClicked(pairwiseContact: PairwiseContact) {
+        presenter.deleteClicked(pairwiseContact)
+    }
 
     private fun contactClicked(pairwiseContact: PairwiseContact) {
         presenter.contactClicked(pairwiseContact)
@@ -51,7 +56,11 @@ class ContactSelectFragment : Fragment(), ContactSelectContract.View {
 
     // region view setup and state lifecycle
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_contact_select, container, false)
     }
 
@@ -65,7 +74,8 @@ class ContactSelectFragment : Fragment(), ContactSelectContract.View {
             presenter.addContactClicked()
         }
 
-        ContactSelectList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        ContactSelectList.layoutManager =
+            LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         ContactSelectList.adapter = adapter
 
         // Notify Presenter that the View is ready

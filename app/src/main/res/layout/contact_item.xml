@@ -16,7 +16,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/colorPrimarySurface">
+    android:background="@color/ic_launcher_background">
 
     <ImageView
         android:id="@+id/nextArrow"
@@ -31,17 +31,20 @@
         app:srcCompat="?attr/homeAsUpIndicator" />
 
     <ImageView
-        android:id="@+id/contact_image"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:id="@+id/deleteButton"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_margin="8dp"
-        android:background="#00FF0000"
+        android:background="#00FFFFFF"
+        android:backgroundTint="#FFFFFF"
         android:contentDescription="a"
+        android:foregroundTint="#FFFFFF"
+        android:tintMode="multiply"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/contactName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/sym_action_chat" />
+        app:srcCompat="@android:drawable/ic_menu_delete" />
 
     <TextView
         android:id="@+id/contactName"
@@ -50,8 +53,9 @@
         android:layout_margin="8dp"
         android:text="Test"
         android:textAppearance="?attr/textAppearanceHeadline5"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/contact_image"
+        app:layout_constraintStart_toEndOf="@+id/deleteButton"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

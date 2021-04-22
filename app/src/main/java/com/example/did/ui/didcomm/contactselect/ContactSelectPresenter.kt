@@ -45,6 +45,10 @@ class ContactSelectPresenter @Inject constructor(
         interactor.toChat(pairwiseContact)
     }
 
+    override fun deleteClicked(pairwiseContact: PairwiseContact) {
+        interactor.deleteContact(pairwiseContact)
+    }
+
     // endregion
 
     // region view event handlers

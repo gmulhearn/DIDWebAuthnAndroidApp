@@ -55,6 +55,7 @@ interface ContactSelectContract {
         fun saveState(outState: Bundle)
         fun addContactClicked()
         fun contactClicked(pairwiseContact: PairwiseContact)
+        fun deleteClicked(pairwiseContact: PairwiseContact)
     }
 
     /**
@@ -93,6 +94,7 @@ interface ContactSelectContract {
         fun savePendingState(outState: Bundle)
         fun toAddContact()
         fun toChat(pairwiseContact: PairwiseContact)
+        fun deleteContact(pairwiseContact: PairwiseContact)
     }
 
     /**

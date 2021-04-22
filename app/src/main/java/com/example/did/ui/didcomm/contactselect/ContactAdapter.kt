@@ -10,19 +10,33 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import com.example.did.R
 import com.example.did.data.PairwiseContact
+import kotlinx.android.synthetic.main.contact_item.view.*
 
-class ContactAdapter(private val onClick: (PairwiseContact) -> Unit) :
+class ContactAdapter(
+    private val onClick: (PairwiseContact) -> Unit,
+    private val onDeleteClick: (PairwiseContact) -> Unit
+) :
     ListAdapter<PairwiseContact, ContactAdapter.ContactViewHolder>(
         ContactDiffCallback
     ) {
 
     /* ViewHolder for Wallet, takes in the inflated view and the onClick behavior. */
-    class ContactViewHolder(itemView: View, val onClick: (PairwiseContact) -> Unit) :
+    class ContactViewHolder(
+        itemView: View,
+        val onClick: (PairwiseContact) -> Unit,
+        val onDeleteClick: (PairwiseContact) -> Unit
+    ) :
         RecyclerView.ViewHolder(itemView) {
         private val contactTextView: TextView = itemView.findViewById(R.id.contactName)
         private var currentContact: PairwiseContact? = null
 
         init {
+            itemView.deleteButton.setOnClickListener {
+                currentContact?.let {
+                    onDeleteClick(it)
+                }
+            }
+
             itemView.setOnClickListener {
                 currentContact?.let {
                     onClick(it)
@@ -44,8 +58,9 @@ class ContactAdapter(private val onClick: (PairwiseContact) -> Unit) :
             .inflate(R.layout.contact_item, parent, false)
         return ContactViewHolder(
             view,
-            onClick
-        )
+            onClick,
+            onDeleteClick
+            )
     }
 
     /* Gets current flower and uses it to bind view. */
