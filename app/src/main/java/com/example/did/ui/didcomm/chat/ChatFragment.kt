@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.did.R
 import com.example.did.data.DIDCommMessage
 import com.example.did.ui.didcomm.contactselect.ContactAdapter
+import kotlinx.android.synthetic.main.chat_info_popup.view.*
 import kotlinx.android.synthetic.main.chat_input_item.view.*
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_contact_select.*
@@ -65,6 +66,10 @@ class ChatFragment : Fragment(), ChatContract.View {
             messageInput.textField.setText("")
         }
 
+        infoButton.setOnClickListener {
+            presenter.infoButtonClicked()
+        }
+
         chatTitle.text = navigationArgs.pairwiseContact.metadata.label
 
         val linearLayoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
@@ -94,6 +99,15 @@ class ChatFragment : Fragment(), ChatContract.View {
         messageList.post {
             messageList.scrollToPosition(updatedMessageList.size)
         }
+    }
+
+    override fun showChatInfo(data: String) {
+        chatInfoPopup.chatInformation.text = data
+        chatInfoPopup.visibility = View.VISIBLE
+    }
+
+    override fun hideChatInfo() {
+        chatInfoPopup.visibility = View.GONE
     }
 
     // endregion

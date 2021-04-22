@@ -14,6 +14,8 @@ interface ChatContract {
      */
     interface View {
         fun updateMessagesList(messageList: MutableList<MessageDisplayModel>)
+        fun showChatInfo(data: String)
+        fun hideChatInfo()
 
     }
 
@@ -53,6 +55,7 @@ interface ChatContract {
          */
         fun saveState(outState: Bundle)
         fun sendClicked(textField: String)
+        fun infoButtonClicked()
     }
 
     /**
@@ -90,6 +93,7 @@ interface ChatContract {
          */
         fun savePendingState(outState: Bundle)
         fun sendMessage(message: String)
+        fun chatInfoRequested()
 
     }
 
@@ -103,6 +107,7 @@ interface ChatContract {
          */
         fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
         fun updateMessages(messageList: MutableList<MessageDisplayModel>)
+        fun updateChatInfoState(showing: Boolean, data: String)
 
     }
 

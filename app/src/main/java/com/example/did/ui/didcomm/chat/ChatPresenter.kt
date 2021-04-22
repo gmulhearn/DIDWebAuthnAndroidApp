@@ -40,6 +40,10 @@ class ChatPresenter @Inject constructor(
         interactor.sendMessage(textField)
     }
 
+    override fun infoButtonClicked() {
+        interactor.chatInfoRequested()
+    }
+
     // endregion
 
     // region view event handlers
@@ -56,6 +60,14 @@ class ChatPresenter @Inject constructor(
 
     override fun updateMessages(messageList: MutableList<MessageDisplayModel>) {
         view.updateMessagesList(messageList)
+    }
+
+    override fun updateChatInfoState(showing: Boolean, data: String) {
+        if (showing) {
+            view.showChatInfo(data)
+        } else {
+            view.hideChatInfo()
+        }
     }
 
     // TODO Add interactor outputs

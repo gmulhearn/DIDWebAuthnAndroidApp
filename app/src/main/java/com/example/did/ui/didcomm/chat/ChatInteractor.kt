@@ -35,6 +35,8 @@ class ChatInteractor @Inject constructor(
 
     internal val messageList: MutableList<MessageDisplayModel> = mutableListOf()
 
+    internal var chatInfoShowing: Boolean = false
+
     // region viper lifecycle
 
     override fun attachOutput(output: ChatContract.InteractorOutput) {
@@ -116,6 +118,26 @@ class ChatInteractor @Inject constructor(
             } else {
                 // failed
             }
+        }
+    }
+
+    override fun chatInfoRequested() {
+        if (chatInfoShowing) {
+            chatInfoShowing = false
+            output.updateChatInfoState(showing = false, data = "")
+        } else {
+            chatInfoShowing = true
+            val dataString = """
+                myDid: ${pairwiseContact.myDid}
+                myVerkey: ${pairwiseContact.metadata.myVerkey}
+                
+                theirDid: ${pairwiseContact.theirDid}
+                theirVerkey: ${pairwiseContact.metadata.theirVerkey}
+                
+                theirEndpoint: ${pairwiseContact.metadata.theirEndpoint}
+                theirRoutingKeys: ${pairwiseContact.metadata.theirRoutingKeys ?: emptyList()}
+            """.trimIndent()
+            output.updateChatInfoState(showing = true, data = dataString)
         }
     }
 
