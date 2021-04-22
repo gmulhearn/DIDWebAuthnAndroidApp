@@ -3,7 +3,9 @@ package com.example.did.ui.didcomm.contactselect
 import android.graphics.Bitmap
 import android.os.Bundle
 import com.example.did.common.ObjectDelegate
+import com.example.did.data.DidInfo
 import com.example.did.data.PairwiseContact
+import org.hyperledger.indy.sdk.did.Did
 import javax.inject.Inject
 
 /**
@@ -47,6 +49,10 @@ class ContactSelectPresenter @Inject constructor(
 
     override fun deleteClicked(pairwiseContact: PairwiseContact) {
         interactor.deleteContact(pairwiseContact)
+    }
+
+    override fun browserClicked() {
+        router.toBrowser(DidInfo("todo", "todo")) // TODO
     }
 
     // endregion

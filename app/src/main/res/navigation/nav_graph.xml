@@ -82,6 +82,9 @@
         <action
             android:id="@+id/action_contactSelectFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_contactSelectFragment_to_browserFragment"
+            app:destination="@id/browserFragment" />
     </fragment>
     <fragment
         android:id="@+id/addContactFragment"

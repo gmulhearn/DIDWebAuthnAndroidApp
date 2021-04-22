@@ -56,6 +56,7 @@ interface ContactSelectContract {
         fun addContactClicked()
         fun contactClicked(pairwiseContact: PairwiseContact)
         fun deleteClicked(pairwiseContact: PairwiseContact)
+        fun browserClicked()
     }
 
     /**
@@ -119,5 +120,6 @@ interface ContactSelectContract {
 
         fun toAddContact(didInfo: DidInfo)
         fun toChat(pairwiseContact: PairwiseContact)
+        fun toBrowser(didInfo: DidInfo)
     }
 }

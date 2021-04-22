@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.did.data.DidInfo
 import com.example.did.data.PairwiseContact
+import com.example.did.ui.didselect.DIDSelectFragmentDirections
 import javax.inject.Inject
 
 /**
@@ -25,6 +26,13 @@ class ContactSelectRouter @Inject constructor(
             pairwiseContact
         )
 
+        findNavController().navigate(directions)
+    }
+
+    override fun toBrowser(didInfo: DidInfo) {
+        val directions = ContactSelectFragmentDirections.actionContactSelectFragmentToBrowserFragment(
+            didInfo
+        )
         findNavController().navigate(directions)
     }
 
