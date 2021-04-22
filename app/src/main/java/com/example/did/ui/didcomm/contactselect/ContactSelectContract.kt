@@ -15,7 +15,7 @@ interface ContactSelectContract {
      */
     interface View {
         fun updateContactList(contacts: List<PairwiseContact>)
-
+        fun onWalletLoaded()
     }
 
     /**
@@ -107,6 +107,7 @@ interface ContactSelectContract {
 
         // TODO
         fun updateContactList(myContacts: List<PairwiseContact>)
+        fun walletFinishedLoading()
     }
 
     /**

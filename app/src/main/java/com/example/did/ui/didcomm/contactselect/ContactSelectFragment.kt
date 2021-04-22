@@ -13,10 +13,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.did.R
+import com.example.did.common.viewhelpers.animateVisibilityIn
+import com.example.did.common.viewhelpers.animateVisibilityOut
 import com.example.did.data.PairwiseContact
-import com.example.did.ui.didselect.DIDAdapter
 import kotlinx.android.synthetic.main.fragment_contact_select.*
-import kotlinx.android.synthetic.main.fragment_d_i_ds.*
 import javax.inject.Inject
 
 /**
@@ -69,6 +69,7 @@ class ContactSelectFragment : Fragment(), ContactSelectContract.View {
         ContactSelectList.adapter = adapter
 
         // Notify Presenter that the View is ready
+        showWalletLoading()
         presenter.viewLoaded(savedInstanceState)
     }
 
@@ -84,6 +85,28 @@ class ContactSelectFragment : Fragment(), ContactSelectContract.View {
 
     override fun updateContactList(contacts: List<PairwiseContact>) {
         adapter.submitList(contacts)
+    }
+
+    override fun onWalletLoaded() {
+        greyout.animateVisibilityOut()
+        addContactButton.isClickable = true
+        loadingWalletText.animateVisibilityOut()
+        hideSpinner()
+    }
+
+    private fun showWalletLoading() {
+        greyout.animateVisibilityIn()
+        addContactButton.isClickable = false
+        loadingWalletText.animateVisibilityIn()
+        showSpinner()
+    }
+
+    private fun showSpinner() {
+        walletLoadingSpinner.animateVisibilityIn()
+    }
+
+    private fun hideSpinner() {
+        walletLoadingSpinner.animateVisibilityOut()
     }
 
     // endregion

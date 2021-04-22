@@ -39,9 +39,7 @@ class ContactSelectInteractor @Inject constructor(
     internal val outputDelegate = ObjectDelegate<ContactSelectContract.InteractorOutput>()
     internal val output by outputDelegate
 
-    internal var wallet: Wallet = walletProvider.getWallet()
-
-    private var dids: MutableList<DidInfo> = mutableListOf()
+    private lateinit var wallet: Wallet
 
     private var seedWords: List<String> = listOf()
     private var seedHex: String = "TODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODO" // TODO
@@ -60,6 +58,16 @@ class ContactSelectInteractor @Inject constructor(
 
     override fun loadData(savedState: Bundle?) {
         getPairwiseContacts()
+        loadWallet()
+    }
+
+    private fun loadWallet() {
+        launch {
+            wallet = withContext(Dispatchers.IO) {
+                walletProvider.getWallet()
+            }
+            output.walletFinishedLoading()
+        }
     }
 
     override fun savePendingState(outState: Bundle) {

@@ -63,6 +63,10 @@ class ContactSelectPresenter @Inject constructor(
         view.updateContactList(myContacts)
     }
 
+    override fun walletFinishedLoading() {
+        view.onWalletLoaded()
+    }
+
 
     // TODO Add interactor outputs
 
