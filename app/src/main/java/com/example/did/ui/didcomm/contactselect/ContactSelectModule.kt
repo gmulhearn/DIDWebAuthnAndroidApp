@@ -24,8 +24,4 @@ class ContactSelectModule: BaseFragmentModule<ContactSelectFragment>() {
 
     @Provides
     fun provideRouter(impl: ContactSelectRouter): ContactSelectContract.Router = impl
-
-    @Provides
-    @DidInformation
-    fun provideDidInfo(fragment: ContactSelectFragment) = fragment.navigationArgs.didInfo
 }

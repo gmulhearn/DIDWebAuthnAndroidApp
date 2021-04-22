@@ -290,7 +290,8 @@ class AddContactInteractor @Inject constructor(
                 theirEndpoint,
                 theirDidInfo.verkey,
                 myDidInfo.verkey,
-                theirRoutingKeys
+                theirRoutingKeys,
+                userDeleted = false
             )
         ).replace("""\u003d""", "=")
 

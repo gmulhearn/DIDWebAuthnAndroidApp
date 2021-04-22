@@ -27,9 +27,6 @@ class ContactSelectFragment : Fragment(), ContactSelectContract.View {
     @Inject
     internal lateinit var presenter: ContactSelectContract.Presenter
 
-    @VisibleForTesting
-    internal val navigationArgs by navArgs<ContactSelectFragmentArgs>()
-
     internal var adapter =
         ContactAdapter { pairwiseContact ->
             contactClicked(pairwiseContact)

@@ -42,37 +42,7 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.button_first).setOnClickListener {
-//            val key = Wallet.generateWalletKey(null).get()
-//            println(key)
-//
-//            val credentials = "{\"key\":\"$key\"}"
-//            val config = "{\"id\":\"testID2\"}"
-//
-//            Wallet.createWallet(config, credentials).get()
-//
-////            val credentials = "{\"key\":\"$key\"}"
-////            val config = "{\"id\":\"testID1\"}"
-//            val wallet = Wallet.openWallet(config, credentials).get()
-//
-//            val did = Did.createAndStoreMyDid(wallet, "{}").get()
-//
-//            println("\ndid: ${did.did}\n\nverkey: ${did.verkey}\n")
-//
-//            val message = "hello world"
-//
-//            val signature = Crypto.cryptoSign(wallet, did.verkey, message.toByteArray(Charsets.UTF_8)).get()
-//
-//            println("\"$message\" signature: ${signature.asList()}")
-//
-//            val verify = Crypto.cryptoVerify(did.verkey, message.toByteArray(Charsets.UTF_8), signature).get()
-//
-//            println("verify message \"$message\": $verify")
-//
-//            val badVerify = Crypto.cryptoVerify(did.verkey, "fake message".toByteArray(Charsets.UTF_8), signature).get()
-//
-//            println("verify message \"fake message\": $badVerify")
-            findNavController().navigate(R.id.action_FirstFragment_to_DIDSelectFragment)
-            // findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            findNavController().navigate(R.id.action_FirstFragment_to_contactSelectFragment)
         }
     }
 }

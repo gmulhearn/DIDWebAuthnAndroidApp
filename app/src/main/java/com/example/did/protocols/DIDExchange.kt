@@ -77,14 +77,6 @@ object DIDExchange {
         routingKeys: List<String>,
         context: Context
     ): PackedMessage {
-        println(
-            """
-            DEBUG ROUTING FORWARD:
-            $packedMessage
-            $nextRecipientKey
-            $routingKeys
-        """.trimIndent()
-        )
 
         val currentRoutingKey =
             routingKeys.firstOrNull() ?: return packedMessage  // end of wrapping

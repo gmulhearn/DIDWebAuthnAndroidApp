@@ -22,7 +22,7 @@ class DIDSelectRouter @Inject constructor(
 
     override fun toContacts(didInfo: DidInfo) {
         val directions = DIDSelectFragmentDirections.actionDIDSelectFragmentToContactSelectFragment(
-            didInfo
+//            didInfo
         )
         findNavController().navigate(directions)
     }

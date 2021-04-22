@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_DIDSelectFragment"
             app:destination="@id/DIDSelectFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_contactSelectFragment"
+            app:destination="@id/contactSelectFragment" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -73,9 +76,6 @@
         android:name="com.example.did.ui.didcomm.contactselect.ContactSelectFragment"
         android:label="fragment_contact_select"
         tools:layout="@layout/fragment_contact_select">
-        <argument
-            android:name="didInfo"
-            app:argType="com.example.did.data.DidInfo" />
         <action
             android:id="@+id/action_contactSelectFragment_to_addContactFragment"
             app:destination="@id/addContactFragment" />

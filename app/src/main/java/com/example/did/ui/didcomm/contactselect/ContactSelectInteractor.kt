@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.pairwise.Pairwise
 import org.hyperledger.indy.sdk.wallet.Wallet
 import java.lang.reflect.Type
@@ -31,7 +32,6 @@ data class PairwiseContactList(
 
 class ContactSelectInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
-    @DidInformation internal val didInfo: DidInfo,
     internal val router: ContactSelectRouter,
     private val walletProvider: WalletProvider
 ) : ContactSelectContract.InteractorInput, CoroutineScope by coroutineScope {
@@ -40,6 +40,11 @@ class ContactSelectInteractor @Inject constructor(
     internal val output by outputDelegate
 
     internal var wallet: Wallet = walletProvider.getWallet()
+
+    private var dids: MutableList<DidInfo> = mutableListOf()
+
+    private var seedWords: List<String> = listOf()
+    private var seedHex: String = "TODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODO" // TODO
 
 
     // region viper lifecycle
@@ -76,16 +81,24 @@ class ContactSelectInteractor @Inject constructor(
                     Gson().fromJson(formattedListString, PairwiseContactList::class.java)
                 println(listContacts)
 
-                listContacts.list.filter {
-                    it.myDid == didInfo.did
-                }
+                listContacts.list
+                    .filter {
+                        it.metadata.userDeleted == false
+                    }
             }
             output.updateContactList(myContacts)
         }
     }
 
     override fun toAddContact() {
-        router.toAddContact(didInfo)
+        // TODO UX Loading
+        launch {
+            val newDidInfo = withContext(Dispatchers.IO) {
+                generateDID()
+            }
+            router.toAddContact(newDidInfo)
+        }
+
     }
 
     override fun toChat(pairwiseContact: PairwiseContact) {
@@ -96,6 +109,18 @@ class ContactSelectInteractor @Inject constructor(
     // endregion
 
     // region interactor inputs
+
+    private suspend fun generateDID(): DidInfo {
+        var exception = false
+        val did = withContext(Dispatchers.IO) {
+
+            Did.createAndStoreMyDid(
+                wallet,
+                "{\"seed\": \"${(dids.size.toString() + seedHex).subSequence(0, 32)}\"}"
+            ).get()
+        }
+        return DidInfo(did.did, did.verkey)
+    }
 
 
     // endregion
