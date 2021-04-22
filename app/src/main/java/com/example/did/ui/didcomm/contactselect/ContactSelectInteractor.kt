@@ -116,7 +116,7 @@ class ContactSelectInteractor @Inject constructor(
 
             Did.createAndStoreMyDid(
                 wallet,
-                "{\"seed\": \"${(dids.size.toString() + seedHex).subSequence(0, 32)}\"}"
+                "{}" // "{\"seed\": \"${(dids.size.toString() + seedHex).subSequence(0, 32)}\"}" TODO
             ).get()
         }
         return DidInfo(did.did, did.verkey)
