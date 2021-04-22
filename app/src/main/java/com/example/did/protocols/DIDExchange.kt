@@ -231,7 +231,7 @@ object DIDExchange {
             rawMessagePacked,
             myWallet,
             pairwiseContact.metadata.theirVerkey,
-            pairwiseContact.metadata.theirRoutingKeys,
+            pairwiseContact.metadata.theirRoutingKeys ?: emptyList(),
             context
         )
     }
