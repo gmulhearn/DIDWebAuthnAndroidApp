@@ -37,12 +37,12 @@
         android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
-        android:backgroundTintMode="add"
+        android:background="#00FFFFFF"
+        android:tint="@color/blue_200"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textField"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_send" />
+        app:srcCompat="@drawable/ic_send" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
