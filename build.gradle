@@ -21,7 +21,7 @@ buildscript {
 allprojects {
     repositories {
         maven { url = "https://repo.sovrin.org/repository/maven-public/" }
-        // maven { url 'https://jitpack.io' }
+        maven { url 'https://jitpack.io' }
         google()
         jcenter()
     }

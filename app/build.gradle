@@ -95,4 +95,12 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    // for base58
+    implementation ('com.github.bitcoinj:bitcoinj:master-SNAPSHOT') {
+        exclude group: "com.google.protobuf", module: "protobuf-java"
+    }
+
+    // for cbor
+    implementation 'co.nstant.in:cbor:0.8'
 }

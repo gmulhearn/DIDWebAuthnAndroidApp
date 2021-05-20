@@ -47,7 +47,6 @@ class WebAuthnBridgeWebView(
         try {
             val bridgeJS =
                 context.assets.open(INJECTED_JS_FILE_NAME).reader(Charsets.UTF_8).readText()
-            println("evaluating JS: $bridgeJS")
             webView.evaluateJavascript("javascript:($bridgeJS)()", null)
         } catch (e: IOException) {
 

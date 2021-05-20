@@ -135,7 +135,7 @@ fun createPublicKeyCredentialAttestationResponse(
     )
     return PublicKeyCredentialAttestationResponse(
         rawId = rawId,
-        id = Base64.getUrlEncoder().encodeToString(rawId).removeSuffix("="),
+        id = Base64.getUrlEncoder().encodeToString(rawId).removeSuffix("=").removeSuffix("="),
         response = attestationResponse
     )
 }
@@ -160,7 +160,7 @@ fun createPublicKeyCredentialAssertionResponse(
 
     return PublicKeyCredentialAssertionResponse(
         rawId = rawId,
-        id = Base64.getUrlEncoder().encodeToString(rawId).removeSuffix("="),
+        id = Base64.getUrlEncoder().encodeToString(rawId).removeSuffix("=").removeSuffix("="),
         response = assertionResponse
     )
 }
