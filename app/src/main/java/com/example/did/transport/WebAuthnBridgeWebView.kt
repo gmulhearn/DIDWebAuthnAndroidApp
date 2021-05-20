@@ -3,6 +3,7 @@ package com.example.did.transport
 import android.content.Context
 import android.os.Handler
 import android.webkit.WebView
+import com.example.did.common.WalletProvider
 import com.example.did.data.PublicKeyCredentialAssertionResponse
 import com.example.did.data.PublicKeyCredentialAttestationResponse
 import com.example.did.protocols.DIDAuthenticator
@@ -11,7 +12,8 @@ import java.io.IOException
 
 class WebAuthnBridgeWebView(
     private val context: Context,
-    private val webView: WebView
+    private val webView: WebView,
+    private val walletProvider: WalletProvider
 ) {
     companion object {
         val BRIDGE_INTERFACE = "webAuthnInterface"
@@ -20,7 +22,7 @@ class WebAuthnBridgeWebView(
 
     var origin: String = ""
     private var loading = false
-    val authenticator = DIDAuthenticator(context)
+    val authenticator = DIDAuthenticator(context, walletProvider)
 
     fun bindWebView() {
         webView.addJavascriptInterface(WebAuthnJsInterface(this), BRIDGE_INTERFACE)

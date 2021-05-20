@@ -20,6 +20,7 @@ import com.example.did.protocols.BIP0039.generateMnemonic
 import com.google.gson.Gson
 import org.spongycastle.jcajce.provider.asymmetric.ec.KeyFactorySpi
 import java.security.spec.KeySpec
+import kotlin.math.sign
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -155,6 +156,18 @@ class IndyTests {
             message.toByteArray(Charsets.UTF_8)
         ).get()
 
+        val signature = Crypto.cryptoSign(
+            openWallet,
+            myDid.getString("verkey"),
+            "hello".toByteArray(Charsets.UTF_8)
+        ).get()
+
+        println(signature.toString(Charsets.UTF_8))
+        for (b in signature) {
+            val st = String.format("%02X", b)
+            print(st)
+        }
+
         println(encryptedMsg.toString(Charsets.UTF_8))
 
         val decryptedMsg = Crypto.unpackMessage(openWallet2, encryptedMsg).get()
@@ -247,7 +260,8 @@ class IndyTests {
 
     @Test
     fun base_64_test_random() {
-        val encoded = "AAAAAGBF2w17IkRJRCI6IlI2SnJ4WDduREo1YUhkdUw2ampzODMiLCJESUREb2MiOnsiaWQiOiJSNkpyeFg3bkRKNWFIZHVMNmpqczgzIiwicHVibGljS2V5IjpbeyJpZCI6IlI2SnJ4WDduREo1YUhkdUw2ampzODMja2V5cy0xIiwicHVibGljS2V5QmFzZTU4IjoiRThhZkU1VjEzd1dyMUJSZEcxSllIRFZWMkdoZFhpdURZS3A1a1I1Y0dIVWQiLCJ0eXBlIjoiRWQyNTUxOVZlcmlmaWNhdGlvbktleTIwMTgiLCJjb250cm9sbGVyIjoiUjZKcnhYN25ESjVhSGR1TDZqanM4MyJ9XSwiQGNvbnRleHQiOiJodHRwczpcL1wvd3d3LnczLm9yZ1wvbnNcL2RpZFwvdjEiLCJzZXJ2aWNlIjpbeyJpZCI6IlI2SnJ4WDduREo1YUhkdUw2ampzODM7aW5keSIsInJvdXRpbmdLZXlzIjpbXSwidHlwZSI6IkluZHlBZ2VudCIsInNlcnZpY2VFbmRwb2ludCI6Imh0dHBzOlwvXC91cy1jZW50cmFsMS1kaWRzYW1wbGUtNjI5NzYuY2xvdWRmdW5jdGlvbnMubmV0XC9lbmRwb2ludD9wPTE3RDBDNEUwLTNGNzgtNEQ4QS05NTEzLUQ4MjcyNzc0Rjk0QSIsInJlY2lwaWVudEtleXMiOlsiRThhZkU1VjEzd1dyMUJSZEcxSllIRFZWMkdoZFhpdURZS3A1a1I1Y0dIVWQiXX1dfX0"
+        val encoded =
+            "AAAAAGBF2w17IkRJRCI6IlI2SnJ4WDduREo1YUhkdUw2ampzODMiLCJESUREb2MiOnsiaWQiOiJSNkpyeFg3bkRKNWFIZHVMNmpqczgzIiwicHVibGljS2V5IjpbeyJpZCI6IlI2SnJ4WDduREo1YUhkdUw2ampzODMja2V5cy0xIiwicHVibGljS2V5QmFzZTU4IjoiRThhZkU1VjEzd1dyMUJSZEcxSllIRFZWMkdoZFhpdURZS3A1a1I1Y0dIVWQiLCJ0eXBlIjoiRWQyNTUxOVZlcmlmaWNhdGlvbktleTIwMTgiLCJjb250cm9sbGVyIjoiUjZKcnhYN25ESjVhSGR1TDZqanM4MyJ9XSwiQGNvbnRleHQiOiJodHRwczpcL1wvd3d3LnczLm9yZ1wvbnNcL2RpZFwvdjEiLCJzZXJ2aWNlIjpbeyJpZCI6IlI2SnJ4WDduREo1YUhkdUw2ampzODM7aW5keSIsInJvdXRpbmdLZXlzIjpbXSwidHlwZSI6IkluZHlBZ2VudCIsInNlcnZpY2VFbmRwb2ludCI6Imh0dHBzOlwvXC91cy1jZW50cmFsMS1kaWRzYW1wbGUtNjI5NzYuY2xvdWRmdW5jdGlvbnMubmV0XC9lbmRwb2ludD9wPTE3RDBDNEUwLTNGNzgtNEQ4QS05NTEzLUQ4MjcyNzc0Rjk0QSIsInJlY2lwaWVudEtleXMiOlsiRThhZkU1VjEzd1dyMUJSZEcxSllIRFZWMkdoZFhpdURZS3A1a1I1Y0dIVWQiXX1dfX0"
         val result = (Base64.getDecoder().decode(encoded).toString(Charsets.UTF_8)).drop(8)
         val obj = Gson().fromJson(result, DIDRequestConnection::class.java)
         println(obj.did)

@@ -11,6 +11,7 @@ import android.widget.SearchView
 import dagger.android.support.AndroidSupportInjection
 import androidx.fragment.app.Fragment
 import com.example.did.R
+import com.example.did.common.WalletProvider
 import com.example.did.transport.WebAuthnBridgeWebView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_browser.*
@@ -24,6 +25,9 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
     @Inject
     internal lateinit var presenter: BrowserContract.Presenter
     internal lateinit var webAuthnBridge: WebAuthnBridgeWebView
+
+    @Inject
+    internal lateinit var walletProvider: WalletProvider
 
     // region viper lifecycle
 
@@ -52,7 +56,7 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
     private fun initInjectedWebView(webViewer: WebView) {
         webViewer.settings.javaScriptEnabled = true
         webViewer.loadUrl("https://webauthn.io")
-        webAuthnBridge = WebAuthnBridgeWebView(this.requireContext(), webViewer)
+        webAuthnBridge = WebAuthnBridgeWebView(this.requireContext(), webViewer, walletProvider)
         webAuthnBridge.bindWebView()
 
         webViewer.webViewClient = object : WebViewClient() {

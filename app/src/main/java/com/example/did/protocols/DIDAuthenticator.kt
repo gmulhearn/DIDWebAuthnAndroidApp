@@ -2,16 +2,19 @@ package com.example.did.protocols
 
 import android.content.Context
 import android.util.Pair
+import com.example.did.common.WalletProvider
 import com.example.did.data.AuthenticatorGetAssertionOptions
 import com.example.did.data.AuthenticatorMakeCredentialOptions
 import com.example.did.data.PublicKeyCredentialAssertionResponse
 import com.example.did.data.PublicKeyCredentialAttestationResponse
-import duo.labs.webauthn.Authenticator
+import duo.labs.webauthn.BasicAuthenticator
+import javax.inject.Inject
 
-class DIDAuthenticator(
-    private val context: Context
+class DIDAuthenticator @Inject constructor(
+    val context: Context,
+    val walletProvider: WalletProvider
 ) {
-    private val duoLabsAuthn = Authenticator(context, false, false)
+    private val duoLabsAuthn = BasicAuthenticator(context, false, false, walletProvider.getWallet())
 
     fun makeCredentials(
         credOpts: AuthenticatorMakeCredentialOptions,
@@ -26,14 +29,7 @@ class DIDAuthenticator(
     ): PublicKeyCredentialAttestationResponse {
         val duoLabsMakeCreds = credOpts.toDuoLabsAuthn()
         println(duoLabsMakeCreds.credTypesAndPubKeyAlgs)
-        println(
-            duoLabsMakeCreds.credTypesAndPubKeyAlgs.add(
-                Pair<String, Long>(
-                    "public-key",
-                    -7
-                )
-            )
-        ) // TODO
+
         val attestationObject = duoLabsAuthn.makeCredential(duoLabsMakeCreds)
         println(attestationObject)
         println(attestationObject.credentialId)
