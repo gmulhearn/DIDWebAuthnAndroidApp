@@ -120,7 +120,7 @@ class DIDAuthenticator @Inject constructor(
                     .build()
             )
         } catch (e: CborException) {
-            throw Exception("couldn't serialize to cbor", e)
+            throw Exception("coseEncodePublicKey threw exception: ", e)
         }
         return baos.toByteArray()
     }

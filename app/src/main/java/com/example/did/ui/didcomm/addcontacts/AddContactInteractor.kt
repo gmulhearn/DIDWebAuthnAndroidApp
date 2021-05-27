@@ -145,7 +145,7 @@ class AddContactInteractor @Inject constructor(
                 wallet,
                 didInfo,
                 theirDid,
-                invitation.routingKeys,
+                invitation.routingKeys ?: listOf(),
                 context
             )
         val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
@@ -227,7 +227,7 @@ class AddContactInteractor @Inject constructor(
             myWallet = wallet,
             myDid = didInfo,
             theirDid = theirDid,
-            theirRoutingKeys = didRequest.connection.didDoc.service.first().routingKeys,
+            theirRoutingKeys = didRequest.connection.didDoc.service.first().routingKeys ?: listOf(),
             context = context
         )
 
@@ -276,7 +276,7 @@ class AddContactInteractor @Inject constructor(
         theirDidInfo: DidInfo,
         myDidInfo: DidInfo,
         theirEndpoint: String,
-        theirRoutingKeys: List<String>,
+        theirRoutingKeys: List<String>?,
         label: String
     ) {
         Did.storeTheirDid(

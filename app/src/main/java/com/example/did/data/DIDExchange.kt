@@ -9,7 +9,7 @@ data class Invitation(
     val label: String,
     val recipientKeys: List<String>,
     val serviceEndpoint: String,
-    val routingKeys: List<String>
+    val routingKeys: List<String>?
 )
 
 data class DIDCommContainer(
@@ -61,7 +61,7 @@ data class DIDDocPublicKey(
 
 data class DIDDocService(
     val id: String,
-    val routingKeys: List<String> = listOf(),
+    val routingKeys: List<String>? = listOf(),
     val type: String = "IndyAgent",
     val serviceEndpoint: String,
     val recipientKeys: List<String>
