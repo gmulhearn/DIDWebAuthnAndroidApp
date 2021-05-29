@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context="com.example.did.ui.didcomm.contactselect.ContactSelectFragment">
 
+    <ImageButton
+        android:id="@+id/walletInfoBtn"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="#00FFFFFF"
+        android:src="@android:drawable/ic_dialog_info"
+        android:tint="@color/design_default_color_primary"
+        app:layout_constraintBottom_toTopOf="@+id/messageScrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/greyout"
         android:layout_width="match_parent"
@@ -18,7 +31,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible">
+        tools:visibility="gone">
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -34,7 +47,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
     <TextView
         android:id="@+id/loadingWalletText"
@@ -47,7 +60,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/walletLoadingSpinner"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ContactSelectList"
@@ -67,11 +80,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="New Contact"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/browserButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.9" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/browserButton"
@@ -79,10 +90,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:text="Browser"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.97" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

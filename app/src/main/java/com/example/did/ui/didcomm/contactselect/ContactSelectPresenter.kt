@@ -55,6 +55,10 @@ class ContactSelectPresenter @Inject constructor(
         router.toBrowser(DidInfo("todo", "todo")) // TODO
     }
 
+    override fun walletInfoClicked() {
+        router.toWalletInfo()
+    }
+
     // endregion
 
     // region view event handlers

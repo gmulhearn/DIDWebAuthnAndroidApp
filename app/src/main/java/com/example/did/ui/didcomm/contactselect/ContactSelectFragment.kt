@@ -78,6 +78,10 @@ class ContactSelectFragment : Fragment(), ContactSelectContract.View {
             presenter.browserClicked()
         }
 
+        walletInfoBtn.setOnClickListener {
+            presenter.walletInfoClicked()
+        }
+
         ContactSelectList.layoutManager =
             LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         ContactSelectList.adapter = adapter

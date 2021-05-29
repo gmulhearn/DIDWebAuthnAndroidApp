@@ -31,8 +31,14 @@ class ContactSelectRouter @Inject constructor(
 
     override fun toBrowser(didInfo: DidInfo) {
         val directions = ContactSelectFragmentDirections.actionContactSelectFragmentToBrowserFragment(
-            didInfo
+            didInfo // TODO - remove this.
         )
+        findNavController().navigate(directions)
+    }
+
+    override fun toWalletInfo() {
+        val directions = ContactSelectFragmentDirections.actionContactSelectFragmentToWalletInfoFragment()
+
         findNavController().navigate(directions)
     }
 

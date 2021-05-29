@@ -85,6 +85,9 @@
         <action
             android:id="@+id/action_contactSelectFragment_to_browserFragment"
             app:destination="@id/browserFragment" />
+        <action
+            android:id="@+id/action_contactSelectFragment_to_walletInfoFragment"
+            app:destination="@id/walletInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/addContactFragment"
@@ -112,5 +115,10 @@
             android:name="didInfo"
             app:argType="com.example.did.data.DidInfo" />
     </fragment>
+    <fragment
+        android:id="@+id/walletInfoFragment"
+        android:name="com.example.did.ui.walletInfo.WalletInfoFragment"
+        android:label="fragment_wallet_info"
+        tools:layout="@layout/fragment_wallet_info" />
 
 </navigation>

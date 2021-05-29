@@ -4,11 +4,6 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class ListMetadataDIDs(
-    val list: List<MetadataDID>
-) : Parcelable
-
-@Parcelize
 data class MetadataDID(
     val did: String,
     val verkey: String,

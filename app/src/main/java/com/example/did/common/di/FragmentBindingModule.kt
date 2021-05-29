@@ -14,6 +14,8 @@ import com.example.did.ui.wallets.WalletsFragment
 import com.example.did.ui.wallets.WalletsModule
 import com.example.did.ui.signing.SigningFragment
 import com.example.did.ui.signing.SigningModule
+import com.example.did.ui.walletInfo.WalletInfoFragment
+import com.example.did.ui.walletInfo.WalletInfoModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -46,4 +48,8 @@ abstract class FragmentBindingModule {
     @ActivityScope
     @ContributesAndroidInjector(modules = [BrowserModule::class])
     abstract fun bindBrowserFragment(): BrowserFragment
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [WalletInfoModule::class])
+    abstract fun bindWalletInfoFragment(): WalletInfoFragment
 }
