@@ -6,6 +6,8 @@ import co.nstant.`in`.cbor.CborEncoder
 import co.nstant.`in`.cbor.CborException
 import com.example.did.common.WalletProvider
 import com.example.did.data.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Sha256Hash
 import org.hyperledger.indy.sdk.crypto.Crypto
@@ -21,7 +23,7 @@ class DIDAuthenticator @Inject constructor(
     val walletProvider: WalletProvider
 ) {
     // TODO - REMOVE BELOW - temporary measure
-    private var userEntity = PublicKeyCredentialUserEntity(byteArrayOf(1), "todo", "todo")
+    // private var userEntity = PublicKeyCredentialUserEntity(byteArrayOf(1), "todo", "todo")
 
     /************************************** REGISTRATION **************************/
     /**
@@ -34,7 +36,7 @@ class DIDAuthenticator @Inject constructor(
     ): PublicKeyCredentialAttestationResponse {
 
         // TODO -remove below - temp
-        userEntity = credOpts.user
+        // userEntity = credOpts.user
 
         // TODO: validity checks here
 
@@ -76,10 +78,13 @@ class DIDAuthenticator @Inject constructor(
         val counter = 0
 
         /** create AttestedCredentialData */
-        val edDSAPublicKey = createAndGetDidVerkey()
+        // val edDSAPublicKey = createAndGetDidVerkey()
+        val didCred = createDidCredential(credOpts)
+        val edDSAPublicKey = Base58.decode(didCred.edDSAKey)
         val coseEncoded = coseEncodeEdDSAPublicKey(edDSAPublicKey)
 
-        val id = "PtbVIGUBHKiHoBPQPGR72tEwMubp4nzUFmHnuGabinM".toByteArray(Charsets.UTF_8) // TODO
+        // val id = "PtbVIGUBHKiHoBPQPGR72tEwMubp4nzUFmHnuGabinM".toByteArray(Charsets.UTF_8) // TODO
+        val id = didCred.keyId.toByteArray(Charsets.UTF_8)
         val aaguid = ByteArray(16).map { 0.toByte() }.toByteArray()
 
         val attestedCredDataBuff = ByteBuffer.allocate(16 + 2 + id.size + coseEncoded.size)
@@ -137,9 +142,13 @@ class DIDAuthenticator @Inject constructor(
         clientDataJson: String
     ): PublicKeyCredentialAssertionResponse {
 
-        val edDSAPublicKey = getDidVerkey()
+        //val edDSAPublicKey = getDidVerkey()
 
-        val counter = 1 // TODO - make for real
+        // val counter = 1 // TODO - make for real
+
+        val didCred = getDidCredential(assertionOpts)
+        val counter = didCred.authCounter  // TODO - increment
+        val edDSAPublicKey = Base58.decode(didCred.edDSAKey)
 
         val authData = createAuthData(assertionOpts, counter)
 
@@ -153,8 +162,10 @@ class DIDAuthenticator @Inject constructor(
             toSign.toByteArray()
         ).get()
 
-        val id = "PtbVIGUBHKiHoBPQPGR72tEwMubp4nzUFmHnuGabinM".toByteArray(Charsets.UTF_8)  // TODO
-        val user = userEntity.id
+        // val id = "PtbVIGUBHKiHoBPQPGR72tEwMubp4nzUFmHnuGabinM".toByteArray(Charsets.UTF_8)  // TODO
+        // val user = userEntity.id
+        val id = didCred.keyId.toByteArray(Charsets.UTF_8)
+        val user = didCred.userInfo.id
 
         return createPublicKeyCredentialAssertionResponse(
             rawId = id,
@@ -189,32 +200,83 @@ class DIDAuthenticator @Inject constructor(
 
     /********************************* DID CREDENTIALS *********************************/
 
-    /**
-     * TODO - make this work
-     */
-    private fun createAndGetDidVerkey(): ByteArray {
-        val myDids = Did.getListMyDidsWithMeta(walletProvider.getWallet()).get()
-        val myDidsJSON = JSONObject("{ \"dids\": $myDids}")
+    private fun createDidCredential(opts: AuthenticatorMakeCredentialOptions): WebAuthnDIDData {
+        val did = Did.createAndStoreMyDid(walletProvider.getWallet(), "{}").get()
 
-        val myDidVer = myDidsJSON.getJSONArray("dids")
-            .getJSONObject(0).getString("verkey")
-        return Base58.decode(myDidVer)
+        val metadata = WebAuthnDIDData(
+            keyId = did.did,  // keyId = did // TODO - confirm this is acceptable
+            authCounter = 0,
+            userInfo = opts.user,
+            rpInfo = RelyingPartyInfo(opts.rp.name, opts.rp.id),
+            edDSAKey = did.verkey,
+            did = did.did
+        )
+
+        Did.setDidMetadata(walletProvider.getWallet(), did.did, Gson().toJson(metadata)).get()
+
+        return metadata
     }
 
     /**
-     * TODO - make this work
+     * get MetadataDID object that matches supplied opts
      */
-    private fun getDidVerkey(): ByteArray {
-        val myDids = Did.getListMyDidsWithMeta(walletProvider.getWallet()).get()
-        val myDidsJSON = JSONObject("{ \"dids\": $myDids}")
+    private fun getDidCredential(opts: AuthenticatorGetAssertionOptions): WebAuthnDIDData {
+        val possibleDIDs = getWebAuthnDIDs()
 
-        val myDidVer = myDidsJSON.getJSONArray("dids")
-            .getJSONObject(0).getString("verkey")
-        return Base58.decode(myDidVer)
+        val matchingDID = possibleDIDs.filter {
+            val webAuthnDIDData = Gson().fromJson(it.metadata, WebAuthnDIDData::class.java)
+
+            val rpMatch = webAuthnDIDData.rpInfo.id == opts.rpId
+            val keyIdMatch = opts.allowCredentialDescriptorList.any {
+                it.getId().contentEquals(webAuthnDIDData.keyId.toByteArray(Charsets.UTF_8))
+            }
+
+            rpMatch && keyIdMatch
+        }.first()
+
+        return Gson().fromJson(matchingDID.metadata, WebAuthnDIDData::class.java)
+    }
+
+    /**
+     * get DIDs stored in the DID wallet that have valid webAuthn credential metadata
+     */
+    private fun getWebAuthnDIDs(): List<MetadataDID> {
+        val myDids = Did.getListMyDidsWithMeta(walletProvider.getWallet()).get()
+        val metadataDIDType = object : TypeToken<List<MetadataDID>>() {}.type
+        val didList = Gson().fromJson<List<MetadataDID>>(myDids, metadataDIDType)
+
+        return didList.filter { metaDid ->
+            var isWebAuthnMeta = false
+            metaDid.metadata?.let {
+                try {
+                    Gson().fromJson(it, WebAuthnDIDData::class.java)
+                    isWebAuthnMeta = true
+                } catch (e: Exception) {}
+            }
+            isWebAuthnMeta
+        }
     }
 
     /***********************************************************************************/
 
+    /** GRAVEYARD */
+//    private fun createAndGetDidVerkey(): ByteArray {
+//        val myDids = Did.getListMyDidsWithMeta(walletProvider.getWallet()).get()
+//        val myDidsJSON = JSONObject("{ \"dids\": $myDids}")
+//
+//        val myDidVer = myDidsJSON.getJSONArray("dids")
+//            .getJSONObject(0).getString("verkey")
+//        return Base58.decode(myDidVer)
+//    }
+//
+//    private fun getDidVerkey(): ByteArray {
+//        val myDids = Did.getListMyDidsWithMeta(walletProvider.getWallet()).get()
+//        val myDidsJSON = JSONObject("{ \"dids\": $myDids}")
+//
+//        val myDidVer = myDidsJSON.getJSONArray("dids")
+//            .getJSONObject(0).getString("verkey")
+//        return Base58.decode(myDidVer)
+//    }
 
     /** GRAVEYARD DUOLABS IMPL BELOW */
 //    private fun duoLabsMakeCredentials(

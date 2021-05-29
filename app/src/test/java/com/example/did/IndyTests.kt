@@ -1,7 +1,6 @@
 package com.example.did
 
-import com.example.did.data.DIDRequestConnection
-import com.example.did.data.PairwiseData
+import com.example.did.data.*
 import com.example.did.protocols.BIP0039.generateSeed
 import org.hyperledger.indy.sdk.LibIndy
 import org.hyperledger.indy.sdk.crypto.Crypto
@@ -18,12 +17,15 @@ import java.security.SecureRandom
 import java.util.*
 import com.example.did.protocols.BIP0039.generateMnemonic
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.spongycastle.jcajce.provider.asymmetric.ec.KeyFactorySpi
 import java.security.spec.KeySpec
 import kotlin.math.sign
 
 /**
  * Example local unit test, which will execute on the development machine (host).
+ *
+ * NOTE: THIS FILE IS A MESS - DESIGNED FOR SPORADIC TESTING
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
@@ -137,6 +139,66 @@ class IndyTests {
 //
 //        Pairwise.createPairwise(openWallet, theirDid.did, myDid.did, metadata).get()
 //        println(Pairwise.listPairwise(openWallet).get())
+    }
+
+    @Test
+    fun `store and get WebAuthn DID`() {
+        val myDid = Did.createAndStoreMyDid(openWallet, "{}").get()
+        val webauthnMeta = WebAuthnDIDData(
+            "keyabc123",
+            1,
+            PublicKeyCredentialUserEntity(byteArrayOf(1), "user1", "gm"),
+            RelyingPartyInfo("RPorg", "RPID"),
+            myDid.verkey
+        )
+
+        // val webauthnMeta = Gson().toJson(PairwiseData("johnno", "https://ssi-sample.com/?p=blah", myDid.verkey, myDid.verkey, listOf(), false)).replace("""\u003d""", "=")
+
+        val metaJSON = Gson().toJson(webauthnMeta)
+
+        println(metaJSON)
+
+        Did.setDidMetadata(openWallet, myDid.did, metaJSON).get()
+
+        val myDids = Did.getListMyDidsWithMeta(openWallet).get()
+        val metadataDIDType = object : TypeToken<List<MetadataDID>>() {}.type
+        val didList = Gson().fromJson<List<MetadataDID>>(myDids, metadataDIDType)
+
+        println(didList)
+    }
+
+    @Test
+    fun `list DIDs metadata`() {
+        val myDids = Did.getListMyDidsWithMeta(openWallet).get()
+        val metadataDIDType = object : TypeToken<List<MetadataDID>>() {}.type
+        val didList = Gson().fromJson<List<MetadataDID>>(myDids, metadataDIDType)
+
+        println(didList)
+
+        didList.forEach { metaDid ->
+            metaDid.metadata?.let {
+                try {
+                    val webauthnMeta = Gson().fromJson(it, WebAuthnDIDData::class.java)
+                    println(webauthnMeta)
+                } catch (e: Exception) {
+
+                }
+            }
+        }
+
+        val validDids = didList.filter { metaDid ->
+            var isWebAuthnMeta = false
+            metaDid.metadata?.let {
+                try {
+                    Gson().fromJson(it, WebAuthnDIDData::class.java)
+                    isWebAuthnMeta = true
+                } catch (e: Exception) {
+                }
+            }
+            isWebAuthnMeta
+        }
+
+        println(validDids)
     }
 
     @Test

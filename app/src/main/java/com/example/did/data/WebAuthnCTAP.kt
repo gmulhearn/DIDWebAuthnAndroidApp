@@ -1,14 +1,17 @@
 package com.example.did.data
 
+import android.os.Parcelable
 import android.os.UserHandle
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 /************************ WEBAUTHN **************************/
 
+@Parcelize
 data class RelyingPartyInfo(
     val name: String,
     val id: String
-)
+) : Parcelable
 
 data class UserInfo(
     val name: String,
@@ -67,11 +70,12 @@ data class PublicKeyCredentialRpEntity(
     val name: String
 )
 
+@Parcelize
 data class PublicKeyCredentialUserEntity(
     val id: ByteArray,
     val displayName: String,
     val name: String
-)
+) : Parcelable
 
 data class AuthenticatorMakeCredentialOptions(
     val clientDataHash: ByteArray,
