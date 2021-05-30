@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.example.did.R
 import com.example.did.common.WalletProvider
 import kotlinx.android.synthetic.main.fragment_wallet_info.*
+import kotlinx.android.synthetic.main.fragment_wallet_info.view.*
 import javax.inject.Inject
 
 /**
@@ -46,11 +47,27 @@ class WalletInfoFragment : Fragment(), WalletInfoContract.View {
         // TODO setup view, event listeners etc.
 
         viewAllDidsBtn.setOnClickListener {
-            presenter.viewDidsClicked(webAuthnFilter = false)
+            presenter.viewDidsClicked(LoadInfoType.ALLDIDS)
         }
 
         viewWebAuthnDids.setOnClickListener {
-            presenter.viewDidsClicked(webAuthnFilter = true)
+            presenter.viewDidsClicked(LoadInfoType.WEBAUTHNDIDS)
+        }
+
+        viewPairwiseBtn.setOnClickListener {
+            presenter.viewDidsClicked(LoadInfoType.PAIRWISEDIDS)
+        }
+
+        restartWallet.setOnClickListener {
+            view.confirmationPopup.visibility = View.VISIBLE
+        }
+
+        yesBtn.setOnClickListener {
+            presenter.restartClicked()
+        }
+
+        noBtn.setOnClickListener {
+            view.confirmationPopup.visibility = View.GONE
         }
 
         // Notify Presenter that the View is ready

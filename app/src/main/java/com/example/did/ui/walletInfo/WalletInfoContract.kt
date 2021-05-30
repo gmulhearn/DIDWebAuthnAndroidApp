@@ -51,7 +51,8 @@ interface WalletInfoContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
-        fun viewDidsClicked(webAuthnFilter: Boolean)
+        fun viewDidsClicked(didType: LoadInfoType)
+        fun restartClicked()
     }
 
     /**
@@ -88,7 +89,8 @@ interface WalletInfoContract {
          * @param outState Bundle to save Interactor state to
          */
         fun savePendingState(outState: Bundle)
-        fun loadDids(webAuthnFilter: Boolean)
+        fun loadInfo(type: LoadInfoType)
+        fun restartWallet()
 
     }
 

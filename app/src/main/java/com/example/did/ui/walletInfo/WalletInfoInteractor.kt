@@ -5,6 +5,7 @@ import com.example.did.common.MSCoroutineScope
 import com.example.did.common.ObjectDelegate
 import com.example.did.common.WalletProvider
 import com.example.did.data.MetadataDID
+import com.example.did.data.PairwiseContact
 import com.example.did.data.WebAuthnDIDData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -13,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.hyperledger.indy.sdk.did.Did
-import org.hyperledger.indy.sdk.wallet.Wallet
+import org.hyperledger.indy.sdk.pairwise.Pairwise
 import javax.inject.Inject
 
 /**
@@ -23,16 +24,16 @@ class WalletInfoInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
     internal val walletProvider: WalletProvider
 ) : WalletInfoContract.InteractorInput, CoroutineScope by coroutineScope {
-    
+
     internal val outputDelegate = ObjectDelegate<WalletInfoContract.InteractorOutput>()
     internal val output by outputDelegate
-    
+
     // region viper lifecycle
 
     override fun attachOutput(output: WalletInfoContract.InteractorOutput) {
         outputDelegate.attach(output)
     }
-    
+
     override fun detachOutput() {
         coroutineScope.cancelJobs()
         outputDelegate.detach()
@@ -46,18 +47,37 @@ class WalletInfoInteractor @Inject constructor(
         // TODO save interactor state to bundle and output success if required
     }
 
-    override fun loadDids(webAuthnFilter: Boolean) {
+    override fun loadInfo(type: LoadInfoType) {
 
         launch {
             val didsString: String = withContext(Dispatchers.IO) {
                 val wallet = walletProvider.getWallet()
+
+                if (type == LoadInfoType.PAIRWISEDIDS) {
+                    // need to structure/format...
+                    val pairwiseStr =
+                        Pairwise.listPairwise(walletProvider.getWallet()).get()
+                            .replace("""\""", "")
+                            .replace("\"[", "[")
+                            .replace("]\"", "")
+                            .replace("\"{", "{")
+                            .replace("}\"", "}")
+
+                    println(pairwiseStr)
+                    val pairwiseListType = object : TypeToken<List<PairwiseContact>>() {}.type
+                    val pairwiseList =
+                        Gson().fromJson<List<PairwiseContact>>(pairwiseStr, pairwiseListType)
+
+                    return@withContext structureDidsToString(pairwiseList)
+                }
+
 
                 val didsString = Did.getListMyDidsWithMeta(wallet).get()
 
                 val metadataDIDType = object : TypeToken<List<MetadataDID>>() {}.type
                 val didList = Gson().fromJson<List<MetadataDID>>(didsString, metadataDIDType)
 
-                if (!webAuthnFilter) {
+                if (type == LoadInfoType.ALLDIDS) {
                     // return full did list
                     return@withContext structureDidsToString(didList)
                 }
@@ -69,7 +89,8 @@ class WalletInfoInteractor @Inject constructor(
                         try {
                             Gson().fromJson(it, WebAuthnDIDData::class.java)
                             isWebAuthnMeta = true
-                        } catch (e: Exception) {}
+                        } catch (e: Exception) {
+                        }
                     }
                     isWebAuthnMeta
                 }
@@ -81,7 +102,11 @@ class WalletInfoInteractor @Inject constructor(
         }
     }
 
-    private fun structureDidsToString(dids : List<MetadataDID>): String {
+    override fun restartWallet() {
+        walletProvider.resetWallet()
+    }
+
+    private fun structureDidsToString(dids: List<Any>): String {
         var counter = 0
         return dids.joinToString("\n\n") {
             counter++
@@ -90,7 +115,7 @@ class WalletInfoInteractor @Inject constructor(
     }
 
     // endregion
-    
+
     // region interactor inputs
 
 

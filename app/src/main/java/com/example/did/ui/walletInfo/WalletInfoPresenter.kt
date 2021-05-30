@@ -8,8 +8,8 @@ import javax.inject.Inject
  * WalletInfo VIPER Presenter Implementation
  */
 class WalletInfoPresenter @Inject constructor(
-        private val interactor: WalletInfoContract.InteractorInput,
-        private val router: WalletInfoContract.Router
+    private val interactor: WalletInfoContract.InteractorInput,
+    private val router: WalletInfoContract.Router
 ) : WalletInfoContract.Presenter, WalletInfoContract.InteractorOutput {
 
     internal val viewDelegate = ObjectDelegate<WalletInfoContract.View>()
@@ -35,8 +35,12 @@ class WalletInfoPresenter @Inject constructor(
         interactor.savePendingState(outState)
     }
 
-    override fun viewDidsClicked(webAuthnFilter: Boolean) {
-        interactor.loadDids(webAuthnFilter)
+    override fun viewDidsClicked(didType: LoadInfoType) {
+        interactor.loadInfo(didType)
+    }
+
+    override fun restartClicked() {
+        interactor.restartWallet()
     }
 
     // endregion

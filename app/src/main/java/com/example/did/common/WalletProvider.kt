@@ -6,15 +6,18 @@ import javax.inject.Inject
 
 interface WalletProvider {
     fun getWallet(): Wallet
+
+    fun resetWallet()
 }
 
 class DefaultWalletProvider @Inject constructor() : WalletProvider {
     internal var wallet: Wallet? = null
 
+    private val key = "5dd8DLF9GP6V9dEeQeHxsmGnBfaLxZnERrToak8sfCTJ"
+    private val credentials = "{\"key\":\"$key\"}"
+    private val config = "{\"id\":\"testID1\"}"
+
     override fun getWallet(): Wallet {
-        val key = "5dd8DLF9GP6V9dEeQeHxsmGnBfaLxZnERrToak8sfCTJ"
-        val credentials = "{\"key\":\"$key\"}"
-        val config = "{\"id\":\"testID1\"}"
 
         if (wallet != null) {
             return wallet!!
@@ -29,6 +32,12 @@ class DefaultWalletProvider @Inject constructor() : WalletProvider {
             wallet = Wallet.openWallet(config, credentials).get()
         }
         return wallet!!
+    }
+
+    override fun resetWallet() {
+        getWallet().closeWallet().get()
+
+        Wallet.deleteWallet(config, credentials).get()
     }
 
 }

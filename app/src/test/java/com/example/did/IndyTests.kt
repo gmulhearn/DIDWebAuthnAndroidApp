@@ -40,23 +40,42 @@ class IndyTests {
         val key = "5dd8DLF9GP6V9dEeQeHxsmGnBfaLxZnERrToak8sfCTJ"
         val credentials = "{\"key\":\"$key\"}"
         val config = "{\"id\":\"testID1\"}"
-        openWallet = Wallet.openWallet(config, credentials).get()
+
+        openWallet = try {
+            Wallet.openWallet(config, credentials).get()
+        } catch (e: Exception) {
+            Wallet.createWallet(config, credentials).get()
+            Wallet.openWallet(config, credentials).get()
+        }
 
         val key2 = "EqZbeZJ8uhAxcurnKaeTMPKxEfaLZXaxnReCECApaABX"
         val credentials2 = "{\"key\":\"$key2\"}"
         val config2 = "{\"id\":\"testID2\"}"
-        openWallet2 = Wallet.openWallet(config2, credentials2).get()
+
+        openWallet2 = try {
+            Wallet.openWallet(config2, credentials2).get()
+        } catch (e: Exception) {
+            Wallet.createWallet(config2, credentials2).get()
+            Wallet.openWallet(config2, credentials2).get()
+        }
+
     }
 
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun deleteWallet1() {
+        val key = "5dd8DLF9GP6V9dEeQeHxsmGnBfaLxZnERrToak8sfCTJ"
+        val credentials = "{\"key\":\"$key\"}"
+        val config = "{\"id\":\"testID1\"}"
+        openWallet!!.closeWallet().get()
+        Wallet.deleteWallet(config, credentials).get()
     }
 
     @Test
-    fun test_split() {
-        val stringy = "helloworld"
-        println(stringy.split("=").first())
+    fun deleteWallet2() {
+        val key2 = "EqZbeZJ8uhAxcurnKaeTMPKxEfaLZXaxnReCECApaABX"
+        val credentials2 = "{\"key\":\"$key2\"}"
+        val config2 = "{\"id\":\"testID2\"}"
+        Wallet.deleteWallet(config2, credentials2).get()
     }
 
     @Test
@@ -119,6 +138,10 @@ class IndyTests {
         println("verify message \"fake message\": $badVerify")
     }
 
+    @Test
+    fun createAndStoreDid() {
+        val myDid = Did.createAndStoreMyDid(openWallet, "{}").get()
+    }
 
     @Test
     fun `pairwise`() {
@@ -149,7 +172,8 @@ class IndyTests {
             1,
             PublicKeyCredentialUserEntity(byteArrayOf(1), "user1", "gm"),
             RelyingPartyInfo("RPorg", "RPID"),
-            myDid.verkey
+            myDid.verkey,
+            myDid.did
         )
 
         // val webauthnMeta = Gson().toJson(PairwiseData("johnno", "https://ssi-sample.com/?p=blah", myDid.verkey, myDid.verkey, listOf(), false)).replace("""\u003d""", "=")
@@ -173,7 +197,9 @@ class IndyTests {
         val metadataDIDType = object : TypeToken<List<MetadataDID>>() {}.type
         val didList = Gson().fromJson<List<MetadataDID>>(myDids, metadataDIDType)
 
-        println(didList)
+        println(didList.joinToString(",\n") { it.toString() })
+
+        println("\n\n")
 
         didList.forEach { metaDid ->
             metaDid.metadata?.let {
