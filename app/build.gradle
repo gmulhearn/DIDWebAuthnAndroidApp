@@ -73,7 +73,9 @@ dependencies {
 
     // OKHTTP
     implementation 'com.squareup.okhttp3:okhttp:4.4.0'
-    implementation project(path: ':android-webauthn-authenticator')
+
+    // TODO - remove completely
+    // implementation project(path: ':android-webauthn-authenticator')
 
     def daggerVersion = "2.27"
     implementation "com.google.dagger:dagger:$daggerVersion"
