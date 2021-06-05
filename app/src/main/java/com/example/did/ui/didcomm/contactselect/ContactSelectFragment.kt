@@ -78,6 +78,10 @@ class ContactSelectFragment : Fragment(), ContactSelectContract.View {
             presenter.browserClicked()
         }
 
+        externalAuthButton.setOnClickListener {
+            presenter.externalAuthClicked()
+        }
+
         walletInfoBtn.setOnClickListener {
             presenter.walletInfoClicked()
         }

@@ -42,6 +42,12 @@ class ContactSelectRouter @Inject constructor(
         findNavController().navigate(directions)
     }
 
+    override fun toExternalAuth() {
+        val directions = ContactSelectFragmentDirections.actionContactSelectFragmentToExternalAuthFragment()
+
+        findNavController().navigate(directions)
+    }
+
     @VisibleForTesting
     internal fun findNavController(): NavController {
         return fragment.findNavController()

@@ -10,6 +10,8 @@ import com.example.did.ui.didcomm.contactselect.ContactSelectFragment
 import com.example.did.ui.didcomm.contactselect.ContactSelectModule
 import com.example.did.ui.didselect.DIDSelectFragment
 import com.example.did.ui.didselect.DIDSelectModule
+import com.example.did.ui.externalauth.ExternalAuthFragment
+import com.example.did.ui.externalauth.ExternalAuthModule
 import com.example.did.ui.wallets.WalletsFragment
 import com.example.did.ui.wallets.WalletsModule
 import com.example.did.ui.signing.SigningFragment
@@ -52,4 +54,8 @@ abstract class FragmentBindingModule {
     @ActivityScope
     @ContributesAndroidInjector(modules = [WalletInfoModule::class])
     abstract fun bindWalletInfoFragment(): WalletInfoFragment
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [ExternalAuthModule::class])
+    abstract fun bindExternalAuthFragment(): ExternalAuthFragment
 }

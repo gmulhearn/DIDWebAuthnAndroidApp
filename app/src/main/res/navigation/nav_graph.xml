@@ -88,6 +88,9 @@
         <action
             android:id="@+id/action_contactSelectFragment_to_walletInfoFragment"
             app:destination="@id/walletInfoFragment" />
+        <action
+            android:id="@+id/action_contactSelectFragment_to_externalAuthFragment"
+            app:destination="@id/externalAuthFragment" />
     </fragment>
     <fragment
         android:id="@+id/addContactFragment"
@@ -120,5 +123,10 @@
         android:name="com.example.did.ui.walletInfo.WalletInfoFragment"
         android:label="fragment_wallet_info"
         tools:layout="@layout/fragment_wallet_info" />
+    <fragment
+        android:id="@+id/externalAuthFragment"
+        android:name="com.example.did.ui.externalauth.ExternalAuthFragment"
+        android:label="fragment_external_auth"
+        tools:layout="@layout/fragment_external_auth" />
 
 </navigation>

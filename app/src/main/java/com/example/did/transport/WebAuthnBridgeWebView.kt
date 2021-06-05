@@ -40,6 +40,7 @@ class WebAuthnBridgeWebView(
         loading = true
         if (url != null) {
             origin = url
+            println(origin)
         }
     }
 
