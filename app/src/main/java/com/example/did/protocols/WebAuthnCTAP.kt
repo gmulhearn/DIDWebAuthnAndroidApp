@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.did.data.*
 import com.google.gson.Gson
+import org.json.JSONObject
 import org.spongycastle.jcajce.provider.digest.SHA256
 import java.util.*
 
@@ -160,6 +161,27 @@ fun createPublicKeyCredentialAssertionResponse(
         id = Base64.getUrlEncoder().encodeToString(rawId).removeSuffix("=").removeSuffix("="),
         response = assertionResponse
     )
+}
+
+fun PublicKeyCredentialAssertionResponse.JSON(): String {
+    return Gson().toJson(this) ?: "{}"
+}
+
+/**
+ * special base for where bytearrays should be reduced to base64
+ */
+fun PublicKeyCredentialAssertionResponse.base64JSON(): String {
+    val fullJSON = Gson().toJson(this)
+
+    val base64JSON = JSONObject(fullJSON)
+
+    base64JSON.getJSONObject("response").put("clientDataJSON", Base64.getEncoder().encodeToString(this.response.clientDataJSON))
+    base64JSON.getJSONObject("response").put("signature", Base64.getEncoder().encodeToString(this.response.signature))
+    base64JSON.getJSONObject("response").put("authenticatorData", Base64.getEncoder().encodeToString(this.response.authenticatorData))
+
+    println(base64JSON)
+
+    return "*${base64JSON.toString()}"  // * to indicate for browser..
 }
 
 /*******************************************************************/

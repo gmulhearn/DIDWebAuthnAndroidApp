@@ -59,8 +59,8 @@ class ExternalAuthInteractor @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun generateQR(data: String) {
-        val width = 340
-        val height = 340
+        val width = 1000
+        val height = 1000
         val imageBitmap = createBitmap(width, height)
 
         println("GENERATING QR")
@@ -108,13 +108,13 @@ class ExternalAuthInteractor @Inject constructor(
             val opts = Gson().fromJson(text, PublicKeyCredentialRequestOptions::class.java)
             println(opts)
             if (opts.publicKey.rpId != null) { // TODO - better check
-
+                generateQR(processCredRequest(opts).base64JSON())
             }
         } catch (e: Exception) { }
     }
 
     private fun processCredCreate(opts: PublicKeyCredentialCreationOptions): PublicKeyCredentialAttestationResponse {
-        val authenticator = DIDAuthenticator(context, walletProvider)
+        val authenticator = DIDAuthenticator(context, walletProvider) // todo - delegate
 
         val makeCredOpts = opts.publicKey.toAuthenticatorMakeCredentialOptions("webauthn.io") // TODO!
         val clientData = CollectedClientData(
@@ -130,8 +130,26 @@ class ExternalAuthInteractor @Inject constructor(
         return response
     }
 
-    private fun processCredRequest(opts: PublicKeyCredentialRequestOptions) {
+    private fun processCredRequest(opts: PublicKeyCredentialRequestOptions): PublicKeyCredentialAssertionResponse {
+        val authenticator = DIDAuthenticator(context, walletProvider)  // todo - delegate
 
+        val origin = "https://webauthn.io/" // TODO
+
+        val getAssertionOpts = opts.publicKey.toAuthenticatorGetAssertionOptions(origin)
+        val clientData = CollectedClientData(
+            type = "webauthn.get",
+            challengeBase64URL = Base64.getUrlEncoder().encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
+            origin = origin
+        )
+
+        val response = authenticator.getAssertion(
+            getAssertionOpts,
+            clientData.JSON()
+        )
+
+        println(response)
+
+        return response
     }
 
     // endregion
