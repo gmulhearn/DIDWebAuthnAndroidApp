@@ -91,6 +91,9 @@
         <action
             android:id="@+id/action_contactSelectFragment_to_externalAuthFragment"
             app:destination="@id/externalAuthFragment" />
+        <action
+            android:id="@+id/action_contactSelectFragment_to_externalSessionFragment"
+            app:destination="@id/externalSessionFragment" />
     </fragment>
     <fragment
         android:id="@+id/addContactFragment"
@@ -128,5 +131,10 @@
         android:name="com.example.did.ui.externalauth.ExternalAuthFragment"
         android:label="fragment_external_auth"
         tools:layout="@layout/fragment_external_auth" />
+    <fragment
+        android:id="@+id/externalSessionFragment"
+        android:name="com.example.did.ui.externalsession.ExternalSessionFragment"
+        android:label="fragment_external_session"
+        tools:layout="@layout/fragment_external_session" />
 
 </navigation>

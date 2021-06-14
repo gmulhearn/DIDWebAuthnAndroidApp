@@ -60,7 +60,8 @@ class ContactSelectPresenter @Inject constructor(
     }
 
     override fun externalAuthClicked() {
-        router.toExternalAuth()
+        //router.toExternalAuth()
+        router.toExternalSession()
     }
 
     // endregion

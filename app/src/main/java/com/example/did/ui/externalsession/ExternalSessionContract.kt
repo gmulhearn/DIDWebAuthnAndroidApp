@@ -1,21 +1,22 @@
-package com.example.did.ui.didcomm.contactselect
+package com.example.did.ui.externalsession
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.example.did.data.DidInfo
-import com.example.did.data.PairwiseContact
 
 /**
- * ContactSelectContract VIPER contract
+ * ExternalSessionContract VIPER contract
  */
-interface ContactSelectContract {
+interface ExternalSessionContract {
 
     /**
      * Passive view interface. This interface declares behaviors that can modify the View
      */
     interface View {
-        fun updateContactList(contacts: List<PairwiseContact>)
-        fun onWalletLoaded()
+        fun signalClient(sig: String)
+
+        fun setupCamera()
+        fun hideCamera()
+        fun showConnected()
     }
 
     /**
@@ -53,12 +54,8 @@ interface ContactSelectContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
-        fun addContactClicked()
-        fun contactClicked(pairwiseContact: PairwiseContact)
-        fun deleteClicked(pairwiseContact: PairwiseContact)
-        fun browserClicked()
-        fun walletInfoClicked()
-        fun externalAuthClicked()
+        fun qrCodeRead(data: String)
+        fun onClientSignalled(data: String)
     }
 
     /**
@@ -95,9 +92,9 @@ interface ContactSelectContract {
          * @param outState Bundle to save Interactor state to
          */
         fun savePendingState(outState: Bundle)
-        fun toAddContact()
-        fun toChat(pairwiseContact: PairwiseContact)
-        fun deleteContact(pairwiseContact: PairwiseContact)
+
+        fun processQrScan(data: String)
+        fun processClientSignal(data: String)
     }
 
     /**
@@ -109,10 +106,9 @@ interface ContactSelectContract {
          * Called after [InteractorInput.loadData] completes successfully
          */
         fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
+        fun retrievedSignal(sig: String)
+        fun connectionSuccess()
 
-        // TODO
-        fun updateContactList(myContacts: List<PairwiseContact>)
-        fun walletFinishedLoading()
     }
 
     /**
@@ -120,11 +116,5 @@ interface ContactSelectContract {
      */
     interface Router {
 
-        fun toAddContact(didInfo: DidInfo)
-        fun toChat(pairwiseContact: PairwiseContact)
-        fun toBrowser(didInfo: DidInfo)
-        fun toWalletInfo()
-        fun toExternalAuth()
-        fun toExternalSession()
     }
 }

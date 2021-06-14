@@ -12,6 +12,8 @@ import com.example.did.ui.didselect.DIDSelectFragment
 import com.example.did.ui.didselect.DIDSelectModule
 import com.example.did.ui.externalauth.ExternalAuthFragment
 import com.example.did.ui.externalauth.ExternalAuthModule
+import com.example.did.ui.externalsession.ExternalSessionFragment
+import com.example.did.ui.externalsession.ExternalSessionModule
 import com.example.did.ui.wallets.WalletsFragment
 import com.example.did.ui.wallets.WalletsModule
 import com.example.did.ui.signing.SigningFragment
@@ -58,4 +60,8 @@ abstract class FragmentBindingModule {
     @ActivityScope
     @ContributesAndroidInjector(modules = [ExternalAuthModule::class])
     abstract fun bindExternalAuthFragment(): ExternalAuthFragment
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [ExternalSessionModule::class])
+    abstract fun bindExternalSessionFragment(): ExternalSessionFragment
 }
