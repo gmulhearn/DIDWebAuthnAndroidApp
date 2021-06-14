@@ -66,6 +66,7 @@ class ExternalSessionFragment : Fragment(), ExternalSessionContract.View {
             }, {
                 println("onmsg")
                 println(it)
+                presenter.onServerMessage(it)
             }),
             JS_INTERFACE_NAME
         )
@@ -155,6 +156,14 @@ class ExternalSessionFragment : Fragment(), ExternalSessionContract.View {
 
     override fun showConnected() {
         connectedPrompt.visibility = View.VISIBLE
+    }
+
+    override fun sendMessageInWebView(jsonData: String) {
+        println("sending msg to webview: $jsonData")
+
+        sessionWebView.post {
+            sessionWebView.evaluateJavascript("""sendData('$jsonData')""", null)
+        }
     }
 
     // endregion

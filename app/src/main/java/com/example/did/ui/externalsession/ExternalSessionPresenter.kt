@@ -44,6 +44,10 @@ class ExternalSessionPresenter @Inject constructor(
         interactor.processClientSignal(data)
     }
 
+    override fun onServerMessage(data: String) {
+        interactor.handleServerMessage(data)
+    }
+
     // endregion
 
     // region view event handlers
@@ -65,6 +69,10 @@ class ExternalSessionPresenter @Inject constructor(
     override fun connectionSuccess() {
         view.hideCamera()
         view.showConnected()
+    }
+
+    override fun responseGenerated(jsonData: String) {
+        view.sendMessageInWebView(jsonData)
     }
 
     // TODO Add interactor outputs

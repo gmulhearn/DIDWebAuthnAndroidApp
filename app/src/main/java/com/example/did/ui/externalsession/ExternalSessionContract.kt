@@ -17,6 +17,7 @@ interface ExternalSessionContract {
         fun setupCamera()
         fun hideCamera()
         fun showConnected()
+        fun sendMessageInWebView(jsonData: String)
     }
 
     /**
@@ -56,6 +57,7 @@ interface ExternalSessionContract {
         fun saveState(outState: Bundle)
         fun qrCodeRead(data: String)
         fun onClientSignalled(data: String)
+        fun onServerMessage(data: String)
     }
 
     /**
@@ -95,6 +97,7 @@ interface ExternalSessionContract {
 
         fun processQrScan(data: String)
         fun processClientSignal(data: String)
+        fun handleServerMessage(data: String)
     }
 
     /**
@@ -108,7 +111,7 @@ interface ExternalSessionContract {
         fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
         fun retrievedSignal(sig: String)
         fun connectionSuccess()
-
+        fun responseGenerated(jsonData: String)
     }
 
     /**
