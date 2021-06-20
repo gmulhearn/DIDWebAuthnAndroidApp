@@ -9,10 +9,8 @@ import com.example.did.data.*
 import com.example.did.data.WebRTCMessageTypes.WEBAUTHN_AUTH_REQUEST
 import com.example.did.data.WebRTCMessageTypes.WEBAUTHN_AUTH_RESPONSE
 import com.example.did.data.WebRTCMessageTypes.WEBAUTHN_REG_REQUEST
-import com.example.did.protocols.DIDAuthenticator
-import com.example.did.protocols.JSON
-import com.example.did.protocols.getChallenge
-import com.example.did.protocols.toAuthenticatorGetAssertionOptions
+import com.example.did.data.WebRTCMessageTypes.WEBAUTHN_REG_RESPONSE
+import com.example.did.protocols.*
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.squareup.okhttp.MediaType
@@ -90,21 +88,49 @@ class ExternalSessionInteractor @Inject constructor(
         }
 
         when (wrtcBaseMessageIn.type) {
-            WEBAUTHN_REG_REQUEST -> {}
+            WEBAUTHN_REG_REQUEST -> {
+                println("server sent reg request")
+                val opts = Gson().fromJson(wrtcBaseMessageIn.jsonData, WRTCPublicKeyCredentialCreationOptions::class.java)
+                println(opts)
+                handleWebAuthnRegistration(opts.publicKeyCredentialCreationOptions, opts.origin)
+            }
             WEBAUTHN_AUTH_REQUEST -> {
                 println("server sent auth request")
-                val opts = Gson().fromJson(wrtcBaseMessageIn.jsonData, PublicKeyCredentialRequestOptions::class.java)
+                val opts = Gson().fromJson(wrtcBaseMessageIn.jsonData, WRTCPublicKeyCredentialRequestOptions::class.java)
                 println(opts)
-                handleWebAuthnAuthentication(opts)
+                handleWebAuthnAuthentication(opts.publicKeyCredentialRequestOptions, opts.origin)
             }
             else -> {println("unknown wrtc message: $data : $wrtcBaseMessageIn")}
         }
     }
 
-    private fun handleWebAuthnAuthentication(opts: PublicKeyCredentialRequestOptions) {
+    private fun handleWebAuthnRegistration(opts: PublicKeyCredentialCreationOptions, origin: String) {
         val authenticator = DIDAuthenticator(context, walletProvider)
 
-        val origin = "https://webauthn.io/" // TODO
+        println(opts)
+        println(opts.publicKey.getChallenge().toUByteArray().toList())
+        println(opts.publicKey.user.getId().toUByteArray().toList())
+        val makeCredOpts = opts.publicKey.toAuthenticatorMakeCredentialOptions(origin)
+        val clientData = CollectedClientData(
+            type = "webauthn.create",
+            challengeBase64URL = Base64.getUrlEncoder().encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
+            origin = origin
+        )
+
+        val response = authenticator.makeCredentials(
+            makeCredOpts,
+            clientData.JSON()
+        )
+
+        val webRTCResponse = wrapToWebRTCMessageOut(WEBAUTHN_REG_RESPONSE, response)
+
+        output.responseGenerated(Gson().toJson(webRTCResponse))
+    }
+
+    private fun handleWebAuthnAuthentication(opts: PublicKeyCredentialRequestOptions, origin: String) {
+        val authenticator = DIDAuthenticator(context, walletProvider)
+
+        // val origin = "https://webauthn.io/" // TODO
 
         val getAssertionOpts = opts.publicKey.toAuthenticatorGetAssertionOptions(origin)
         val clientData = CollectedClientData(

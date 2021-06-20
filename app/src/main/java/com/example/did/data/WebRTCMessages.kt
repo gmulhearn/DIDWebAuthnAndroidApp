@@ -39,3 +39,15 @@ data class WRTCBaseMessageOut(
     val type: String,
     val data: Any
 )
+
+@Keep
+data class WRTCPublicKeyCredentialRequestOptions(
+    val publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptions,
+    val origin: String
+)
+
+@Keep
+data class WRTCPublicKeyCredentialCreationOptions(
+    val publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions,
+    val origin: String
+)

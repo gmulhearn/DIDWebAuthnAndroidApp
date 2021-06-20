@@ -35,9 +35,6 @@ class DIDAuthenticator @Inject constructor(
         clientDataJson: String
     ): PublicKeyCredentialAttestationResponse {
 
-        // TODO -remove below - temp
-        // userEntity = credOpts.user
-
         // TODO: validity checks here
 
         val authData = createAuthData(credOpts)
@@ -78,12 +75,10 @@ class DIDAuthenticator @Inject constructor(
         val counter = 0
 
         /** create AttestedCredentialData */
-        // val edDSAPublicKey = createAndGetDidVerkey()
         val didCred = createDidCredential(credOpts)
         val edDSAPublicKey = Base58.decode(didCred.edDSAKey)
         val coseEncoded = coseEncodeEdDSAPublicKey(edDSAPublicKey)
 
-        // val id = "PtbVIGUBHKiHoBPQPGR72tEwMubp4nzUFmHnuGabinM".toByteArray(Charsets.UTF_8) // TODO
         val id = didCred.keyId.toByteArray(Charsets.UTF_8)
         val aaguid = ByteArray(16).map { 0.toByte() }.toByteArray()
 
