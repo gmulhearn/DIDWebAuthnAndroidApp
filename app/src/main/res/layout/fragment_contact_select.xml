@@ -4,7 +4,7 @@
     android:id="@+id/contactSelectLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.did.ui.didcomm.contactselect.ContactSelectFragment">
+    tools:context="com.gmulhearn.didwebauthn.ui.didcomm.contactselect.ContactSelectFragment">
 
     <ImageButton
         android:id="@+id/walletInfoBtn"

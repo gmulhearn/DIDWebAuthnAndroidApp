@@ -4,7 +4,7 @@
     android:id="@+id/frameLayout5"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.did.ui.externalsession.ExternalSessionFragment">
+    tools:context="com.gmulhearn.didwebauthn.ui.externalsession.ExternalSessionFragment">
 
     <TextView
         android:id="@+id/connectedPrompt"
