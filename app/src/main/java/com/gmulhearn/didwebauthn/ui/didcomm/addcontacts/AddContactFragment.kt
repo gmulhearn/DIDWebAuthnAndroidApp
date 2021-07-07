@@ -1,4 +1,4 @@
-package com.gmulhearn.didwebauthn.ui.didcomm.AddContact
+package com.gmulhearn.didwebauthn.ui.didcomm.addcontacts
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -6,12 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.VisibleForTesting
 import dagger.android.support.AndroidSupportInjection
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.budiyev.android.codescanner.*
 import com.gmulhearn.didwebauthn.R
+import com.gmulhearn.didwebauthn.ui.didcomm.AddContact.AddContactContract
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.contact_label_popup.*
 import kotlinx.android.synthetic.main.fragment_add_contact.*
@@ -24,8 +24,6 @@ class AddContactFragment : Fragment(), AddContactContract.View {
 
     @Inject
     internal lateinit var presenter: AddContactContract.Presenter
-
-    @VisibleForTesting
 
     internal val navigationArgs by navArgs<AddContactFragmentArgs>()
 

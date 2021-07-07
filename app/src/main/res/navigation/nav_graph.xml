@@ -97,7 +97,7 @@
     </fragment>
     <fragment
         android:id="@+id/addContactFragment"
-        android:name="com.gmulhearn.didwebauthn.ui.didcomm.AddContact.AddContactFragment"
+        android:name="com.gmulhearn.didwebauthn.ui.didcomm.addcontacts.AddContactFragment"
         android:label="add_contact_fragment">
         <argument
             android:name="didInfo"

@@ -2,7 +2,7 @@ package com.gmulhearn.didwebauthn.common.di
 
 import com.gmulhearn.didwebauthn.ui.browser.BrowserFragment
 import com.gmulhearn.didwebauthn.ui.browser.BrowserModule
-import com.gmulhearn.didwebauthn.ui.didcomm.AddContact.AddContactFragment
+import com.gmulhearn.didwebauthn.ui.didcomm.addcontacts.AddContactFragment
 import com.gmulhearn.didwebauthn.ui.didcomm.AddContact.AddContactModule
 import com.gmulhearn.didwebauthn.ui.didcomm.chat.ChatFragment
 import com.gmulhearn.didwebauthn.ui.didcomm.chat.ChatModule

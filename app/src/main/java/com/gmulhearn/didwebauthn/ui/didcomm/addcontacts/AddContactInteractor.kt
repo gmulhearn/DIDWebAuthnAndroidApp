@@ -1,4 +1,4 @@
-package com.gmulhearn.didwebauthn.ui.didcomm.AddContact
+package com.gmulhearn.didwebauthn.ui.didcomm.addcontacts
 
 import android.content.Context
 import android.graphics.Color
@@ -17,6 +17,7 @@ import com.gmulhearn.didwebauthn.protocols.DIDExchange.generateEncryptedResponse
 import com.gmulhearn.didwebauthn.protocols.DIDExchange.generateInvitation
 import com.gmulhearn.didwebauthn.protocols.DIDExchange.generateInvitationUrl
 import com.gmulhearn.didwebauthn.transport.FirebaseRelay
+import com.gmulhearn.didwebauthn.ui.didcomm.AddContact.AddContactContract
 import com.google.firebase.FirebaseApp
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat

@@ -2,6 +2,8 @@ package com.gmulhearn.didwebauthn.ui.didcomm.AddContact
 
 import com.gmulhearn.didwebauthn.common.di.BaseFragmentModule
 import com.gmulhearn.didwebauthn.common.di.qualifier.DidInformation
+import com.gmulhearn.didwebauthn.ui.didcomm.addcontacts.AddContactFragment
+import com.gmulhearn.didwebauthn.ui.didcomm.addcontacts.AddContactInteractor
 import com.gmulhearn.didwebauthn.ui.didcomm.addcontacts.AddContactRouter
 import dagger.Module
 import dagger.Provides
