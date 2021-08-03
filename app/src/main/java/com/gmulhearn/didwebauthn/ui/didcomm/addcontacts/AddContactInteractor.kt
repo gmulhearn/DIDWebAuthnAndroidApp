@@ -12,8 +12,8 @@ import com.gmulhearn.didwebauthn.common.ObjectDelegate
 import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.gmulhearn.didwebauthn.common.di.qualifier.DidInformation
 import com.gmulhearn.didwebauthn.data.*
-import com.gmulhearn.didwebauthn.protocols.DIDCommProtocols
-import com.gmulhearn.didwebauthn.transport.relay.RelayRepository
+import com.gmulhearn.didwebauthn.core.protocols.DIDCommProtocols
+import com.gmulhearn.didwebauthn.core.transport.relay.RelayRepository
 import com.gmulhearn.didwebauthn.ui.didcomm.AddContact.AddContactContract
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat

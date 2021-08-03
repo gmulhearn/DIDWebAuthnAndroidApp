@@ -1,8 +1,8 @@
 package com.gmulhearn.didwebauthn
 
 import com.gmulhearn.didwebauthn.data.Invitation
-import com.gmulhearn.didwebauthn.protocols.toJsonString
-import com.gmulhearn.didwebauthn.transport.relay.FirebaseRelayRepository
+import com.gmulhearn.didwebauthn.core.protocols.toJsonString
+import com.gmulhearn.didwebauthn.core.transport.relay.FirebaseRelayRepository
 import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

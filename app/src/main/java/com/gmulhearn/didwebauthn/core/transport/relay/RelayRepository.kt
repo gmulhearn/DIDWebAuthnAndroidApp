@@ -1,6 +1,5 @@
-package com.gmulhearn.didwebauthn.transport.relay
+package com.gmulhearn.didwebauthn.core.transport.relay
 
-import android.content.Context
 import com.squareup.okhttp.MediaType
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request

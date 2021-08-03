@@ -12,7 +12,7 @@ import dagger.android.support.AndroidSupportInjection
 import androidx.fragment.app.Fragment
 import com.gmulhearn.didwebauthn.R
 import com.gmulhearn.didwebauthn.common.WalletProvider
-import com.gmulhearn.didwebauthn.transport.WebAuthnBridgeWebView
+import com.gmulhearn.didwebauthn.core.transport.WebAuthnBridgeWebView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_browser.*
 import javax.inject.Inject

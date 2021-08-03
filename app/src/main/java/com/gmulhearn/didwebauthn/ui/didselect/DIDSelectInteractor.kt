@@ -8,8 +8,8 @@ import com.gmulhearn.didwebauthn.common.MSCoroutineScope
 import com.gmulhearn.didwebauthn.common.ObjectDelegate
 import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.gmulhearn.didwebauthn.data.DidInfo
-import com.gmulhearn.didwebauthn.protocols.BIP0039.generateMnemonic
-import com.gmulhearn.didwebauthn.protocols.BIP0039.generateSeed
+import com.gmulhearn.didwebauthn.core.protocols.BIP0039.generateMnemonic
+import com.gmulhearn.didwebauthn.core.protocols.BIP0039.generateSeed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,7 +1,7 @@
 package com.gmulhearn.didwebauthn
 
 import com.gmulhearn.didwebauthn.data.*
-import com.gmulhearn.didwebauthn.protocols.BIP0039.generateSeed
+import com.gmulhearn.didwebauthn.core.protocols.BIP0039.generateSeed
 import org.hyperledger.indy.sdk.LibIndy
 import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did

@@ -6,8 +6,8 @@ import com.gmulhearn.didwebauthn.common.DefaultDispatcherProvider
 import com.gmulhearn.didwebauthn.common.DefaultWalletProvider
 import com.gmulhearn.didwebauthn.common.DispatcherProvider
 import com.gmulhearn.didwebauthn.common.WalletProvider
-import com.gmulhearn.didwebauthn.transport.relay.FirebaseRelayRepository
-import com.gmulhearn.didwebauthn.transport.relay.RelayRepository
+import com.gmulhearn.didwebauthn.core.transport.relay.FirebaseRelayRepository
+import com.gmulhearn.didwebauthn.core.transport.relay.RelayRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

@@ -1,4 +1,4 @@
-package com.gmulhearn.didwebauthn.transport
+package com.gmulhearn.didwebauthn.core.transport
 
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep

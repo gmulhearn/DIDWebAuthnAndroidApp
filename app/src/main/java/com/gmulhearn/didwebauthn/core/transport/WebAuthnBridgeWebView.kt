@@ -1,4 +1,4 @@
-package com.gmulhearn.didwebauthn.transport
+package com.gmulhearn.didwebauthn.core.transport
 
 import android.content.Context
 import android.os.Handler
@@ -6,7 +6,7 @@ import android.webkit.WebView
 import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialAssertionResponse
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialAttestationResponse
-import com.gmulhearn.didwebauthn.protocols.DIDAuthenticator
+import com.gmulhearn.didwebauthn.core.protocols.DIDAuthenticator
 import com.google.gson.Gson
 import java.io.IOException
 

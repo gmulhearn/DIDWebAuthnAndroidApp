@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import com.budiyev.android.codescanner.*
 import javax.inject.Inject
 import com.gmulhearn.didwebauthn.R
-import com.gmulhearn.didwebauthn.transport.WebRTCJsInterface
+import com.gmulhearn.didwebauthn.core.transport.WebRTCJsInterface
 import kotlinx.android.synthetic.main.fragment_external_session.*
 
 /**

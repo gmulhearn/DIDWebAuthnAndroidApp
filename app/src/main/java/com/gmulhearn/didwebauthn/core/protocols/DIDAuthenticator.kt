@@ -1,4 +1,4 @@
-package com.gmulhearn.didwebauthn.protocols
+package com.gmulhearn.didwebauthn.core.protocols
 
 import android.content.Context
 import co.nstant.`in`.cbor.CborBuilder

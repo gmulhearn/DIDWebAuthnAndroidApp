@@ -1,11 +1,11 @@
-package com.gmulhearn.didwebauthn.transport
+package com.gmulhearn.didwebauthn.core.transport
 
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
 import com.gmulhearn.didwebauthn.data.CollectedClientData
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialCreationOptions
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialRequestOptions
-import com.gmulhearn.didwebauthn.protocols.*
+import com.gmulhearn.didwebauthn.core.protocols.*
 import com.google.gson.Gson
 import java.util.*
 

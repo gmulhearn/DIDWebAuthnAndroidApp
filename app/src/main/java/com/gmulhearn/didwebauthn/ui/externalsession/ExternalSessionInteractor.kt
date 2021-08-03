@@ -10,7 +10,7 @@ import com.gmulhearn.didwebauthn.data.WebRTCMessageTypes.WEBAUTHN_AUTH_REQUEST
 import com.gmulhearn.didwebauthn.data.WebRTCMessageTypes.WEBAUTHN_AUTH_RESPONSE
 import com.gmulhearn.didwebauthn.data.WebRTCMessageTypes.WEBAUTHN_REG_REQUEST
 import com.gmulhearn.didwebauthn.data.WebRTCMessageTypes.WEBAUTHN_REG_RESPONSE
-import com.gmulhearn.didwebauthn.protocols.*
+import com.gmulhearn.didwebauthn.core.protocols.*
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.squareup.okhttp.MediaType

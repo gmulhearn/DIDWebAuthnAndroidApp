@@ -1,4 +1,4 @@
-package com.gmulhearn.didwebauthn.protocols
+package com.gmulhearn.didwebauthn.core.protocols
 
 import android.os.Build
 import androidx.annotation.RequiresApi

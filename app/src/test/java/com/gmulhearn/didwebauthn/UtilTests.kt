@@ -1,6 +1,6 @@
 package com.gmulhearn.didwebauthn
 
-import com.gmulhearn.didwebauthn.protocols.CCDToString
+import com.gmulhearn.didwebauthn.core.protocols.CCDToString
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

@@ -1,4 +1,4 @@
-package com.gmulhearn.didwebauthn.transport.relay
+package com.gmulhearn.didwebauthn.core.transport.relay
 
 import android.content.Context
 import com.google.firebase.FirebaseApp
@@ -6,14 +6,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.Blob
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.okhttp.MediaType
-import com.squareup.okhttp.OkHttpClient
-import com.squareup.okhttp.Request
-import com.squareup.okhttp.RequestBody
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.reflect.KFunction1
 
 class FirebaseRelayRepository @Inject constructor(
     context: Context
@@ -32,7 +25,6 @@ class FirebaseRelayRepository @Inject constructor(
     }
 
     suspend fun readAllMessages(postboxID: String) {
-//        val firestore = FirebaseFirestore.getInstance(app)
 
         Firebase.auth.signInAnonymously().addOnCompleteListener {
             firestore

@@ -1,4 +1,4 @@
-package com.gmulhearn.didwebauthn.protocols
+package com.gmulhearn.didwebauthn.core.protocols
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,7 +6,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import com.gmulhearn.didwebauthn.data.*
-import com.gmulhearn.didwebauthn.transport.relay.RelayRepository
+import com.gmulhearn.didwebauthn.core.transport.relay.RelayRepository
 import com.google.gson.Gson
 import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did

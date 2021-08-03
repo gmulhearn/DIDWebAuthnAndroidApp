@@ -10,7 +10,7 @@ import com.gmulhearn.didwebauthn.common.MSCoroutineScope
 import com.gmulhearn.didwebauthn.common.ObjectDelegate
 import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.gmulhearn.didwebauthn.data.*
-import com.gmulhearn.didwebauthn.protocols.*
+import com.gmulhearn.didwebauthn.core.protocols.*
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
