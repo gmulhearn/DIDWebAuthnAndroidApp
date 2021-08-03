@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.createBitmap
 import com.gmulhearn.didwebauthn.common.MSCoroutineScope
@@ -37,7 +36,6 @@ class AddContactInteractor @Inject constructor(
     private val context: Context,
     private val walletProvider: WalletProvider,
     private val relay: RelayRepository
-    // private val didComm: DIDCommProtocols
 ) : AddContactContract.InteractorInput, CoroutineScope by coroutineScope {
 
     private val didComm = DIDCommProtocols(relay)
@@ -156,6 +154,7 @@ class AddContactInteractor @Inject constructor(
 
     override fun loadData(savedState: Bundle?) {
         launch {
+            relay.initializePostbox(didInfo.did)
             relay.subscribeToMessages(didInfo.did) { data -> processMessage(data) }
         }
     }

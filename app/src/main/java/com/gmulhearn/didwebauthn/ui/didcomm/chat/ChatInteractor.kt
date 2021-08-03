@@ -11,10 +11,12 @@ import com.gmulhearn.didwebauthn.data.*
 import com.gmulhearn.didwebauthn.core.protocols.DIDCommProtocols
 import com.gmulhearn.didwebauthn.core.transport.relay.RelayRepository
 import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
+import com.gmulhearn.didwebauthn.data.indy.PairwiseData
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.hyperledger.indy.sdk.crypto.Crypto
+import java.util.UUID
 import javax.inject.Inject
 
 /**
@@ -55,12 +57,14 @@ class ChatInteractor @Inject constructor(
             relay.subscribeToMessages(pairwiseContact.myDid) { data ->
                 processMessage(data)
             }
+            relay.getMessages(pairwiseContact.myDid).forEach { data ->
+                processMessage(data)
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun processMessage(data: ByteArray) {
-
         val didCommContainer: DIDCommContainer
         try {
             val unencryptedMsg =
@@ -83,10 +87,11 @@ class ChatInteractor @Inject constructor(
             val didCommMessage =
                 Gson().fromJson(didCommContainer.message.toString(), DIDCommMessage::class.java)
             checkNotNull(didCommMessage.content)
-            messageList.add(MessageDisplayModel(didCommMessage, isSender = false))
+            val isSender = didCommContainer.senderVerkey == pairwiseContact.metadata.myVerkey
+            messageList.add(MessageDisplayModel(didCommMessage, isSender = isSender))
             output.updateMessages(messageList)
         } catch (e: java.lang.Exception) {
-            println("faile to decode as msg $e")
+            println("failed to decode as msg $e")
         }
     }
 
@@ -108,12 +113,30 @@ class ChatInteractor @Inject constructor(
             context
         )
 
+        val messageSelfPacked = didComm.generateEncryptedDIDCommMessage(
+            wallet,
+            pairwiseContact.copy(
+                metadata = pairwiseContact.metadata.copy(
+                    theirVerkey = pairwiseContact.metadata.myVerkey,
+                    theirRoutingKeys = emptyList()
+                )
+            ),
+            "2021-03-09T12:32:10Z", // todo...
+            message,
+            context
+        )
+
         launch {
             if (relay.sendDataToEndpoint(messagePacked, pairwiseContact.metadata.theirEndpoint)) {
                 val didCommMessage =
-                    DIDCommMessage("2021-03-09T12:32:10Z", message, id = "todo") // TODO
-                messageList.add(MessageDisplayModel(didCommMessage, isSender = true))
-                output.updateMessages(messageList)
+                    DIDCommMessage(
+                        "2021-03-09T12:32:10Z", // TODO
+                        message,
+                        id = UUID.randomUUID().toString()
+                    )
+                relay.storeMessage(pairwiseContact.myDid, messageSelfPacked)
+                // messageList.add(MessageDisplayModel(didCommMessage, isSender = true))
+                // output.updateMessages(messageList)
             } else {
                 // failed
             }

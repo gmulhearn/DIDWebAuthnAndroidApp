@@ -1,21 +1,39 @@
 package com.gmulhearn.didwebauthn.core.transport.relay
 
-import android.content.Context
-import android.provider.Settings
 import com.gmulhearn.didwebauthn.common.WalletProvider
-import javax.inject.Inject
+import com.gmulhearn.didwebauthn.data.indy.DIDMetaData
+import com.gmulhearn.didwebauthn.data.indy.RelayDIDData
+import com.google.gson.Gson
+import org.hyperledger.indy.sdk.did.Did
+import java.lang.Exception
 
 class DIDPostboxManager(
-    private val context: Context
+    private val walletProvider: WalletProvider
 ) {
-    @Inject
-    internal lateinit var walletProvider: WalletProvider
+
+    private val wallet = walletProvider.getWallet()
+
+    fun checkDIDPostboxExists(did: String): Boolean {
+        return try {
+            val metadataStr = Did.getDidMetadata(wallet, did).get()
+            val metadata = Gson().fromJson(metadataStr, DIDMetaData::class.java)
+            metadata.relayDIDData != null
+        } catch (e: Exception) {
+            false
+        }
+    }
 
     fun getPostboxIDForDID(did: String): String {
-        return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        val metadataStr = Did.getDidMetadata(wallet, did).get()
+        val metadata = Gson().fromJson(metadataStr, DIDMetaData::class.java)
+        return metadata.relayDIDData!!.postboxID
     }
 
     fun storePostboxIDForDID(postboxID: String, did: String) {
-
+        val metadata = DIDMetaData(
+            relayDIDData = RelayDIDData(postboxID)
+        )
+        val metadataJSON = Gson().toJson(metadata)
+        Did.setDidMetadata(wallet, did, metadataJSON).get()
     }
 }

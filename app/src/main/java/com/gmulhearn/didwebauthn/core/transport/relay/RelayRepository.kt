@@ -9,15 +9,18 @@ import kotlinx.coroutines.withContext
 
 
 interface RelayRepository {
+    /**
+     * initialise a postbox for the given [did] if they don't already have one
+     */
     fun initializePostbox(did: String)
 
     fun getServiceEndpoint(did: String): String
 
     fun subscribeToMessages(did: String, onReceiveMessage: (ByteArray) -> Unit)
 
-    fun getMessages(did: String): List<ByteArray>
+    suspend fun getMessages(did: String): List<ByteArray>
 
-    fun storeMessage(did: String, message: String)
+    suspend fun storeMessage(did: String, data: ByteArray)
 
     suspend fun sendDataToEndpoint(data: ByteArray, endpoint: String): Boolean {
         val postRequest = Request.Builder()

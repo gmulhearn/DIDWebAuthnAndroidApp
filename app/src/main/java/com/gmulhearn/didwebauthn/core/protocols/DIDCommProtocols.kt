@@ -11,9 +11,9 @@ import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did
 import org.hyperledger.indy.sdk.wallet.Wallet
 import java.nio.ByteBuffer
-import java.util.*
+import java.util.*;
 
-class DIDCommProtocols (private val relay: RelayRepository) {
+class DIDCommProtocols(private val relay: RelayRepository) {
 
     fun generateInvitation(
         wallet: Wallet,
@@ -21,7 +21,7 @@ class DIDCommProtocols (private val relay: RelayRepository) {
         label: String
     ): Invitation {
         val didKey = Did.keyForLocalDid(wallet, did.did).get()
-
+        relay.initializePostbox(did.did)
         val endpoint = relay.getServiceEndpoint(did.did)
 
         return Invitation(
@@ -34,6 +34,7 @@ class DIDCommProtocols (private val relay: RelayRepository) {
     }
 
     private fun generateDIDDoc(did: DidInfo): DIDDoc {
+        relay.initializePostbox(did.did)
         val endpoint = relay.getServiceEndpoint(did.did)
 
         val publicKey = DIDDocPublicKey(

@@ -1,18 +1,24 @@
 package com.gmulhearn.didwebauthn.core.transport.relay
 
 import android.content.Context
+import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.google.firebase.FirebaseApp
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.Blob
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.UUID
 import javax.inject.Inject
 
 class FirebaseRelayRepository @Inject constructor(
-    context: Context
+    context: Context,
+    private val walletProvider: WalletProvider
 ) : RelayRepository {
 
-    private val didPostboxManager = DIDPostboxManager(context)
+    private val didPostboxManager = DIDPostboxManager(walletProvider)
 
     // todo convert below to delegated
     private val app = FirebaseApp.initializeApp(context)!!
@@ -29,25 +35,11 @@ class FirebaseRelayRepository @Inject constructor(
         return "https://$region-$projectId.cloudfunctions.net/$functionName?p=$postboxID"
     }
 
-    suspend fun readAllMessages(postboxID: String) {
-
-        Firebase.auth.signInAnonymously().addOnCompleteListener {
-            firestore
-                .collection("postboxes")
-                .document(postboxID)
-                .collection("messages")
-                .get()
-                .addOnCompleteListener {
-                    it.result?.documents?.forEach {
-                        val blob = it.data?.get("message") as Blob
-                        println(blob.toBytes().toString(Charsets.UTF_8))
-                    }
-                }
-        }
-    }
-
     override fun initializePostbox(did: String) {
-        TODO("Not yet implemented")
+        if (!didPostboxManager.checkDIDPostboxExists(did)) {
+            val newPostboxID = UUID.randomUUID().toString()
+            didPostboxManager.storePostboxIDForDID(newPostboxID, did)
+        }
     }
 
     override fun subscribeToMessages(did: String, onReceiveMessage: (ByteArray) -> Unit) {
@@ -72,11 +64,34 @@ class FirebaseRelayRepository @Inject constructor(
         }
     }
 
-    override fun getMessages(did: String): List<ByteArray> {
-        TODO("Not yet implemented")
+    @ExperimentalCoroutinesApi
+    override suspend fun getMessages(did: String): List<ByteArray> {
+        val postboxID = didPostboxManager.getPostboxIDForDID(did)
+
+        return suspendCancellableCoroutine { cont ->
+            Firebase.auth.signInAnonymously().addOnCompleteListener {
+                firestore
+                    .collection("postboxes")
+                    .document(postboxID)
+                    .collection("messages")
+                    .get()
+                    .addOnCompleteListener { task ->
+                        // return this:
+                        cont.resume(
+                            value = task.result?.documents?.sortedBy { doc ->
+                                (doc.data?.get("createdAt") as Timestamp).seconds
+                            }?.map { doc ->
+                                val blob = doc.data?.get("message") as Blob
+                                blob.toBytes()
+                            } ?: emptyList(),
+                            onCancellation = {}
+                        )
+                    }
+            }
+        }
     }
 
-    override fun storeMessage(did: String, message: String) {
-        TODO("Not yet implemented")
+    override suspend fun storeMessage(did: String, data: ByteArray) {
+        sendDataToEndpoint(data, getServiceEndpoint(did)) // a bit lazy, i could always store it
     }
 }
