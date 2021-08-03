@@ -84,7 +84,7 @@ class AddContactInteractor @Inject constructor(
                         EnumMap(EncodeHintType::class.java)
                     hintMap[EncodeHintType.MARGIN] = 0
 
-                    val invite = didComm.generateInvitation(wallet, didInfo, context, myLabel)
+                    val invite = didComm.generateInvitation(wallet, didInfo, myLabel)
 
                     val inviteUrl = didComm.generateInvitationUrl(invite)
 
@@ -155,10 +155,8 @@ class AddContactInteractor @Inject constructor(
     }
 
     override fun loadData(savedState: Bundle?) {
-        val androidId =
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
         launch {
-            relay.subscribeToMessages(androidId) { data -> processMessage(data) }
+            relay.subscribeToMessages(didInfo.did) { data -> processMessage(data) }
         }
     }
 

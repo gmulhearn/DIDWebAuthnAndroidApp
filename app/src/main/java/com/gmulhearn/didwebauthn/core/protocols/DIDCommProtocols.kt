@@ -1,9 +1,7 @@
 package com.gmulhearn.didwebauthn.core.protocols
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.provider.Settings
 import androidx.annotation.RequiresApi
 import com.gmulhearn.didwebauthn.data.*
 import com.gmulhearn.didwebauthn.core.transport.relay.RelayRepository
@@ -17,20 +15,17 @@ import java.util.*
 
 class DIDCommProtocols (private val relay: RelayRepository) {
 
-    @SuppressLint("HardwareIds")
     fun generateInvitation(
         wallet: Wallet,
         did: DidInfo,
-        context: Context,
         label: String
     ): Invitation {
         val didKey = Did.keyForLocalDid(wallet, did.did).get()
-        val androidId =
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        val endpoint = relay.getServiceEndpoint(androidId)
+
+        val endpoint = relay.getServiceEndpoint(did.did)
 
         return Invitation(
-            id = androidId,
+            id = UUID.randomUUID().toString(),
             label = label,
             recipientKeys = listOf(didKey),
             serviceEndpoint = endpoint,
@@ -38,10 +33,8 @@ class DIDCommProtocols (private val relay: RelayRepository) {
         )
     }
 
-    fun generateDIDDoc(did: DidInfo, context: Context): DIDDoc {
-        val androidId =
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        val endpoint = relay.getServiceEndpoint(androidId)
+    private fun generateDIDDoc(did: DidInfo): DIDDoc {
+        val endpoint = relay.getServiceEndpoint(did.did)
 
         val publicKey = DIDDocPublicKey(
             id = did.did + "#keys-1",
@@ -63,7 +56,7 @@ class DIDCommProtocols (private val relay: RelayRepository) {
         )
     }
 
-    fun routingForwardWrap(
+    private fun routingForwardWrap(
         packedMessage: PackedMessage,
         myWallet: Wallet,
         nextRecipientKey: String,
@@ -73,11 +66,9 @@ class DIDCommProtocols (private val relay: RelayRepository) {
 
         val currentRoutingKey =
             routingKeys.firstOrNull() ?: return packedMessage  // end of wrapping
-        val androidId =
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
 
         val routingForwardMessage = RoutingForwardMessage(
-            id = androidId,
+            id = UUID.randomUUID().toString(),
             to = nextRecipientKey,
             message = packedMessage
         )
@@ -136,11 +127,9 @@ class DIDCommProtocols (private val relay: RelayRepository) {
         return rawRoutingForwardMessage.toByteArray(Charsets.UTF_8)
     }
 
-    private fun generateRequest(label: String, did: DidInfo, context: Context): DIDRequestMessage {
-        val androidId =
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+    private fun generateRequest(label: String, did: DidInfo): DIDRequestMessage {
 
-        val didDoc = generateDIDDoc(did, context)
+        val didDoc = generateDIDDoc(did)
 
         val didRequestConnection = DIDRequestConnection(
             did = did.did,
@@ -151,7 +140,7 @@ class DIDCommProtocols (private val relay: RelayRepository) {
             label = label,
             connection = didRequestConnection,
             type = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
-            id = androidId
+            id = UUID.randomUUID().toString()
         )
     }
 
@@ -163,7 +152,7 @@ class DIDCommProtocols (private val relay: RelayRepository) {
         theirRoutingKeys: List<String>,
         context: Context
     ): ByteArray {
-        val didCommMessage = generateRequest(label, myDid, context)
+        val didCommMessage = generateRequest(label, myDid)
 
         val jsonMessage = Gson().toJson(didCommMessage).replace("""\u003d""", "=")
 
@@ -194,12 +183,10 @@ class DIDCommProtocols (private val relay: RelayRepository) {
         context: Context
     ): ByteArray {
 
-        val androidId =
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
         val didCommMessage = DIDCommMessage(
             sentTime = time,
             content = message,
-            id = androidId
+            id = UUID.randomUUID().toString()
         )
 
         val jsonMessage = Gson().toJson(didCommMessage)
@@ -221,7 +208,6 @@ class DIDCommProtocols (private val relay: RelayRepository) {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun generateEncryptedResponseMessage(
         myWallet: Wallet,
         myDid: DidInfo,
@@ -231,7 +217,7 @@ class DIDCommProtocols (private val relay: RelayRepository) {
     ): ByteArray {
         val connection = DIDRequestConnection(
             myDid.did,
-            generateDIDDoc(myDid, context)
+            generateDIDDoc(myDid)
         )
 
         val connectionJson = Gson().toJson(connection).replace("""\u003d""", "=")
@@ -259,12 +245,12 @@ class DIDCommProtocols (private val relay: RelayRepository) {
         )
 
         val thread = DIDResponseThread(
-            thid = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+            thid = UUID.randomUUID().toString()
         )
         val response = DIDResponseMessage(
             connectionSig,
             thread,
-            id = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+            id = UUID.randomUUID().toString()
         )
 
         println(response)

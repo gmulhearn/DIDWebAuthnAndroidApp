@@ -3,7 +3,6 @@ package com.gmulhearn.didwebauthn.ui.didcomm.chat
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import androidx.annotation.RequiresApi
 import com.gmulhearn.didwebauthn.common.MSCoroutineScope
 import com.gmulhearn.didwebauthn.common.ObjectDelegate
@@ -52,11 +51,9 @@ class ChatInteractor @Inject constructor(
     }
 
     override fun loadData(savedState: Bundle?) {
-        val androidId =
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
         launch {
-            relay.subscribeToMessages(androidId) { data -> processMessage(data)
-
+            relay.subscribeToMessages(pairwiseContact.myDid) { data ->
+                processMessage(data)
             }
         }
     }
@@ -113,7 +110,8 @@ class ChatInteractor @Inject constructor(
 
         launch {
             if (relay.sendDataToEndpoint(messagePacked, pairwiseContact.metadata.theirEndpoint)) {
-                val didCommMessage = DIDCommMessage("2021-03-09T12:32:10Z", message, id = "todo") // TODO
+                val didCommMessage =
+                    DIDCommMessage("2021-03-09T12:32:10Z", message, id = "todo") // TODO
                 messageList.add(MessageDisplayModel(didCommMessage, isSender = true))
                 output.updateMessages(messageList)
             } else {
