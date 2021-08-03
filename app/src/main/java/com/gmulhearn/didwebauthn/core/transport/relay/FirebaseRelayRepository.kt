@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.Date
 import java.util.UUID
 import javax.inject.Inject
 
@@ -46,8 +47,7 @@ class FirebaseRelayRepository @Inject constructor(
         val postboxID = didPostboxManager.getPostboxIDForDID(did)
 
         Firebase.auth.signInAnonymously().addOnCompleteListener {
-            firestore
-                .collection("postboxes")
+            firestore.collection("postboxes")
                 .document(postboxID)
                 .collection("messages")
                 .addSnapshotListener { value, error ->
@@ -92,6 +92,15 @@ class FirebaseRelayRepository @Inject constructor(
     }
 
     override suspend fun storeMessage(did: String, data: ByteArray) {
-        sendDataToEndpoint(data, getServiceEndpoint(did)) // a bit lazy, i could always store it
+
+        val postboxID = didPostboxManager.getPostboxIDForDID(did)
+
+        Firebase.auth.signInAnonymously().addOnCompleteListener {
+            firestore
+                .collection("postboxes")
+                .document(postboxID)
+                .collection("messages")
+                .add(hashMapOf("createdAt" to Timestamp(Date(Date().time - 1000)), "message" to Blob.fromBytes(data)))
+        }
     }
 }
