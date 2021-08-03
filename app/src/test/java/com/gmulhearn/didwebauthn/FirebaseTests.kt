@@ -2,14 +2,14 @@ package com.gmulhearn.didwebauthn
 
 import com.gmulhearn.didwebauthn.data.Invitation
 import com.gmulhearn.didwebauthn.protocols.toJsonString
-import com.gmulhearn.didwebauthn.transport.FirebaseRelay
+import com.gmulhearn.didwebauthn.transport.relay.FirebaseRelayRepository
 import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 class FirebaseTests {
 
-    private lateinit var firebaseRelay: FirebaseRelay
+    private lateinit var firebaseRelay: FirebaseRelayRepository
 
     @Before
     fun setup() {

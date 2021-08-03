@@ -9,9 +9,8 @@ import com.gmulhearn.didwebauthn.common.MSCoroutineScope
 import com.gmulhearn.didwebauthn.common.ObjectDelegate
 import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.gmulhearn.didwebauthn.data.*
-import com.gmulhearn.didwebauthn.protocols.DIDExchange.generateEncryptedDIDCommMessage
-import com.gmulhearn.didwebauthn.transport.FirebaseRelay
-import com.google.firebase.FirebaseApp
+import com.gmulhearn.didwebauthn.protocols.DIDCommProtocols
+import com.gmulhearn.didwebauthn.transport.relay.RelayRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -25,8 +24,11 @@ class ChatInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
     private val pairwiseContact: PairwiseContact,
     private val context: Context,
-    private val walletProvider: WalletProvider
+    private val walletProvider: WalletProvider,
+    private val relay: RelayRepository
 ) : ChatContract.InteractorInput, CoroutineScope by coroutineScope {
+
+    private val didComm = DIDCommProtocols(relay)
 
     internal val outputDelegate = ObjectDelegate<ChatContract.InteractorOutput>()
     internal val output by outputDelegate
@@ -49,23 +51,22 @@ class ChatInteractor @Inject constructor(
     }
 
     override fun loadData(savedState: Bundle?) {
-        val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
         val androidId =
             Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
         launch {
-            firebase.waitForMessage(androidId, ::onMessage)
+            relay.subscribeToMessages(androidId) { data -> processMessage(data)
+
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun onMessage(data: Map<String, Any?>) {
+    private fun processMessage(data: ByteArray) {
 
-        println("onMessage: $data")
-        val message = data["message"] as com.google.firebase.firestore.Blob
         val didCommContainer: DIDCommContainer
         try {
             val unencryptedMsg =
-                Crypto.unpackMessage(wallet, message.toBytes()).get().toString(Charsets.UTF_8)
+                Crypto.unpackMessage(wallet, data).get().toString(Charsets.UTF_8)
             println("unencrypted: $unencryptedMsg")
 
             didCommContainer = Gson().fromJson(unencryptedMsg, DIDCommContainer::class.java)
@@ -101,18 +102,17 @@ class ChatInteractor @Inject constructor(
             return
         }
 
-        val messagePacked = generateEncryptedDIDCommMessage(
+        val messagePacked = didComm.generateEncryptedDIDCommMessage(
             wallet,
             pairwiseContact,
-            "2021-03-09T12:32:10Z",
+            "2021-03-09T12:32:10Z", // todo...
             message,
             context
         )
 
         launch {
-            val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
-            if (firebase.transmitData(messagePacked, pairwiseContact.metadata.theirEndpoint)) {
-                val didCommMessage = DIDCommMessage("2021-03-09T12:32:10Z", message, id = "todo")
+            if (relay.sendDataToEndpoint(messagePacked, pairwiseContact.metadata.theirEndpoint)) {
+                val didCommMessage = DIDCommMessage("2021-03-09T12:32:10Z", message, id = "todo") // TODO
                 messageList.add(MessageDisplayModel(didCommMessage, isSender = true))
                 output.updateMessages(messageList)
             } else {

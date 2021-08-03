@@ -12,13 +12,9 @@ import com.gmulhearn.didwebauthn.common.ObjectDelegate
 import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.gmulhearn.didwebauthn.common.di.qualifier.DidInformation
 import com.gmulhearn.didwebauthn.data.*
-import com.gmulhearn.didwebauthn.protocols.DIDExchange.generateEncryptedRequestMessage
-import com.gmulhearn.didwebauthn.protocols.DIDExchange.generateEncryptedResponseMessage
-import com.gmulhearn.didwebauthn.protocols.DIDExchange.generateInvitation
-import com.gmulhearn.didwebauthn.protocols.DIDExchange.generateInvitationUrl
-import com.gmulhearn.didwebauthn.transport.FirebaseRelay
+import com.gmulhearn.didwebauthn.protocols.DIDCommProtocols
+import com.gmulhearn.didwebauthn.transport.relay.RelayRepository
 import com.gmulhearn.didwebauthn.ui.didcomm.AddContact.AddContactContract
-import com.google.firebase.FirebaseApp
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
@@ -38,8 +34,12 @@ class AddContactInteractor @Inject constructor(
     internal val coroutineScope: MSCoroutineScope,
     @DidInformation internal val didInfo: DidInfo,
     private val context: Context,
-    private val walletProvider: WalletProvider
+    private val walletProvider: WalletProvider,
+    private val relay: RelayRepository
+    // private val didComm: DIDCommProtocols
 ) : AddContactContract.InteractorInput, CoroutineScope by coroutineScope {
+
+    private val didComm = DIDCommProtocols(relay)
 
     internal val outputDelegate = ObjectDelegate<AddContactContract.InteractorOutput>()
     internal val output by outputDelegate
@@ -83,9 +83,9 @@ class AddContactInteractor @Inject constructor(
                         EnumMap(EncodeHintType::class.java)
                     hintMap[EncodeHintType.MARGIN] = 0
 
-                    val invite = generateInvitation(wallet, didInfo, context, myLabel)
+                    val invite = didComm.generateInvitation(wallet, didInfo, context, myLabel)
 
-                    val inviteUrl = generateInvitationUrl(invite)
+                    val inviteUrl = didComm.generateInvitationUrl(invite)
 
                     val bitmapMatrix =
                         qrCodeWriter.encode(inviteUrl, barcodeFormatQRCode, width, height, hintMap)
@@ -109,7 +109,8 @@ class AddContactInteractor @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun processQrScan(text: String?) {
-        val inviteEncoded = text?.split("?c_i=")?.last()?.split("%")?.first()  // sometimes suffixed with %3D...
+        val inviteEncoded =
+            text?.split("?c_i=")?.last()?.split("%")?.first()  // sometimes suffixed with %3D...
         println(inviteEncoded)
         var invite = ""
         try {
@@ -141,7 +142,7 @@ class AddContactInteractor @Inject constructor(
     private suspend fun replyToInvitation(invitation: Invitation) {
         val theirDid = DidInfo("unnecessary", invitation.recipientKeys.first())
         val replyEncrypted =
-            generateEncryptedRequestMessage(
+            didComm.generateEncryptedRequestMessage(
                 myLabel,
                 wallet,
                 didInfo,
@@ -149,28 +150,23 @@ class AddContactInteractor @Inject constructor(
                 invitation.routingKeys ?: listOf(),
                 context
             )
-        val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
-        firebase.transmitData(replyEncrypted, invitation.serviceEndpoint)
+        relay.sendDataToEndpoint(replyEncrypted, invitation.serviceEndpoint)
     }
 
     override fun loadData(savedState: Bundle?) {
-        val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
         val androidId =
             Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
         launch {
-            firebase.waitForMessage(androidId, ::onMessage)
+            relay.subscribeToMessages(androidId) { data -> processMessage(data) }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun onMessage(data: Map<String, Any?>) {
-
-        println("onMessage: $data")
-        val message = data["message"] as com.google.firebase.firestore.Blob
-        var didCommContainer: DIDCommContainer
+    private fun processMessage(data: ByteArray) {
+        val didCommContainer: DIDCommContainer
         try {
             val unencryptedMsg =
-                Crypto.unpackMessage(wallet, message.toBytes()).get().toString(Charsets.UTF_8)
+                Crypto.unpackMessage(wallet, data).get().toString(Charsets.UTF_8)
             println("unencrypted: $unencryptedMsg")
 
             didCommContainer = Gson().fromJson(unencryptedMsg, DIDCommContainer::class.java)
@@ -224,7 +220,7 @@ class AddContactInteractor @Inject constructor(
             didRequest.connection.didDoc.service.first().recipientKeys.first()
         )
 
-        val encryptedResponseRaw = generateEncryptedResponseMessage(
+        val encryptedResponseRaw = didComm.generateEncryptedResponseMessage(
             myWallet = wallet,
             myDid = didInfo,
             theirDid = theirDid,
@@ -233,8 +229,7 @@ class AddContactInteractor @Inject constructor(
         )
 
         val result = withContext(Dispatchers.IO) {
-            val firebase = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
-            firebase.transmitData(
+            relay.sendDataToEndpoint(
                 encryptedResponseRaw, // encryptedResponse,
                 didRequest.connection.didDoc.service.first().serviceEndpoint
             )

@@ -6,6 +6,8 @@ import com.gmulhearn.didwebauthn.common.DefaultDispatcherProvider
 import com.gmulhearn.didwebauthn.common.DefaultWalletProvider
 import com.gmulhearn.didwebauthn.common.DispatcherProvider
 import com.gmulhearn.didwebauthn.common.WalletProvider
+import com.gmulhearn.didwebauthn.transport.relay.FirebaseRelayRepository
+import com.gmulhearn.didwebauthn.transport.relay.RelayRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -30,4 +32,8 @@ class AppModule {
     @Provides
     @Singleton
     fun provideWallet(impl: DefaultWalletProvider): WalletProvider = impl
+
+    @Provides
+    @Singleton
+    fun provideRelayService(impl: FirebaseRelayRepository): RelayRepository = impl
 }

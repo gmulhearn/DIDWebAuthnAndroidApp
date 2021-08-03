@@ -6,8 +6,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import com.gmulhearn.didwebauthn.data.*
-import com.gmulhearn.didwebauthn.transport.FirebaseRelay
-import com.google.firebase.FirebaseApp
+import com.gmulhearn.didwebauthn.transport.relay.RelayRepository
 import com.google.gson.Gson
 import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did
@@ -15,7 +14,8 @@ import org.hyperledger.indy.sdk.wallet.Wallet
 import java.nio.ByteBuffer
 import java.util.*
 
-object DIDExchange {
+class DIDCommProtocols (private val relay: RelayRepository) {
+
     @SuppressLint("HardwareIds")
     fun generateInvitation(
         wallet: Wallet,
@@ -23,12 +23,10 @@ object DIDExchange {
         context: Context,
         label: String
     ): Invitation {
-        val firebaseRelay = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
-
         val didKey = Did.keyForLocalDid(wallet, did.did).get()
         val androidId =
             Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        val endpoint = firebaseRelay.getServiceEndpoint(androidId)
+        val endpoint = relay.getServiceEndpoint(androidId)
 
         return Invitation(
             id = androidId,
@@ -40,12 +38,9 @@ object DIDExchange {
     }
 
     fun generateDIDDoc(did: DidInfo, context: Context): DIDDoc {
-
-        val firebaseRelay = FirebaseRelay(FirebaseApp.initializeApp(context)!!)
-
         val androidId =
             Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        val endpoint = firebaseRelay.getServiceEndpoint(androidId)
+        val endpoint = relay.getServiceEndpoint(androidId)
 
         val publicKey = DIDDocPublicKey(
             id = did.did + "#keys-1",
@@ -140,7 +135,7 @@ object DIDExchange {
         return rawRoutingForwardMessage.toByteArray(Charsets.UTF_8)
     }
 
-    fun generateRequest(label: String, did: DidInfo, context: Context): DIDRequestMessage {
+    private fun generateRequest(label: String, did: DidInfo, context: Context): DIDRequestMessage {
         val androidId =
             Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
 
