@@ -31,5 +31,10 @@
       <option name="name" value="maven2" />
       <option name="url" value="https://jitpack.io" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="android-snapshots" />
+      <option name="name" value="android-snapshots" />
+      <option name="url" value="https://repo.tools.anonyome.com/repository/android-snapshots/" />
+    </remote-repository>
   </component>
 </project>

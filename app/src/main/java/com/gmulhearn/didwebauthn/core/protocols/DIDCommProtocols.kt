@@ -21,7 +21,6 @@ class DIDCommProtocols(private val relay: RelayRepository) {
         label: String
     ): Invitation {
         val didKey = Did.keyForLocalDid(wallet, did.did).get()
-        relay.initializePostbox(did.did)
         val endpoint = relay.getServiceEndpoint(did.did)
 
         return Invitation(
@@ -34,7 +33,6 @@ class DIDCommProtocols(private val relay: RelayRepository) {
     }
 
     private fun generateDIDDoc(did: DidInfo): DIDDoc {
-        relay.initializePostbox(did.did)
         val endpoint = relay.getServiceEndpoint(did.did)
 
         val publicKey = DIDDocPublicKey(

@@ -12,11 +12,11 @@ interface RelayRepository {
     /**
      * initialise a postbox for the given [did] if they don't already have one
      */
-    fun initializePostbox(did: String)
+    suspend fun initializePostbox(did: String)
 
     fun getServiceEndpoint(did: String): String
 
-    fun subscribeToMessages(did: String, onReceiveMessage: (ByteArray) -> Unit)
+    suspend fun subscribeToMessages(did: String, onReceiveMessage: (ByteArray) -> Unit)
 
     suspend fun getMessages(did: String): List<ByteArray>
 

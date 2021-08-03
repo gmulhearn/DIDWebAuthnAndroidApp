@@ -11,7 +11,6 @@ import com.gmulhearn.didwebauthn.data.*
 import com.gmulhearn.didwebauthn.core.protocols.DIDCommProtocols
 import com.gmulhearn.didwebauthn.core.transport.relay.RelayRepository
 import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
-import com.gmulhearn.didwebauthn.data.indy.PairwiseData
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -134,9 +133,9 @@ class ChatInteractor @Inject constructor(
                         message,
                         id = UUID.randomUUID().toString()
                     )
+                messageList.add(MessageDisplayModel(didCommMessage, isSender = true))
+                output.updateMessages(messageList)
                 relay.storeMessage(pairwiseContact.myDid, messageSelfPacked)
-                // messageList.add(MessageDisplayModel(didCommMessage, isSender = true))
-                // output.updateMessages(messageList)
             } else {
                 // failed
             }

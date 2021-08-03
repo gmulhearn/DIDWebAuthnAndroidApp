@@ -81,7 +81,6 @@ class AddContactInteractor @Inject constructor(
                     val hintMap: MutableMap<EncodeHintType, Any> =
                         EnumMap(EncodeHintType::class.java)
                     hintMap[EncodeHintType.MARGIN] = 0
-
                     val invite = didComm.generateInvitation(wallet, didInfo, myLabel)
 
                     val inviteUrl = didComm.generateInvitationUrl(invite)
@@ -156,6 +155,7 @@ class AddContactInteractor @Inject constructor(
         launch {
             relay.initializePostbox(didInfo.did)
             relay.subscribeToMessages(didInfo.did) { data -> processMessage(data) }
+            generateQR()
         }
     }
 

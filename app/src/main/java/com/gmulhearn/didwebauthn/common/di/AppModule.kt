@@ -8,6 +8,7 @@ import com.gmulhearn.didwebauthn.common.DispatcherProvider
 import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.gmulhearn.didwebauthn.core.transport.relay.FirebaseRelayRepository
 import com.gmulhearn.didwebauthn.core.transport.relay.RelayRepository
+import com.gmulhearn.didwebauthn.core.transport.relay.SudoRelayRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -35,5 +36,5 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideRelayService(impl: FirebaseRelayRepository): RelayRepository = impl
+    fun provideRelayService(impl: SudoRelayRepository): RelayRepository = impl
 }

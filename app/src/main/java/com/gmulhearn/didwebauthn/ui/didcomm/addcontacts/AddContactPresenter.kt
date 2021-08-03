@@ -31,7 +31,6 @@ class AddContactPresenter @Inject constructor(
 
     override fun viewLoaded(savedState: Bundle?) {
         interactor.loadData(savedState)
-        interactor.generateQR()
         view.setupCamera()
     }
 

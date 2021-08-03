@@ -91,7 +91,7 @@ class ChatFragment : Fragment(), ChatContract.View {
 
     override fun updateMessagesList(updatedMessageList: MutableList<MessageDisplayModel>) {
         println(updatedMessageList)
-        val startMessageList = mutableListOf(MessageDisplayModel(DIDCommMessage("", "start",id="n/a"), false))
+        val startMessageList = mutableListOf<MessageDisplayModel>()
         startMessageList.addAll(updatedMessageList)
         adapter.submitList(startMessageList)
         messageList.post {

@@ -36,14 +36,14 @@ class FirebaseRelayRepository @Inject constructor(
         return "https://$region-$projectId.cloudfunctions.net/$functionName?p=$postboxID"
     }
 
-    override fun initializePostbox(did: String) {
+    override suspend fun initializePostbox(did: String) {
         if (!didPostboxManager.checkDIDPostboxExists(did)) {
             val newPostboxID = UUID.randomUUID().toString()
             didPostboxManager.storePostboxIDForDID(newPostboxID, did)
         }
     }
 
-    override fun subscribeToMessages(did: String, onReceiveMessage: (ByteArray) -> Unit) {
+    override suspend fun subscribeToMessages(did: String, onReceiveMessage: (ByteArray) -> Unit) {
         val postboxID = didPostboxManager.getPostboxIDForDID(did)
 
         Firebase.auth.signInAnonymously().addOnCompleteListener {
@@ -56,6 +56,7 @@ class FirebaseRelayRepository @Inject constructor(
                     }
                     value?.documentChanges?.firstOrNull()?.document?.data?.let { firebaseMessage ->
                         val msgData = firebaseMessage["message"]?.let { it as Blob }
+                        println("firebase relay received msg: ${msgData?.toBytes()?.toString(Charsets.UTF_8)}")
                         onReceiveMessage(
                             msgData?.toBytes() ?: byteArrayOf()
                         )
