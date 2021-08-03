@@ -6,6 +6,9 @@ import co.nstant.`in`.cbor.CborEncoder
 import co.nstant.`in`.cbor.CborException
 import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.gmulhearn.didwebauthn.data.*
+import com.gmulhearn.didwebauthn.data.indy.DIDMetaData
+import com.gmulhearn.didwebauthn.data.indy.LibIndyDIDListItem
+import com.gmulhearn.didwebauthn.data.indy.WebAuthnDIDData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.bitcoinj.core.Base58
@@ -197,7 +200,7 @@ class DIDAuthenticator @Inject constructor(
     private fun createDidCredential(opts: AuthenticatorMakeCredentialOptions): WebAuthnDIDData {
         val did = Did.createAndStoreMyDid(walletProvider.getWallet(), "{}").get()
 
-        val metadata = WebAuthnDIDData(
+        val webAuthnMetadata = WebAuthnDIDData(
             keyId = did.did,  // keyId = did // TODO - confirm this is acceptable
             authCounter = 0,
             userInfo = opts.user,
@@ -206,49 +209,52 @@ class DIDAuthenticator @Inject constructor(
             did = did.did
         )
 
-        Did.setDidMetadata(walletProvider.getWallet(), did.did, Gson().toJson(metadata)).get()
+        val didMetadata = DIDMetaData(webAuthnData = webAuthnMetadata)
 
-        return metadata
+        Did.setDidMetadata(walletProvider.getWallet(), did.did, Gson().toJson(didMetadata)).get()
+
+        return webAuthnMetadata
     }
 
     /**
      * get MetadataDID object that matches supplied opts
      */
     private fun getDidCredential(opts: AuthenticatorGetAssertionOptions): WebAuthnDIDData {
-        val possibleDIDs = getWebAuthnDIDs()
+        val possibleWebAuthnDIDs = getWebAuthnDIDsData()
 
-        val matchingDID = possibleDIDs.filter {
-            val webAuthnDIDData = Gson().fromJson(it.metadata, WebAuthnDIDData::class.java)
-
+        // TODO - handle error if none found?
+        return possibleWebAuthnDIDs.first { webAuthnDIDData ->
             val rpMatch = webAuthnDIDData.rpInfo.id == opts.rpId
             val keyIdMatch = opts.allowCredentialDescriptorList.any {
                 it.getId().contentEquals(webAuthnDIDData.keyId.toByteArray(Charsets.UTF_8))
             }
 
             rpMatch && keyIdMatch
-        }.first()
-
-        return Gson().fromJson(matchingDID.metadata, WebAuthnDIDData::class.java)
+        }
     }
 
     /**
      * get DIDs stored in the DID wallet that have valid webAuthn credential metadata
      */
-    private fun getWebAuthnDIDs(): List<MetadataDID> {
+    private fun getWebAuthnDIDsData(): List<WebAuthnDIDData> {
         val myDids = Did.getListMyDidsWithMeta(walletProvider.getWallet()).get()
-        val metadataDIDType = object : TypeToken<List<MetadataDID>>() {}.type
-        val didList = Gson().fromJson<List<MetadataDID>>(myDids, metadataDIDType)
+        val metadataDIDType = object : TypeToken<List<LibIndyDIDListItem>>() {}.type
+        val didList = Gson().fromJson<List<LibIndyDIDListItem>>(myDids, metadataDIDType)
 
-        return didList.filter { metaDid ->
-            var isWebAuthnMeta = false
-            metaDid.metadata?.let {
+        val webauthnDIDDataList = mutableListOf<WebAuthnDIDData>()
+        didList.forEach { didItem ->
+            didItem.metadata?.let {
                 try {
-                    Gson().fromJson(it, WebAuthnDIDData::class.java)
-                    isWebAuthnMeta = true
-                } catch (e: Exception) {}
+                    val metadata = Gson().fromJson(it, DIDMetaData::class.java)
+                    metadata.webAuthnData?.let { webauthnDID ->
+                        webauthnDIDDataList.add(webauthnDID)
+                    }
+                } catch (e: Exception) {
+                }
             }
-            isWebAuthnMeta
         }
+
+        return webauthnDIDDataList
     }
 
     /***********************************************************************************/

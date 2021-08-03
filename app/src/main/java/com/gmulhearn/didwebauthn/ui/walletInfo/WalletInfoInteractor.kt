@@ -4,9 +4,10 @@ import android.os.Bundle
 import com.gmulhearn.didwebauthn.common.MSCoroutineScope
 import com.gmulhearn.didwebauthn.common.ObjectDelegate
 import com.gmulhearn.didwebauthn.common.WalletProvider
-import com.gmulhearn.didwebauthn.data.MetadataDID
-import com.gmulhearn.didwebauthn.data.PairwiseContact
-import com.gmulhearn.didwebauthn.data.WebAuthnDIDData
+import com.gmulhearn.didwebauthn.data.indy.DIDMetaData
+import com.gmulhearn.didwebauthn.data.indy.LibIndyDIDListItem
+import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
+import com.gmulhearn.didwebauthn.data.indy.WebAuthnDIDData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -74,8 +75,8 @@ class WalletInfoInteractor @Inject constructor(
 
                 val didsString = Did.getListMyDidsWithMeta(wallet).get()
 
-                val metadataDIDType = object : TypeToken<List<MetadataDID>>() {}.type
-                val didList = Gson().fromJson<List<MetadataDID>>(didsString, metadataDIDType)
+                val metadataDIDType = object : TypeToken<List<LibIndyDIDListItem>>() {}.type
+                val didList = Gson().fromJson<List<LibIndyDIDListItem>>(didsString, metadataDIDType)
 
                 if (type == LoadInfoType.ALLDIDS) {
                     // return full did list
@@ -87,8 +88,8 @@ class WalletInfoInteractor @Inject constructor(
                     var isWebAuthnMeta = false
                     metaDid.metadata?.let {
                         try {
-                            Gson().fromJson(it, WebAuthnDIDData::class.java)
-                            isWebAuthnMeta = true
+                            val metadata = Gson().fromJson(it, DIDMetaData::class.java)
+                            isWebAuthnMeta = metadata.webAuthnData != null
                         } catch (e: Exception) {
                         }
                     }

@@ -1,4 +1,4 @@
-package com.gmulhearn.didwebauthn.data
+package com.gmulhearn.didwebauthn.data.indy
 
 import android.os.Parcelable
 import androidx.annotation.Keep

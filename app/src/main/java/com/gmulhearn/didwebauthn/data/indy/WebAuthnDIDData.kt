@@ -1,7 +1,9 @@
-package com.gmulhearn.didwebauthn.data
+package com.gmulhearn.didwebauthn.data.indy
 
 import android.os.Parcelable
 import androidx.annotation.Keep
+import com.gmulhearn.didwebauthn.data.PublicKeyCredentialUserEntity
+import com.gmulhearn.didwebauthn.data.RelyingPartyInfo
 import kotlinx.android.parcel.Parcelize
 
 @Keep

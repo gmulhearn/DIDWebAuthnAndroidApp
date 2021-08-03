@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gmulhearn.didwebauthn.R
 import com.gmulhearn.didwebauthn.common.viewhelpers.animateVisibilityIn
 import com.gmulhearn.didwebauthn.common.viewhelpers.animateVisibilityOut
-import com.gmulhearn.didwebauthn.data.PairwiseContact
+import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
 import kotlinx.android.synthetic.main.fragment_contact_select.*
 import javax.inject.Inject
 

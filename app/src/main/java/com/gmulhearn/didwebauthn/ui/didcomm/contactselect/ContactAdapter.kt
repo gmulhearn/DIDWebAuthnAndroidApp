@@ -9,7 +9,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import com.gmulhearn.didwebauthn.R
-import com.gmulhearn.didwebauthn.data.PairwiseContact
+import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
 import kotlinx.android.synthetic.main.contact_item.view.*
 
 class ContactAdapter(

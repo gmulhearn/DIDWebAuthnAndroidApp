@@ -5,8 +5,8 @@ import com.gmulhearn.didwebauthn.common.MSCoroutineScope
 import com.gmulhearn.didwebauthn.common.ObjectDelegate
 import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.gmulhearn.didwebauthn.data.DidInfo
-import com.gmulhearn.didwebauthn.data.PairwiseContact
-import com.gmulhearn.didwebauthn.data.PairwiseData
+import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
+import com.gmulhearn.didwebauthn.data.indy.PairwiseData
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

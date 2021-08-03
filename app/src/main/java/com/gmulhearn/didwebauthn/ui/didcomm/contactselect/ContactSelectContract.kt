@@ -3,7 +3,7 @@ package com.gmulhearn.didwebauthn.ui.didcomm.contactselect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.gmulhearn.didwebauthn.data.DidInfo
-import com.gmulhearn.didwebauthn.data.PairwiseContact
+import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
 
 /**
  * ContactSelectContract VIPER contract

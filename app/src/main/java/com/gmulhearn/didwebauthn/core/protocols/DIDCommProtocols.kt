@@ -7,6 +7,7 @@ import android.provider.Settings
 import androidx.annotation.RequiresApi
 import com.gmulhearn.didwebauthn.data.*
 import com.gmulhearn.didwebauthn.core.transport.relay.RelayRepository
+import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
 import com.google.gson.Gson
 import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did

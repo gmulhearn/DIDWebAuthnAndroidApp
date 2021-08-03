@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import com.gmulhearn.didwebauthn.R
-import com.gmulhearn.didwebauthn.data.PairwiseContact
+import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
 
 class MessageListAdapter(private val onClick: (PairwiseContact) -> Unit) :
     ListAdapter<MessageDisplayModel, MessageListAdapter.MessageViewHolder>(

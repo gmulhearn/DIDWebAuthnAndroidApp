@@ -3,7 +3,7 @@ package com.gmulhearn.didwebauthn.ui.didcomm.contactselect
 import android.os.Bundle
 import com.gmulhearn.didwebauthn.common.ObjectDelegate
 import com.gmulhearn.didwebauthn.data.DidInfo
-import com.gmulhearn.didwebauthn.data.PairwiseContact
+import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
 import javax.inject.Inject
 
 /**

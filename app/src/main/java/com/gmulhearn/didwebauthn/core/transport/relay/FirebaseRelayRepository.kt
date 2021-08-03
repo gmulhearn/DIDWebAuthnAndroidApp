@@ -11,15 +11,20 @@ import javax.inject.Inject
 class FirebaseRelayRepository @Inject constructor(
     context: Context
 ) : RelayRepository {
+
+    private val didPostboxManager = DIDPostboxManager(context)
+
     // todo convert below to delegated
     private val app = FirebaseApp.initializeApp(context)!!
     private val firestore = FirebaseFirestore.getInstance(app)
 
-    override fun getServiceEndpoint(postboxID: String): String {
+    override fun getServiceEndpoint(did: String): String {
         val projectId = app.options.projectId!!
 
         val region = "us-central1"
         val functionName = "endpoint"
+
+        val postboxID = didPostboxManager.getPostboxIDForDID(did)
 
         return "https://$region-$projectId.cloudfunctions.net/$functionName?p=$postboxID"
     }
@@ -41,11 +46,13 @@ class FirebaseRelayRepository @Inject constructor(
         }
     }
 
-    override fun initializePostbox(postboxID: String) {
+    override fun initializePostbox(did: String) {
         TODO("Not yet implemented")
     }
 
-    override fun subscribeToMessages(postboxID: String, onReceiveMessage: (ByteArray) -> Unit) {
+    override fun subscribeToMessages(did: String, onReceiveMessage: (ByteArray) -> Unit) {
+        val postboxID = didPostboxManager.getPostboxIDForDID(did)
+
         Firebase.auth.signInAnonymously().addOnCompleteListener {
             firestore
                 .collection("postboxes")
@@ -65,11 +72,11 @@ class FirebaseRelayRepository @Inject constructor(
         }
     }
 
-    override fun getMessages(postboxID: String): List<ByteArray> {
+    override fun getMessages(did: String): List<ByteArray> {
         TODO("Not yet implemented")
     }
 
-    override fun storeMessage(postboxID: String, message: String) {
+    override fun storeMessage(did: String, message: String) {
         TODO("Not yet implemented")
     }
 }

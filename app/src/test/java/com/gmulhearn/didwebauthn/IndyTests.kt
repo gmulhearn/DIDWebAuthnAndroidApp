@@ -2,6 +2,9 @@ package com.gmulhearn.didwebauthn
 
 import com.gmulhearn.didwebauthn.data.*
 import com.gmulhearn.didwebauthn.core.protocols.BIP0039.generateSeed
+import com.gmulhearn.didwebauthn.data.indy.DIDMetaData
+import com.gmulhearn.didwebauthn.data.indy.LibIndyDIDListItem
+import com.gmulhearn.didwebauthn.data.indy.WebAuthnDIDData
 import org.hyperledger.indy.sdk.LibIndy
 import org.hyperledger.indy.sdk.crypto.Crypto
 import org.hyperledger.indy.sdk.did.Did
@@ -179,8 +182,8 @@ class DIDWebAuthnAndroids {
         Did.setDidMetadata(openWallet, myDid.did, metaJSON).get()
 
         val myDids = Did.getListMyDidsWithMeta(openWallet).get()
-        val metadataDIDType = object : TypeToken<List<MetadataDID>>() {}.type
-        val didList = Gson().fromJson<List<MetadataDID>>(myDids, metadataDIDType)
+        val metadataDIDType = object : TypeToken<List<LibIndyDIDListItem>>() {}.type
+        val didList = Gson().fromJson<List<LibIndyDIDListItem>>(myDids, metadataDIDType)
 
         println(didList)
     }
@@ -188,8 +191,8 @@ class DIDWebAuthnAndroids {
     @Test
     fun `list DIDs metadata`() {
         val myDids = Did.getListMyDidsWithMeta(openWallet).get()
-        val metadataDIDType = object : TypeToken<List<MetadataDID>>() {}.type
-        val didList = Gson().fromJson<List<MetadataDID>>(myDids, metadataDIDType)
+        val metadataDIDType = object : TypeToken<List<LibIndyDIDListItem>>() {}.type
+        val didList = Gson().fromJson<List<LibIndyDIDListItem>>(myDids, metadataDIDType)
 
         println(didList.joinToString(",\n") { it.toString() })
 
@@ -198,7 +201,7 @@ class DIDWebAuthnAndroids {
         didList.forEach { metaDid ->
             metaDid.metadata?.let {
                 try {
-                    val webauthnMeta = Gson().fromJson(it, WebAuthnDIDData::class.java)
+                    val webauthnMeta = Gson().fromJson(it, DIDMetaData::class.java)
                     println(webauthnMeta)
                 } catch (e: Exception) {
 
@@ -210,8 +213,8 @@ class DIDWebAuthnAndroids {
             var isWebAuthnMeta = false
             metaDid.metadata?.let {
                 try {
-                    Gson().fromJson(it, WebAuthnDIDData::class.java)
-                    isWebAuthnMeta = true
+                    val metadata = Gson().fromJson(it, DIDMetaData::class.java)
+                    isWebAuthnMeta = metadata.webAuthnData != null
                 } catch (e: Exception) {
                 }
             }

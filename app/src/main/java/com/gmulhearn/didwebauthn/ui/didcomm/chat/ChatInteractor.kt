@@ -11,6 +11,7 @@ import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.gmulhearn.didwebauthn.data.*
 import com.gmulhearn.didwebauthn.core.protocols.DIDCommProtocols
 import com.gmulhearn.didwebauthn.core.transport.relay.RelayRepository
+import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

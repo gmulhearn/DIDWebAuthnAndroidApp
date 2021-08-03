@@ -4,7 +4,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.gmulhearn.didwebauthn.data.DidInfo
-import com.gmulhearn.didwebauthn.data.PairwiseContact
+import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
 import javax.inject.Inject
 
 /**

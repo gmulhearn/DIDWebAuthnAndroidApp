@@ -110,7 +110,7 @@
         tools:layout="@layout/fragment_chat">
         <argument
             android:name="pairwiseContact"
-            app:argType="com.gmulhearn.didwebauthn.data.PairwiseContact" />
+            app:argType="com.gmulhearn.didwebauthn.data.indy.PairwiseContact" />
     </fragment>
     <fragment
         android:id="@+id/browserFragment"
