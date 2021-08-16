@@ -24,9 +24,6 @@ class DIDAuthenticator @Inject constructor(
     val context: Context,
     val walletProvider: WalletProvider
 ) {
-    // TODO - REMOVE BELOW - temporary measure
-    // private var userEntity = PublicKeyCredentialUserEntity(byteArrayOf(1), "todo", "todo")
-
     /************************************** REGISTRATION **************************/
     /**
      * Primary Authenticator function - makeCredential.
@@ -138,9 +135,6 @@ class DIDAuthenticator @Inject constructor(
         assertionOpts: AuthenticatorGetAssertionOptions,
         clientDataJson: String
     ): PublicKeyCredentialAssertionResponse {
-
-        //val edDSAPublicKey = getDidVerkey()
-
         // val counter = 1 // TODO - make for real
 
         val didCred = getDidCredential(assertionOpts)
@@ -159,8 +153,6 @@ class DIDAuthenticator @Inject constructor(
             toSign.toByteArray()
         ).get()
 
-        // val id = "PtbVIGUBHKiHoBPQPGR72tEwMubp4nzUFmHnuGabinM".toByteArray(Charsets.UTF_8)  // TODO
-        // val user = userEntity.id
         val id = didCred.keyId.toByteArray(Charsets.UTF_8)
         val user = didCred.userInfo.id
 
@@ -201,7 +193,7 @@ class DIDAuthenticator @Inject constructor(
         val did = Did.createAndStoreMyDid(walletProvider.getWallet(), "{}").get()
 
         val webAuthnMetadata = WebAuthnDIDData(
-            keyId = did.did,  // keyId = did // TODO - confirm this is acceptable
+            keyId = did.did,
             authCounter = 0,
             userInfo = opts.user,
             rpInfo = RelyingPartyInfo(opts.rp.name, opts.rp.id),

@@ -130,8 +130,6 @@ class ExternalSessionInteractor @Inject constructor(
     private fun handleWebAuthnAuthentication(opts: PublicKeyCredentialRequestOptions, origin: String) {
         val authenticator = DIDAuthenticator(context, walletProvider)
 
-        // val origin = "https://webauthn.io/" // TODO
-
         val getAssertionOpts = opts.publicKey.toAuthenticatorGetAssertionOptions(origin)
         val clientData = CollectedClientData(
             type = "webauthn.get",
