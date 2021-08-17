@@ -21,7 +21,7 @@ class SudoRelayRepository @Inject constructor(
 
     companion object {
         private const val BASE_POSTBOX_ENDPOINT =
-            "https://bizie3ctr0.execute-api.us-east-1.amazonaws.com/"
+            "https://ph3oqq1dke.execute-api.us-east-1.amazonaws.com/"
     }
 
     private val didPostboxManager = DIDPostboxManager(walletProvider)

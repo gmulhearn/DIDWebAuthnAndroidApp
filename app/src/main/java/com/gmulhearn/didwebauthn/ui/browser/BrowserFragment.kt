@@ -64,13 +64,13 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
                 view: WebView?,
                 request: WebResourceRequest?
             ): WebResourceResponse? {
-                println("REQUEST: \n\t${request?.method}\n\t${request?.requestHeaders}")
+                // println("REQUEST: \n\t${request?.method}\n\t${request?.requestHeaders}")
                 webAuthnBridge.onWebViewRequest()
                 return super.shouldInterceptRequest(view, request)
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                println("PAGE STARTED")
+                // println("PAGE STARTED")
                 webAuthnBridge.onPageStart(url)
                 super.onPageStarted(view, url, favicon)
             }
@@ -94,7 +94,7 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
         presenter.attachView(this)
 
         searchbar.setOnSearchClickListener {
-            println(searchbar.query)
+            //println(searchbar.query)
         }
         searchbar.setOnQueryTextListener(this)
         // Notify Presenter that the View is ready
