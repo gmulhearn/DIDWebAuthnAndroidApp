@@ -33,23 +33,25 @@ class ExternalSessionInteractor @Inject constructor(
     internal val walletProvider: WalletProvider,
     internal val context: Context
 ) : ExternalSessionContract.InteractorInput, CoroutineScope by coroutineScope {
-    
+
     internal val outputDelegate = ObjectDelegate<ExternalSessionContract.InteractorOutput>()
     internal val output by outputDelegate
 
     internal var serverNonce: Int = -1
 
     companion object {
-        const val GET_INIT_SIG_ENDPOINT = "https://xl8dewabb6.execute-api.ap-southeast-2.amazonaws.com/default/readSignal"
-        const val UPDATE_ENDPOINT = "https://xl8dewabb6.execute-api.ap-southeast-2.amazonaws.com/default/replySignal"
+        const val GET_INIT_SIG_ENDPOINT =
+            "https://xl8dewabb6.execute-api.ap-southeast-2.amazonaws.com/default/readSignal"
+        const val UPDATE_ENDPOINT =
+            "https://xl8dewabb6.execute-api.ap-southeast-2.amazonaws.com/default/replySignal"
     }
-    
+
     // region viper lifecycle
 
     override fun attachOutput(output: ExternalSessionContract.InteractorOutput) {
         outputDelegate.attach(output)
     }
-    
+
     override fun detachOutput() {
         coroutineScope.cancelJobs()
         outputDelegate.detach()
@@ -90,21 +92,48 @@ class ExternalSessionInteractor @Inject constructor(
         when (wrtcBaseMessageIn.type) {
             WEBAUTHN_REG_REQUEST -> {
                 println("server sent reg request")
-                val opts = Gson().fromJson(wrtcBaseMessageIn.jsonData, WRTCPublicKeyCredentialCreationOptions::class.java)
+                val opts = Gson().fromJson(
+                    wrtcBaseMessageIn.jsonData,
+                    WRTCPublicKeyCredentialCreationOptions::class.java
+                )
                 println(opts)
-                handleWebAuthnRegistration(opts.publicKeyCredentialCreationOptions, opts.origin)
+
+                output.requestUserRegistrationConfirmation(
+                    opts.origin,
+                    opts.publicKeyCredentialCreationOptions.publicKey.user
+                ) {
+                    // on success:
+                    handleWebAuthnRegistration(opts.publicKeyCredentialCreationOptions, opts.origin)
+                }
             }
             WEBAUTHN_AUTH_REQUEST -> {
                 println("server sent auth request")
-                val opts = Gson().fromJson(wrtcBaseMessageIn.jsonData, WRTCPublicKeyCredentialRequestOptions::class.java)
+                val opts = Gson().fromJson(
+                    wrtcBaseMessageIn.jsonData,
+                    WRTCPublicKeyCredentialRequestOptions::class.java
+                )
                 println(opts)
-                handleWebAuthnAuthentication(opts.publicKeyCredentialRequestOptions, opts.origin)
+
+                output.requestUserAuthenticationConfirmation(
+                    opts.origin,
+                    opts.publicKeyCredentialRequestOptions.publicKey.allowCredentials
+                ) {
+                    handleWebAuthnAuthentication(
+                        opts.publicKeyCredentialRequestOptions,
+                        opts.origin
+                    )
+                }
             }
-            else -> {println("unknown wrtc message: $data : $wrtcBaseMessageIn")}
+            else -> {
+                println("unknown wrtc message: $data : $wrtcBaseMessageIn")
+            }
         }
     }
 
-    private fun handleWebAuthnRegistration(opts: PublicKeyCredentialCreationOptions, origin: String) {
+    private fun handleWebAuthnRegistration(
+        opts: PublicKeyCredentialCreationOptions,
+        origin: String
+    ) {
         val authenticator = DIDAuthenticator(context, walletProvider)
 
         println(opts)
@@ -113,7 +142,8 @@ class ExternalSessionInteractor @Inject constructor(
         val makeCredOpts = opts.publicKey.toAuthenticatorMakeCredentialOptions(origin)
         val clientData = CollectedClientData(
             type = "webauthn.create",
-            challengeBase64URL = Base64.getUrlEncoder().encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
+            challengeBase64URL = Base64.getUrlEncoder()
+                .encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
             origin = origin
         )
 
@@ -127,13 +157,17 @@ class ExternalSessionInteractor @Inject constructor(
         output.responseGenerated(Gson().toJson(webRTCResponse))
     }
 
-    private fun handleWebAuthnAuthentication(opts: PublicKeyCredentialRequestOptions, origin: String) {
+    private fun handleWebAuthnAuthentication(
+        opts: PublicKeyCredentialRequestOptions,
+        origin: String
+    ) {
         val authenticator = DIDAuthenticator(context, walletProvider)
 
         val getAssertionOpts = opts.publicKey.toAuthenticatorGetAssertionOptions(origin)
         val clientData = CollectedClientData(
             type = "webauthn.get",
-            challengeBase64URL = Base64.getUrlEncoder().encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
+            challengeBase64URL = Base64.getUrlEncoder()
+                .encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
             origin = origin
         )
 
@@ -157,7 +191,12 @@ class ExternalSessionInteractor @Inject constructor(
         println("replying...")
         val postRequest = Request.Builder()
             .url(UPDATE_ENDPOINT)
-            .post(RequestBody.create(MediaType.parse("application/json"), """{"nonce": $nonce, "resSignal": $data}"""))
+            .post(
+                RequestBody.create(
+                    MediaType.parse("application/json"),
+                    """{"nonce": $nonce, "resSignal": $data}"""
+                )
+            )
             .build()
 
         val client = OkHttpClient()
@@ -183,7 +222,7 @@ class ExternalSessionInteractor @Inject constructor(
     }
 
     // endregion
-    
+
     // region interactor inputs
 
 

@@ -10,7 +10,10 @@ interface ExternalSessionModels {
     // endregion
 
     // region Interactor Output data models and errors
-
+    enum class RequestType {
+        REGISTRATION,
+        AUTHENTICATION
+    }
     // endregion
 
 }

@@ -2,6 +2,8 @@ package com.gmulhearn.didwebauthn.ui.externalsession
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.gmulhearn.didwebauthn.data.AllowCredentialDescriptor
+import com.gmulhearn.didwebauthn.data.UserInfo
 
 /**
  * ExternalSessionContract VIPER contract
@@ -18,6 +20,7 @@ interface ExternalSessionContract {
         fun hideCamera()
         fun showConnected()
         fun sendMessageInWebView(jsonData: String)
+        fun showUserPrompt(title: String, message: String, onConfirmation: () -> Unit)
     }
 
     /**
@@ -112,6 +115,18 @@ interface ExternalSessionContract {
         fun retrievedSignal(sig: String)
         fun connectionSuccess()
         fun responseGenerated(jsonData: String)
+
+        fun requestUserRegistrationConfirmation(
+            origin: String,
+            userInfo: UserInfo,
+            onConfirmation: () -> Unit
+        )
+
+        fun requestUserAuthenticationConfirmation(
+            origin: String,
+            allowedCredentials: List<AllowCredentialDescriptor>,
+            onConfirmation: () -> Unit
+        )
     }
 
     /**

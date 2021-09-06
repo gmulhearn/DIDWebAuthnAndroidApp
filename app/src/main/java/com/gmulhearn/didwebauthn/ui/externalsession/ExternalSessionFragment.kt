@@ -14,6 +14,7 @@ import com.budiyev.android.codescanner.*
 import javax.inject.Inject
 import com.gmulhearn.didwebauthn.R
 import com.gmulhearn.didwebauthn.core.transport.WebRTCJsInterface
+import com.gmulhearn.didwebauthn.showAlertDialog
 import kotlinx.android.synthetic.main.fragment_external_session.*
 
 /**
@@ -95,7 +96,8 @@ class ExternalSessionFragment : Fragment(), ExternalSessionContract.View {
         presenter.attachView(this)
 
         // set up qr code
-        val scannerView = requireActivity().findViewById<CodeScannerView>(R.id.extSessionScannerPreview)
+        val scannerView =
+            requireActivity().findViewById<CodeScannerView>(R.id.extSessionScannerPreview)
         codeScanner = CodeScanner(requireContext(), scannerView)
     }
 
@@ -164,6 +166,16 @@ class ExternalSessionFragment : Fragment(), ExternalSessionContract.View {
         sessionWebView.post {
             sessionWebView.evaluateJavascript("""sendData('$jsonData')""", null)
         }
+    }
+
+    override fun showUserPrompt(title: String, message: String, onConfirmation: () -> Unit) {
+        showAlertDialog(
+            title = title,
+            message = message,
+            positiveButtonResId = R.string.accept,
+            onPositive = onConfirmation,
+            negativeButtonResId = R.string.reject
+        )
     }
 
     // endregion

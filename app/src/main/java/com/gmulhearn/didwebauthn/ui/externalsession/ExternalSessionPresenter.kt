@@ -2,6 +2,10 @@ package com.gmulhearn.didwebauthn.ui.externalsession
 
 import android.os.Bundle
 import com.gmulhearn.didwebauthn.common.ObjectDelegate
+import com.gmulhearn.didwebauthn.core.protocols.getId
+import com.gmulhearn.didwebauthn.data.AllowCredentialDescriptor
+import com.gmulhearn.didwebauthn.data.UserInfo
+import java.util.Base64
 import javax.inject.Inject
 
 /**
@@ -53,7 +57,6 @@ class ExternalSessionPresenter @Inject constructor(
     // region view event handlers
 
     // TODO Add view event handlers
-
     // endregion
 
     // region interactor output
@@ -73,6 +76,31 @@ class ExternalSessionPresenter @Inject constructor(
 
     override fun responseGenerated(jsonData: String) {
         view.sendMessageInWebView(jsonData)
+    }
+
+    override fun requestUserRegistrationConfirmation(
+        origin: String,
+        userInfo: UserInfo,
+        onConfirmation: () -> Unit
+    ) {
+        view.showUserPrompt(
+            title = "Incoming WebAuthn Registration Request",
+            message = "request from origin: $origin\nfor user: ${userInfo.displayName}",
+            onConfirmation = onConfirmation
+        )
+    }
+
+    override fun requestUserAuthenticationConfirmation(
+        origin: String,
+        allowedCredentials: List<AllowCredentialDescriptor>,
+        onConfirmation: () -> Unit
+    ) {
+        val allowedCredsString = allowedCredentials.joinToString(separator = ",\n", prefix = "- ") { Base64.getEncoder().encodeToString(it.getId()) }
+        view.showUserPrompt(
+            title = "Incoming WebAuthn Authentication Request",
+            message = "request from origin: $origin\nallowed keys Ids: $allowedCredsString",
+            onConfirmation = onConfirmation
+        )
     }
 
     // TODO Add interactor outputs
