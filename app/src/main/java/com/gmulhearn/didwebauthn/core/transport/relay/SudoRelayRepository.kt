@@ -2,11 +2,11 @@ package com.gmulhearn.didwebauthn.core.transport.relay
 
 import android.content.Context
 import com.gmulhearn.didwebauthn.common.WalletProvider
-import com.sudoplatform.sudodecentralizedidentityrelay.SudoDecentralizedIdentityRelayClient
-import com.sudoplatform.sudodecentralizedidentityrelay.subscribeToRelayEvents
-import com.sudoplatform.sudodecentralizedidentityrelay.subscription.DecentralizedIdentityRelayEventSubscriber
-import com.sudoplatform.sudodecentralizedidentityrelay.types.PostboxDeletionResult
-import com.sudoplatform.sudodecentralizedidentityrelay.types.RelayMessage
+import com.sudoplatform.sudoconfigmanager.DefaultSudoConfigManager
+import com.sudoplatform.sudodirelay.SudoDIRelayClient
+import com.sudoplatform.sudodirelay.subscription.DIRelayEventSubscriber
+import com.sudoplatform.sudodirelay.types.PostboxDeletionResult
+import com.sudoplatform.sudodirelay.types.RelayMessage
 import com.sudoplatform.sudologging.AndroidUtilsLogDriver
 import com.sudoplatform.sudologging.LogLevel
 import com.sudoplatform.sudologging.Logger
@@ -19,9 +19,14 @@ class SudoRelayRepository @Inject constructor(
     private val walletProvider: WalletProvider
 ) : RelayRepository {
 
-    companion object {
-        private const val BASE_POSTBOX_ENDPOINT =
-            "https://0uam748fp1.execute-api.us-east-1.amazonaws.com/"
+    private var basePostboxEndpoint: String
+
+    init {
+        val endpoint = DefaultSudoConfigManager(context)
+            .getConfigSet("relayService")
+            ?.get("httpEndpoint") as String?
+        requireNotNull(endpoint)
+        basePostboxEndpoint = "$endpoint/"
     }
 
     private val didPostboxManager = DIDPostboxManager(walletProvider)
@@ -29,7 +34,7 @@ class SudoRelayRepository @Inject constructor(
     private val logger = Logger("didWebAuthnApp", AndroidUtilsLogDriver(LogLevel.DEBUG))
 
     private val diRelayClient =
-        SudoDecentralizedIdentityRelayClient.builder().setContext(context).setLogger(logger).build()
+        SudoDIRelayClient.builder().setContext(context).setLogger(logger).build()
 
     override suspend fun initializePostbox(did: String) {
         if (!didPostboxManager.checkDIDPostboxExists(did)) {
@@ -42,15 +47,15 @@ class SudoRelayRepository @Inject constructor(
     override fun getServiceEndpoint(did: String): String {
         val postboxID = didPostboxManager.getPostboxIDForDID(did)
 
-        return "$BASE_POSTBOX_ENDPOINT$postboxID"
+        return "$basePostboxEndpoint$postboxID"
     }
 
     override suspend fun subscribeToMessages(did: String, onReceiveMessage: (ByteArray) -> Unit) {
         val postboxID = didPostboxManager.getPostboxIDForDID(did)
 
         diRelayClient.subscribeToRelayEvents(postboxID,
-            object : DecentralizedIdentityRelayEventSubscriber {
-                override fun connectionStatusChanged(state: DecentralizedIdentityRelayEventSubscriber.ConnectionState) {}
+            object : DIRelayEventSubscriber {
+                override fun connectionStatusChanged(state: DIRelayEventSubscriber.ConnectionState) {}
                 override fun messageIncoming(message: RelayMessage) {
                     println("sudo relay received msg: ${message.cipherText}")
                     onReceiveMessage(

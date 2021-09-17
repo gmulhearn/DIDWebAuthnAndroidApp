@@ -91,7 +91,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
 
     // SUDO RELAY - can be removed if using firebase
-    implementation 'com.sudoplatform:sudodecentralizedidentityrelay:0.0.1-1630310626-SNAPSHOT'
+    implementation "com.sudoplatform:sudoconfigmanager:1.2.3"
+    implementation 'com.sudoplatform:sudodirelay:0.1.0-1631514216-SNAPSHOT'
     implementation "com.sudoplatform:sudologging:1.0.25"
 
     implementation 'com.google.code.gson:gson:2.8.6'
