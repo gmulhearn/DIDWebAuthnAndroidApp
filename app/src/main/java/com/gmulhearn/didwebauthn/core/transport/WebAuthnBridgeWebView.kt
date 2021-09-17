@@ -13,11 +13,12 @@ import java.io.IOException
 class WebAuthnBridgeWebView(
     private val context: Context,
     private val webView: WebView,
-    private val walletProvider: WalletProvider
+    private val walletProvider: WalletProvider,
+    val requestPermissionFromView: (title: String, message: String, onConfirmation: () -> Unit) -> Unit
 ) {
     companion object {
-        val BRIDGE_INTERFACE = "webAuthnInterface"
-        val INJECTED_JS_FILE_NAME = "InjectNavigatorCredentials.js"
+        const val BRIDGE_INTERFACE = "webAuthnInterface"
+        const val INJECTED_JS_FILE_NAME = "InjectNavigatorCredentials.js"
     }
 
     var origin: String = ""
@@ -61,7 +62,7 @@ class WebAuthnBridgeWebView(
         println(pkcString)
         webView.post {
             webView.evaluateJavascript(
-                "javascript:navigator.credentials.resolveRegistration($pkcString)",
+                "javascript:window.webauthnResolution = $pkcString",
                 null
             )
         }
@@ -74,7 +75,7 @@ class WebAuthnBridgeWebView(
 
         webView.post {
             webView.evaluateJavascript(
-                "javascript:navigator.credentials.resolveAuthentication($pkcString)",
+                "javascript:window.webauthnResolution = $pkcString",
                 null
             )
         }

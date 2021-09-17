@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.gmulhearn.didwebauthn.R
 import com.gmulhearn.didwebauthn.common.WalletProvider
 import com.gmulhearn.didwebauthn.core.transport.WebAuthnBridgeWebView
+import com.gmulhearn.didwebauthn.showAlertDialog
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_browser.*
 import javax.inject.Inject
@@ -44,8 +45,12 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
 
     // region view setup and state lifecycle
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v =  inflater.inflate(R.layout.fragment_browser, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val v = inflater.inflate(R.layout.fragment_browser, container, false)
 
         val webViewer = v.findViewById<WebView>(R.id.webView)
         initInjectedWebView(webViewer)
@@ -56,7 +61,14 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
     private fun initInjectedWebView(webViewer: WebView) {
         webViewer.settings.javaScriptEnabled = true
         webViewer.loadUrl("https://webauthn.io")
-        webAuthnBridge = WebAuthnBridgeWebView(this.requireContext(), webViewer, walletProvider)
+        webAuthnBridge = WebAuthnBridgeWebView(
+            this.requireContext(),
+            webViewer,
+            walletProvider
+        ) { title, message, onConfirmation ->
+            showUserPrompt(title, message, onConfirmation)
+        }
+
         webAuthnBridge.bindWebView()
 
         webViewer.webViewClient = object : WebViewClient() {
@@ -64,13 +76,11 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
                 view: WebView?,
                 request: WebResourceRequest?
             ): WebResourceResponse? {
-                // println("REQUEST: \n\t${request?.method}\n\t${request?.requestHeaders}")
                 webAuthnBridge.onWebViewRequest()
                 return super.shouldInterceptRequest(view, request)
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                // println("PAGE STARTED")
                 webAuthnBridge.onPageStart(url)
                 super.onPageStarted(view, url, favicon)
             }
@@ -128,6 +138,16 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
 
     private fun showSnackbar(status: String) {
         Snackbar.make(this.requireView(), status, Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun showUserPrompt(title: String, message: String, onConfirmation: () -> Unit) {
+        showAlertDialog(
+            title = title,
+            message = message,
+            positiveButtonResId = R.string.accept,
+            onPositive = onConfirmation,
+            negativeButtonResId = R.string.reject
+        )
     }
 
     // endregion
