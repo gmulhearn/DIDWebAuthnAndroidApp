@@ -9,6 +9,7 @@ import com.gmulhearn.didwebauthn.data.PublicKeyCredentialAttestationResponse
 import com.gmulhearn.didwebauthn.core.protocols.DIDAuthenticator
 import com.google.gson.Gson
 import java.io.IOException
+import java.net.URL
 
 class WebAuthnBridgeWebView(
     private val context: Context,
@@ -40,8 +41,11 @@ class WebAuthnBridgeWebView(
     fun onPageStart(url: String?) {
         loading = true
         if (url != null) {
-            origin = url
-            println(origin)
+            val urlObj = URL(url)
+            val optionalPort = if (urlObj.port != 80 && urlObj.port != -1) ":${urlObj.port}" else ""
+            origin = "${urlObj.protocol}://${urlObj.host}$optionalPort"
+            println("setting bridge origin: $origin")
+
         }
     }
 

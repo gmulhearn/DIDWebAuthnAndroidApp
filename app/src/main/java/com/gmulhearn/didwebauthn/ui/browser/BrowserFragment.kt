@@ -60,7 +60,8 @@ class BrowserFragment : Fragment(), BrowserContract.View, SearchView.OnQueryText
 
     private fun initInjectedWebView(webViewer: WebView) {
         webViewer.settings.javaScriptEnabled = true
-        webViewer.loadUrl("https://webauthn.io")
+        webViewer.clearCache(true)
+        webViewer.loadUrl("http://192.168.0.54:8080") //"https://webauthn.io")
         webAuthnBridge = WebAuthnBridgeWebView(
             this.requireContext(),
             webViewer,

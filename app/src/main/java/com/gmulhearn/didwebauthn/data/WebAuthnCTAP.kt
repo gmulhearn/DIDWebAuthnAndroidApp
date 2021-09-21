@@ -9,7 +9,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class RelyingPartyInfo(
     val name: String,
-    val id: String
+    val id: String?
 ) : Parcelable
 
 data class UserInfo(

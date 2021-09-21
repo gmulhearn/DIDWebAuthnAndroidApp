@@ -71,8 +71,8 @@ class DIDAuthenticator @Inject constructor(
             CborBuilder()
                 .addMap()
                 .put("authData", authData)
-                .put("fmt", "none")
-                .putMap("attStmt")
+                .put("fmt", "none")         // none attestation
+                .putMap("attStmt")      // empty map
                 .end()
                 .end()
                 .build()
@@ -309,6 +309,8 @@ class DIDAuthenticator @Inject constructor(
         // TODO - handle error if none found?
         return possibleWebAuthnDIDs.first { webAuthnDIDData ->
             val rpMatch = webAuthnDIDData.rpInfo.id == opts.rpId
+            println("DEBUG: allowed cred: ${opts.rpId}")
+            println("DEBUG: this cred: ${webAuthnDIDData.rpInfo.id}")
             val keyIdMatch = opts.allowCredentialDescriptorList.any {
                 it.getId().contentEquals(webAuthnDIDData.keyId.toByteArray(Charsets.UTF_8))
             }

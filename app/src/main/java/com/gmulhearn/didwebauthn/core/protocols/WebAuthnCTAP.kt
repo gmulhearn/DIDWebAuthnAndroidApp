@@ -6,6 +6,7 @@ import com.gmulhearn.didwebauthn.data.*
 import com.google.gson.Gson
 import org.json.JSONObject
 import org.spongycastle.jcajce.provider.digest.SHA256
+import java.net.URL
 import java.util.*
 
 fun Map<String, Int>.toByteArray(): ByteArray {
@@ -74,19 +75,32 @@ fun CredentialCreationOptions.getChallenge(): ByteArray {
 }
 
 /**
+ * Standardises way to assemble [CollectedClientData] properly
+ */
+fun createCollectedClientData(
+    isRegistration: Boolean,
+    challenge: ByteArray,
+    origin: String
+): CollectedClientData {
+    return CollectedClientData(
+        type = if (isRegistration) "webauthn.create" else "webauthn.get",
+        challengeBase64URL = Base64.getUrlEncoder().withoutPadding().encodeToString(challenge),
+        origin = origin
+    )
+}
+
+/**
  * Transform into AuthenticatorMakeCredentialOptions object for the authenticator
  */
 @RequiresApi(Build.VERSION_CODES.O)
 fun CredentialCreationOptions.toAuthenticatorMakeCredentialOptions(origin: String): AuthenticatorMakeCredentialOptions {
-    val clientData = CollectedClientData(
-        type = "webauthn.create",
-        challengeBase64URL = Base64.getUrlEncoder().encodeToString(getChallenge())
-            .removeSuffix("="),
-        origin = origin
-    )
+    val clientData = createCollectedClientData(true, getChallenge(), origin)
+
+    // rpId = the id if specified (should check), else use the host/domain
+    val rpId = relyingPartyInfo.id ?: URL(origin).host
 
     val clientDataHash = clientData.hash()
-    val rp = PublicKeyCredentialRpEntity(relyingPartyInfo.id, relyingPartyInfo.name)
+    val rp = PublicKeyCredentialRpEntity(rpId, relyingPartyInfo.name)
     val user = PublicKeyCredentialUserEntity(user.getId(), user.displayName, user.name)
     val pubKeyCredParams = this.pubKeyCredParams.map { Pair(it.type, it.algorithm.toLong()) }
 
@@ -175,9 +189,14 @@ fun PublicKeyCredentialAssertionResponse.base64JSON(): String {
 
     val base64JSON = JSONObject(fullJSON)
 
-    base64JSON.getJSONObject("response").put("clientDataJSON", Base64.getEncoder().encodeToString(this.response.clientDataJSON))
-    base64JSON.getJSONObject("response").put("signature", Base64.getEncoder().encodeToString(this.response.signature))
-    base64JSON.getJSONObject("response").put("authenticatorData", Base64.getEncoder().encodeToString(this.response.authenticatorData))
+    base64JSON.getJSONObject("response")
+        .put("clientDataJSON", Base64.getEncoder().encodeToString(this.response.clientDataJSON))
+    base64JSON.getJSONObject("response")
+        .put("signature", Base64.getEncoder().encodeToString(this.response.signature))
+    base64JSON.getJSONObject("response").put(
+        "authenticatorData",
+        Base64.getEncoder().encodeToString(this.response.authenticatorData)
+    )
 
     println(base64JSON)
 
@@ -197,16 +216,19 @@ fun CredentialRequestOptions.getChallenge(): ByteArray {
 }
 
 fun CredentialRequestOptions.toAuthenticatorGetAssertionOptions(origin: String): AuthenticatorGetAssertionOptions {
-    val clientData = CollectedClientData(
-        type = "webauthn.get",
-        challengeBase64URL = Base64.getUrlEncoder().encodeToString(getChallenge())
-            .removeSuffix("="),
-        origin = origin
+    val clientData = createCollectedClientData(
+        false,
+        getChallenge(),
+        origin
     )
     val clientDataHash = clientData.hash()
 
+    val urlObj = URL(origin)
+
+    // TODO: require RpID == urlObj.host? origin rpID check
+
     return AuthenticatorGetAssertionOptions(
-        rpId = origin.split("//")[1].split("/").first(), // TODO need to check this works
+        rpId = urlObj.host, // TODO need to check this works
         clientDataHash = clientDataHash,
         allowCredentialDescriptorList = allowCredentials,
         requireUserPresence = true,

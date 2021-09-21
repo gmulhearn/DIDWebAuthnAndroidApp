@@ -140,11 +140,10 @@ class ExternalSessionInteractor @Inject constructor(
         println(opts.publicKey.getChallenge().toUByteArray().toList())
         println(opts.publicKey.user.getId().toUByteArray().toList())
         val makeCredOpts = opts.publicKey.toAuthenticatorMakeCredentialOptions(origin)
-        val clientData = CollectedClientData(
-            type = "webauthn.create",
-            challengeBase64URL = Base64.getUrlEncoder()
-                .encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
-            origin = origin
+        val clientData = createCollectedClientData(
+            true,
+            opts.publicKey.getChallenge(),
+            origin
         )
 
         val response = authenticator.makeCredentials(
@@ -164,11 +163,10 @@ class ExternalSessionInteractor @Inject constructor(
         val authenticator = DIDAuthenticator(context, walletProvider)
 
         val getAssertionOpts = opts.publicKey.toAuthenticatorGetAssertionOptions(origin)
-        val clientData = CollectedClientData(
-            type = "webauthn.get",
-            challengeBase64URL = Base64.getUrlEncoder()
-                .encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
-            origin = origin
+        val clientData = createCollectedClientData(
+            false,
+            opts.publicKey.getChallenge(),
+            origin
         )
 
         val response = authenticator.getAssertion(

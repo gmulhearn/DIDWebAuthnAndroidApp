@@ -42,9 +42,17 @@ function () {
 
     credentialsContainer = new CredentialsContainer();
 
+    navigator.credentials = credentialsContainer;
+
     navigator.credentials.create = credentialsContainer.create;
     navigator.credentials.get = credentialsContainer.get;
 
     window.PublicKeyCredential = function() {
     }
+
+    window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable = function() {
+    }
+
+    console.log(PublicKeyCredential);
+    console.log(PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable);
 }

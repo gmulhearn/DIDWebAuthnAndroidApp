@@ -22,10 +22,10 @@ class WebAuthnJsInterface(private val bridge: WebAuthnBridgeWebView) {
         println(opts.publicKey.getChallenge().toUByteArray().toList())
         println(opts.publicKey.user.getId().toUByteArray().toList())
         val makeCredOpts = opts.publicKey.toAuthenticatorMakeCredentialOptions(bridge.origin)
-        val clientData = CollectedClientData(
-            type = "webauthn.create",
-            challengeBase64URL = Base64.getUrlEncoder().encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
-            origin = bridge.origin
+        val clientData = createCollectedClientData(
+            true,
+            opts.publicKey.getChallenge(),
+            bridge.origin
         )
 
         requestUserRegistrationConfirmation(bridge.origin, opts.publicKey.user) {
@@ -55,10 +55,10 @@ class WebAuthnJsInterface(private val bridge: WebAuthnBridgeWebView) {
         val opts = Gson().fromJson(data, PublicKeyCredentialRequestOptions::class.java)
         println(opts)
         val getAssertionOpts = opts.publicKey.toAuthenticatorGetAssertionOptions(bridge.origin)
-        val clientData = CollectedClientData(
-            type = "webauthn.get",
-            challengeBase64URL = Base64.getUrlEncoder().encodeToString(opts.publicKey.getChallenge()).removeSuffix("="),
-            origin = bridge.origin
+        val clientData = createCollectedClientData(
+            false,
+            opts.publicKey.getChallenge(),
+            bridge.origin
         )
 
         requestUserAuthenticationConfirmation(
