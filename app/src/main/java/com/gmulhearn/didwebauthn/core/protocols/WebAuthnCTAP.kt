@@ -97,7 +97,8 @@ fun CredentialCreationOptions.toAuthenticatorMakeCredentialOptions(origin: Strin
     val clientData = createCollectedClientData(true, getChallenge(), origin)
 
     // rpId = the id if specified (should check), else use the host/domain
-    val rpId = relyingPartyInfo.id ?: URL(origin).host
+    val rpId = relyingPartyInfo.id ?:
+        URL(origin).host
 
     val clientDataHash = clientData.hash()
     val rp = PublicKeyCredentialRpEntity(rpId, relyingPartyInfo.name)
@@ -223,12 +224,12 @@ fun CredentialRequestOptions.toAuthenticatorGetAssertionOptions(origin: String):
     )
     val clientDataHash = clientData.hash()
 
-    val urlObj = URL(origin)
+    // val urlObj = URL(origin)
 
-    // TODO: require RpID == urlObj.host? origin rpID check
+    // TODO: IMPORTANT SECURITY: origin rpID check
 
     return AuthenticatorGetAssertionOptions(
-        rpId = urlObj.host, // TODO need to check this works
+        rpId = rpId, // urlObj.host, // TODO need to check this works
         clientDataHash = clientDataHash,
         allowCredentialDescriptorList = allowCredentials,
         requireUserPresence = true,

@@ -92,7 +92,7 @@ dependencies {
 
     // SUDO RELAY - can be removed if using firebase
     implementation "com.sudoplatform:sudoconfigmanager:1.2.3"
-    implementation 'com.sudoplatform:sudodirelay:0.1.0-1631514216-SNAPSHOT'
+    implementation 'com.sudoplatform:sudodirelay:0.1.0-1632093972-SNAPSHOT'
     implementation "com.sudoplatform:sudologging:1.0.25"
 
     implementation 'com.google.code.gson:gson:2.8.6'
@@ -102,9 +102,10 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation "com.squareup.okhttp3:okhttp:4.3.1"
 
     // for base58
-    implementation ('com.github.bitcoinj:bitcoinj:master-SNAPSHOT') {
+    implementation ('org.bitcoinj:bitcoinj-core:0.15.10') {
         exclude group: "com.google.protobuf", module: "protobuf-java"
     }
 

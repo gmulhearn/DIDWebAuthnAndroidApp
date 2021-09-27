@@ -11,7 +11,7 @@ import com.gmulhearn.didwebauthn.data.AuthenticatorGetAssertionOptions
 import com.gmulhearn.didwebauthn.data.AuthenticatorMakeCredentialOptions
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialAssertionResponse
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialAttestationResponse
-import com.gmulhearn.didwebauthn.data.RelyingPartyInfo
+import com.gmulhearn.didwebauthn.data.PublicKeyCredentialRpEntity
 import com.gmulhearn.didwebauthn.data.indy.DIDMetaData
 import com.gmulhearn.didwebauthn.data.indy.EDDSA_ALG
 import com.gmulhearn.didwebauthn.data.indy.ES256_ALG
@@ -44,6 +44,10 @@ class DIDAuthenticator @Inject constructor(
     val context: Context,
     val walletProvider: WalletProvider
 ) {
+
+    companion object {
+        const val KEY_ID_PREFIX = "did:webauthn:"
+    }
     /************************************** REGISTRATION **************************/
     /**
      * Primary Authenticator function - makeCredential.
@@ -97,8 +101,8 @@ class DIDAuthenticator @Inject constructor(
             if (credOpts.pubKeyCredParams.any { it.second.toInt() == EDDSA_ALG }) EDDSA_ALG else ES256_ALG
 
         val rpIdHash = Sha256Hash.hash(credOpts.rp.id.toByteArray(Charsets.UTF_8))
-        val flags: Byte = 0x01 or (0x01 shl 6) // attested cred included
-        val counter = 0
+        val flags: Byte = 0x01 or (0x01 shl 6) or (0x01 shl 2)// attested cred included and user verified
+        val counter = 1
 
         /** create AttestedCredentialData */
         val didCred = createDidCredential(credOpts, keyAlg)
@@ -213,11 +217,11 @@ class DIDAuthenticator @Inject constructor(
         assertionOpts: AuthenticatorGetAssertionOptions,
         clientDataJson: String
     ): PublicKeyCredentialAssertionResponse {
-        // val counter = 1 // TODO - make for real
 
         val didCred = getDidCredential(assertionOpts)
-        val counter = didCred.authCounter  // TODO - increment
-        val authData = createAuthData(assertionOpts, counter)
+        incrementCounterForDIDCred(didCred)
+        val counter = didCred.authCounter + 1
+        val authData = createAuthData(counter, didCred.rpInfo.id)
 
         val authDataClientDataHashToSign = mutableListOf<Byte>()
         authData.forEach { authDataClientDataHashToSign.add(it) }
@@ -258,11 +262,11 @@ class DIDAuthenticator @Inject constructor(
      * see: https://www.w3.org/TR/webauthn/#attestation-object
      */
     private fun createAuthData(
-        credOpts: AuthenticatorGetAssertionOptions,
-        counter: Int
+        counter: Int,
+        rpId: String
     ): ByteArray {
 
-        val rpIdHash = Sha256Hash.hash(credOpts.rpId.toByteArray(Charsets.UTF_8))
+        val rpIdHash = Sha256Hash.hash(rpId.toByteArray(Charsets.UTF_8))
         val flags: Byte = 0x01 // no attest data include
 
         val authDataBuff = ByteBuffer.allocate(32 + 1 + 4)
@@ -284,10 +288,10 @@ class DIDAuthenticator @Inject constructor(
         val did = Did.createAndStoreMyDid(walletProvider.getWallet(), "{}").get()
 
         val webAuthnMetadata = WebAuthnDIDData(
-            keyId = did.did,
-            authCounter = 0,
+            keyId = "$KEY_ID_PREFIX${did.did}",
+            authCounter = 1,
             userInfo = opts.user,
-            rpInfo = RelyingPartyInfo(opts.rp.name, opts.rp.id),
+            rpInfo = PublicKeyCredentialRpEntity(opts.rp.id, opts.rp.name),
             edDSAKey = did.verkey,
             did = did.did,
             keyAlg = keyAlg.toSupportedKeyAlg()
@@ -308,15 +312,26 @@ class DIDAuthenticator @Inject constructor(
 
         // TODO - handle error if none found?
         return possibleWebAuthnDIDs.first { webAuthnDIDData ->
-            val rpMatch = webAuthnDIDData.rpInfo.id == opts.rpId
+            // opts.rpId should be the full domain, and the rpId can be a substring
+            val rpMatch = opts.rpId == webAuthnDIDData.rpInfo.id
             println("DEBUG: allowed cred: ${opts.rpId}")
             println("DEBUG: this cred: ${webAuthnDIDData.rpInfo.id}")
+            println("DEBUG: RPMATCH: ${rpMatch}")
+
             val keyIdMatch = opts.allowCredentialDescriptorList.any {
                 it.getId().contentEquals(webAuthnDIDData.keyId.toByteArray(Charsets.UTF_8))
             }
 
             rpMatch && keyIdMatch
         }
+    }
+
+    /**
+     * increments the sign counter for a did
+     */
+    private fun incrementCounterForDIDCred(didCred: WebAuthnDIDData) {
+        val newMetadata = DIDMetaData(webAuthnData = didCred.copy(authCounter = didCred.authCounter + 1))
+        Did.setDidMetadata(walletProvider.getWallet(), didCred.did, Gson().toJson(newMetadata)).get()
     }
 
     /**

@@ -64,10 +64,11 @@ data class PublicKeyCredentialRequestOptions(
 
 /************************** CTAP ****************************/
 
+@Parcelize
 data class PublicKeyCredentialRpEntity(
     val id: String,
     val name: String
-)
+): Parcelable
 
 @Parcelize
 data class PublicKeyCredentialUserEntity(

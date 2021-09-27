@@ -18,6 +18,14 @@ import java.security.SecureRandom
 import java.util.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import kotlin.concurrent.timer
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -168,7 +176,7 @@ class DIDWebAuthnAndroids {
             "keyabc123",
             1,
             PublicKeyCredentialUserEntity(byteArrayOf(1), "user1", "gm"),
-            RelyingPartyInfo("RPorg", "RPID"),
+            PublicKeyCredentialRpEntity("RPorg", "RPID"),
             myDid.verkey,
             myDid.did
         )
@@ -354,6 +362,118 @@ class DIDWebAuthnAndroids {
     }
 
     @Test
-    fun keyspecTest() {
+    fun relaySecurityInitWithDid1And1234Connection() = runBlocking<Unit> {
+        // get my first did
+        val myDids = Did.getListMyDidsWithMeta(openWallet).get()
+        val myDidJSON = JSONObject("{ \"dids\": $myDids}").getJSONArray("dids").getJSONObject(0)
+        val verkey = myDidJSON.get("verkey").toString()
+
+        val initJSON = JSONObject(
+            mutableMapOf(
+                Pair("connectionId", "1234-1234-1234-1234"),
+                Pair("key", verkey)
+            ) as Map<*, *>
+        )
+
+        postToLocalTest(initJSON.toString(), "init")
+    }
+
+    @Test
+    fun relaySecurityValidTest() = runBlocking<Unit> {
+        // get my first did
+        val myDids = Did.getListMyDidsWithMeta(openWallet).get()
+        val myDidJSON = JSONObject("{ \"dids\": $myDids}").getJSONArray("dids").getJSONObject(0)
+        val verkey = myDidJSON.get("verkey").toString()
+
+        val timestamp = Date().time.toString()
+        val timestampSig =
+            Crypto.cryptoSign(openWallet, verkey, timestamp.toByteArray(Charsets.UTF_8)).get()
+
+        val getMessagesJSON = JSONObject(
+            mutableMapOf(
+                Pair("connectionId", "1234-1234-1234-1234"),
+                Pair("timestamp", timestamp),
+                Pair("timestampSig", Base64.getEncoder().encodeToString(timestampSig))
+            ) as Map<*, *>
+        )
+        postToLocalTest(getMessagesJSON.toString(), "getMessages")
+    }
+
+    @Test
+    fun relaySecurityInvalidSigTest() = runBlocking<Unit> {
+        // get incorrect did
+        val myDids = Did.getListMyDidsWithMeta(openWallet).get()
+        val incorrectDidJSON = JSONObject("{ \"dids\": $myDids}").getJSONArray("dids").getJSONObject(1)
+        val incorrectSigningVerkey = incorrectDidJSON.get("verkey").toString()
+
+        // sign with incorrect Did
+        val timestamp = Date().time.toString()
+        val timestampSig =
+            Crypto.cryptoSign(openWallet, incorrectSigningVerkey, timestamp.toByteArray(Charsets.UTF_8)).get()
+
+        val getMessagesJSON = JSONObject(
+            mutableMapOf(
+                Pair("connectionId", "1234-1234-1234-1234"),
+                Pair("timestamp", timestamp),
+                Pair("timestampSig", Base64.getEncoder().encodeToString(timestampSig))
+            ) as Map<*, *>
+        )
+        postToLocalTest(getMessagesJSON.toString(), "getMessages")
+    }
+
+    @Test
+    fun relaySecurityReplayAttackTest() = runBlocking<Unit> {
+        // get my first Did
+        val myDids = Did.getListMyDidsWithMeta(openWallet).get()
+        val myDidJSON = JSONObject("{ \"dids\": $myDids}").getJSONArray("dids").getJSONObject(0)
+        val verkey = myDidJSON.get("verkey").toString()
+
+        // sign valid
+        val timestamp = Date().time.toString()
+        val timestampSig =
+            Crypto.cryptoSign(openWallet, verkey, timestamp.toByteArray(Charsets.UTF_8)).get()
+        val getMessagesJSON = JSONObject(
+            mutableMapOf(
+                Pair("connectionId", "1234-1234-1234-1234"),
+                Pair("timestamp", timestamp),
+                Pair("timestampSig", Base64.getEncoder().encodeToString(timestampSig))
+            ) as Map<*, *>
+        )
+        // post once, valid
+        postToLocalTest(getMessagesJSON.toString(), "getMessages")
+        // post twice, invalid
+        postToLocalTest(getMessagesJSON.toString(), "getMessages")
+    }
+
+    @Test
+    fun relaySecurityInvalidClockTest() = runBlocking<Unit> {
+        // get my first Did
+        val myDids = Did.getListMyDidsWithMeta(openWallet).get()
+        val myDidJSON = JSONObject("{ \"dids\": $myDids}").getJSONArray("dids").getJSONObject(0)
+        val verkey = myDidJSON.get("verkey").toString()
+
+        // sign old timestamp
+        val timestamp = (Date().time + (2 * 60 * 60 * 60)).toString()
+        val timestampSig =
+            Crypto.cryptoSign(openWallet, verkey, timestamp.toByteArray(Charsets.UTF_8)).get()
+        val getMessagesJSON = JSONObject(
+            mutableMapOf(
+                Pair("connectionId", "1234-1234-1234-1234"),
+                Pair("timestamp", timestamp),
+                Pair("timestampSig", Base64.getEncoder().encodeToString(timestampSig))
+            ) as Map<*, *>
+        )
+        postToLocalTest(getMessagesJSON.toString(), "getMessages")
+    }
+
+    private suspend fun postToLocalTest(data: String, action: String) {
+        val postRequest = Request.Builder()
+            .url("http://localhost:3000/$action")
+            .post(data.toRequestBody("application/json".toMediaTypeOrNull()))
+            .build()
+        val client = OkHttpClient()
+        val response = withContext(Dispatchers.IO) {
+            client.newCall(postRequest).execute()
+        }
     }
 }

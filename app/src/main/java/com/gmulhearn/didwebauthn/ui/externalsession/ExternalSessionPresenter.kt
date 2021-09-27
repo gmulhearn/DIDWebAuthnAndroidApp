@@ -95,7 +95,7 @@ class ExternalSessionPresenter @Inject constructor(
         allowedCredentials: List<AllowCredentialDescriptor>,
         onConfirmation: () -> Unit
     ) {
-        val allowedCredsString = allowedCredentials.joinToString(separator = ",\n", prefix = "- ") { Base64.getEncoder().encodeToString(it.getId()) }
+        val allowedCredsString = allowedCredentials.joinToString(separator = ",\n", prefix = "- ") { it.getId().toString(Charsets.UTF_8) }
         view.showUserPrompt(
             title = "Incoming WebAuthn Authentication Request",
             message = "request from origin: $origin\nallowed keys Ids: $allowedCredsString",
