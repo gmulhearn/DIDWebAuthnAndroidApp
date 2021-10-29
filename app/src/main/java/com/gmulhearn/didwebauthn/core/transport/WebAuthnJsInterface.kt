@@ -2,14 +2,12 @@ package com.gmulhearn.didwebauthn.core.transport
 
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
-import com.gmulhearn.didwebauthn.data.CollectedClientData
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialCreationOptions
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialRequestOptions
 import com.gmulhearn.didwebauthn.core.protocols.*
 import com.gmulhearn.didwebauthn.data.AllowCredentialDescriptor
 import com.gmulhearn.didwebauthn.data.UserInfo
 import com.google.gson.Gson
-import java.util.*
 
 @Keep
 class WebAuthnJsInterface(private val bridge: WebAuthnBridgeWebView) {
@@ -29,9 +27,11 @@ class WebAuthnJsInterface(private val bridge: WebAuthnBridgeWebView) {
         )
 
         requestUserRegistrationConfirmation(bridge.origin, opts.publicKey.user) {
-            bridge.resolveAttestation(bridge.authenticator.makeCredentials(
-                makeCredOpts,
-                clientData.JSON()
+            bridge.resolveAttestation(bridge.authenticator.authenticatorMakeCredential(
+                rp = makeCredOpts.rp,
+                user = makeCredOpts.user,
+                pubKeyCredParams = makeCredOpts.pubKeyCredParams,
+                clientDataJson = clientData.JSON()
             ))
         }
 
@@ -65,9 +65,11 @@ class WebAuthnJsInterface(private val bridge: WebAuthnBridgeWebView) {
             bridge.origin,
             opts.publicKey.allowCredentials
         ) {
-            bridge.resolveAssertion(bridge.authenticator.getAssertion(
-                getAssertionOpts,
-                clientData.JSON()
+            bridge.resolveAssertion(bridge.authenticator.authenticatorGetAssertion(
+                rpId = getAssertionOpts.rpId,
+                clientDataHash = getAssertionOpts.clientDataHash,
+                allowList = getAssertionOpts.allowCredentialDescriptorList,
+                clientDataJson = clientData.JSON()
             ))
         }
     }

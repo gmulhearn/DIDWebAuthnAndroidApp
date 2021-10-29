@@ -7,11 +7,11 @@ import co.nstant.`in`.cbor.CborBuilder
 import co.nstant.`in`.cbor.CborEncoder
 import co.nstant.`in`.cbor.CborException
 import com.gmulhearn.didwebauthn.common.WalletProvider
-import com.gmulhearn.didwebauthn.data.AuthenticatorGetAssertionOptions
-import com.gmulhearn.didwebauthn.data.AuthenticatorMakeCredentialOptions
+import com.gmulhearn.didwebauthn.data.AllowCredentialDescriptor
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialAssertionResponse
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialAttestationResponse
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialRpEntity
+import com.gmulhearn.didwebauthn.data.PublicKeyCredentialUserEntity
 import com.gmulhearn.didwebauthn.data.indy.DIDMetaData
 import com.gmulhearn.didwebauthn.data.indy.EDDSA_ALG
 import com.gmulhearn.didwebauthn.data.indy.ES256_ALG
@@ -37,7 +37,6 @@ import java.security.Signature
 import java.security.interfaces.ECPublicKey
 import java.security.spec.ECGenParameterSpec
 import java.security.spec.ECPoint
-import java.util.Arrays
 import javax.inject.Inject
 
 class DIDAuthenticator @Inject constructor(
@@ -52,19 +51,23 @@ class DIDAuthenticator @Inject constructor(
     /**
      * Primary Authenticator function - makeCredential.
      * Creates an attestation object (none attestation) and formats
+     * https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#authenticatorMakeCredential
      */
-    fun makeCredentials(
-        credOpts: AuthenticatorMakeCredentialOptions,
+    fun authenticatorMakeCredential(
+        clientDataHash: ByteArray? = null, // Not used as no Attestation produced
+        rp: PublicKeyCredentialRpEntity,
+        user: PublicKeyCredentialUserEntity,
+        pubKeyCredParams: List<Pair<String, Long>>,
         clientDataJson: String
     ): PublicKeyCredentialAttestationResponse {
 
-        if (credOpts.pubKeyCredParams.none { (it.second.toInt() == EDDSA_ALG || it.second.toInt() == ES256_ALG) }) {
+        if (pubKeyCredParams.none { (it.second.toInt() == EDDSA_ALG || it.second.toInt() == ES256_ALG) }) {
             // TODO - throw, unsupported
         }
 
         // TODO: more validity checks here
 
-        val (authData, credentialId) = createAuthData(credOpts)
+        val (authData, credentialId) = createAuthData(rp, user, pubKeyCredParams)
 
         val byteStream = ByteArrayOutputStream()
         CborEncoder(byteStream).encode(
@@ -91,18 +94,22 @@ class DIDAuthenticator @Inject constructor(
      * creates the authData component (FOR REGISTRATION) on the attestation object
      * see: https://www.w3.org/TR/webauthn/#attestation-object
      */
-    private fun createAuthData(credOpts: AuthenticatorMakeCredentialOptions): Pair<ByteArray, ByteArray> {
+    private fun createAuthData(
+        rp: PublicKeyCredentialRpEntity,
+        user: PublicKeyCredentialUserEntity,
+        pubKeyCredParams: List<Pair<String, Long>>
+    ): Pair<ByteArray, ByteArray> {
         // assume must be either eddsa or es256, (constraint verified by function caller)
         val keyAlg = // ES256_ALG
-            if (credOpts.pubKeyCredParams.any { it.second.toInt() == EDDSA_ALG }) EDDSA_ALG else ES256_ALG
+            if (pubKeyCredParams.any { it.second.toInt() == EDDSA_ALG }) EDDSA_ALG else ES256_ALG
 
-        val rpIdHash = Sha256Hash.hash(credOpts.rp.id.toByteArray(Charsets.UTF_8))
+        val rpIdHash = Sha256Hash.hash(rp.id.toByteArray(Charsets.UTF_8))
         val flags: Byte =
             0x01 or (0x01 shl 6) or (0x01 shl 2)// attested cred included and user verified
         val counter = 1
 
         /** create AttestedCredentialData */
-        val didCred = createDidCredential(credOpts, keyAlg)
+        val didCred = createDidCredential(rp, user, keyAlg)
         val coseEncoded: ByteArray = when (didCred.keyAlg) {
             KEY_ALG.EDDSA -> {
                 val edDSAPublicKey = Base58.decode(didCred.edDSAKey)
@@ -210,20 +217,23 @@ class DIDAuthenticator @Inject constructor(
     /**
      * Primary Authenticator function - getAssertion.
      * Creates an assertion object and formats
+     * https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#authenticatorGetAssertion
      */
-    fun getAssertion(
-        assertionOpts: AuthenticatorGetAssertionOptions,
+    fun authenticatorGetAssertion(
+        rpId: String,
+        clientDataHash: ByteArray,
+        allowList: List<AllowCredentialDescriptor>,
         clientDataJson: String
     ): PublicKeyCredentialAssertionResponse {
 
-        val didCred = getDidCredential(assertionOpts)
+        val didCred = getDidCredential(rpId, allowList)
         incrementCounterForDIDCred(didCred)
         val counter = didCred.authCounter + 1
         val authData = createAuthData(counter, didCred.rpInfo.id)
 
         val authDataClientDataHashToSign = mutableListOf<Byte>()
         authData.forEach { authDataClientDataHashToSign.add(it) }
-        assertionOpts.clientDataHash.forEach { authDataClientDataHashToSign.add(it) }
+        clientDataHash.forEach { authDataClientDataHashToSign.add(it) }
 
         val sig = when (didCred.keyAlg) {
             KEY_ALG.EDDSA -> {
@@ -280,7 +290,8 @@ class DIDAuthenticator @Inject constructor(
     /********************************* DID CREDENTIALS *********************************/
 
     private fun createDidCredential(
-        opts: AuthenticatorMakeCredentialOptions,
+        rp: PublicKeyCredentialRpEntity,
+        user: PublicKeyCredentialUserEntity,
         keyAlg: Int
     ): WebAuthnDIDData {
         val did = Did.createAndStoreMyDid(walletProvider.getWallet(), "{}").get()
@@ -288,8 +299,8 @@ class DIDAuthenticator @Inject constructor(
         val webAuthnMetadata = WebAuthnDIDData(
             keyId = "$KEY_ID_PREFIX${did.did}",
             authCounter = 1,
-            userInfo = opts.user,
-            rpInfo = PublicKeyCredentialRpEntity(opts.rp.id, opts.rp.name),
+            userInfo = user,
+            rpInfo = PublicKeyCredentialRpEntity(rp.id, rp.name),
             edDSAKey = did.verkey,
             did = did.did,
             keyAlg = keyAlg.toSupportedKeyAlg()
@@ -305,18 +316,18 @@ class DIDAuthenticator @Inject constructor(
     /**
      * get MetadataDID object that matches supplied opts
      */
-    private fun getDidCredential(opts: AuthenticatorGetAssertionOptions): WebAuthnDIDData {
+    private fun getDidCredential(rpId: String, allowList: List<AllowCredentialDescriptor>): WebAuthnDIDData {
         val possibleWebAuthnDIDs = getWebAuthnDIDsData()
 
         // TODO - handle error if none found?
         return possibleWebAuthnDIDs.first { webAuthnDIDData ->
             // opts.rpId should be the full domain, and the rpId can be a substring
-            val rpMatch = opts.rpId == webAuthnDIDData.rpInfo.id
-            println("DEBUG: allowed cred: ${opts.rpId}")
+            val rpMatch = rpId == webAuthnDIDData.rpInfo.id
+            println("DEBUG: allowed cred: ${rpId}")
             println("DEBUG: this cred: ${webAuthnDIDData.rpInfo.id}")
             println("DEBUG: RPMATCH: ${rpMatch}")
 
-            val keyIdMatch = opts.allowCredentialDescriptorList.any {
+            val keyIdMatch = allowList.any {
                 it.getId().contentEquals(webAuthnDIDData.keyId.toByteArray(Charsets.UTF_8))
             }
 

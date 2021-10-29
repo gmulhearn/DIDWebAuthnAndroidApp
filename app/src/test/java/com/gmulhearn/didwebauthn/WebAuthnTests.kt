@@ -3,7 +3,6 @@ package com.gmulhearn.didwebauthn
 import com.gmulhearn.didwebauthn.data.PublicKeyCredentialCreationOptions
 import com.gmulhearn.didwebauthn.core.protocols.getChallenge
 import com.gmulhearn.didwebauthn.core.protocols.toAuthenticatorMakeCredentialOptions
-//import com.gmulhearn.didwebauthn.core.protocols.toDuoLabsAuthn
 import com.google.gson.Gson
 import org.junit.Assert
 import org.junit.Before

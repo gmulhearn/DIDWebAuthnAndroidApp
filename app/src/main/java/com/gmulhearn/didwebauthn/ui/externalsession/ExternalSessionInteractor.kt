@@ -22,7 +22,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -144,9 +143,11 @@ class ExternalSessionInteractor @Inject constructor(
             origin
         )
 
-        val response = authenticator.makeCredentials(
-            makeCredOpts,
-            clientData.JSON()
+        val response = authenticator.authenticatorMakeCredential(
+            rp = makeCredOpts.rp,
+            user = makeCredOpts.user,
+            pubKeyCredParams = makeCredOpts.pubKeyCredParams,
+            clientDataJson = clientData.JSON()
         )
 
         val webRTCResponse = wrapToWebRTCMessageOut(WEBAUTHN_REG_RESPONSE, response)
@@ -167,9 +168,11 @@ class ExternalSessionInteractor @Inject constructor(
             origin
         )
 
-        val response = authenticator.getAssertion(
-            getAssertionOpts,
-            clientData.JSON()
+        val response = authenticator.authenticatorGetAssertion(
+            rpId = getAssertionOpts.rpId,
+            clientDataHash = getAssertionOpts.clientDataHash,
+            allowList = getAssertionOpts.allowCredentialDescriptorList,
+            clientDataJson = clientData.JSON()
         )
 
         println(response)
