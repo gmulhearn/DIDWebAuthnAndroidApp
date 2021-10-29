@@ -29,7 +29,7 @@ class StartFragment : Fragment() {
         LibIndy.init()
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_first, container, false)
+        return inflater.inflate(R.layout.fragment_start, container, false)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)

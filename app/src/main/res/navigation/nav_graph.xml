@@ -9,7 +9,7 @@
         android:id="@+id/StartFragment"
         android:name="com.gmulhearn.didwebauthn.StartFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/fragment_start">
 
         <action
             android:id="@+id/action_StartFragment_to_WalletsFragment"
