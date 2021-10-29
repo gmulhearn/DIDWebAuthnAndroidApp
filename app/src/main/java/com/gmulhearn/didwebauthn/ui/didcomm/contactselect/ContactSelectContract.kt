@@ -58,7 +58,6 @@ interface ContactSelectContract {
         fun deleteClicked(pairwiseContact: PairwiseContact)
         fun browserClicked()
         fun walletInfoClicked()
-        fun externalAuthClicked()
     }
 
     /**
@@ -124,7 +123,6 @@ interface ContactSelectContract {
         fun toChat(pairwiseContact: PairwiseContact)
         fun toBrowser(didInfo: DidInfo)
         fun toWalletInfo()
-        fun toExternalAuth()
         fun toExternalSession()
     }
 }

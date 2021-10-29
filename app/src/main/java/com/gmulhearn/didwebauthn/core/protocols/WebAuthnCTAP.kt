@@ -108,35 +108,6 @@ fun CredentialCreationOptions.toAuthenticatorMakeCredentialOptions(origin: Strin
     return AuthenticatorMakeCredentialOptions(clientDataHash, rp, user, pubKeyCredParams)
 }
 
-/**
- * TODO: BELOW IS TEMP FOR TESTING/DEBUGGING - REMOVE IN FUTURE
- * Transformer for converting this AuthenticatorMakeCredentialOptions to DuoLabs format
- */
-//fun AuthenticatorMakeCredentialOptions.toDuoLabsAuthn(
-//): duo.labs.webauthn.models.AuthenticatorMakeCredentialOptions {
-//    val duoLabs = duo.labs.webauthn.models.AuthenticatorMakeCredentialOptions()
-//    val duoLabsRP = RpEntity()
-//    duoLabsRP.id = rp.id
-//    duoLabsRP.name = rp.name
-//    val duoLabsUser = UserEntity()
-//    duoLabsUser.displayName = user.displayName
-//    duoLabsUser.id = user.id
-//    duoLabsUser.name = user.name
-//
-//    duoLabs.clientDataHash = clientDataHash
-//    duoLabs.rpEntity = duoLabsRP
-//    duoLabs.userEntity = duoLabsUser
-//
-//    duoLabs.credTypesAndPubKeyAlgs =
-//        pubKeyCredParams as MutableList<android.util.Pair<String, Long>>
-//    duoLabs.excludeCredentialDescriptorList = mutableListOf()
-//    duoLabs.requireResidentKey = false
-//    duoLabs.requireUserPresence = true  // ?? for wellformed()
-//    duoLabs.requireUserVerification = false
-//
-//    return duoLabs
-//}
-
 fun createPublicKeyCredentialAttestationResponse(
     rawId: ByteArray,
     attestationObject: ByteArray,
@@ -237,24 +208,5 @@ fun CredentialRequestOptions.toAuthenticatorGetAssertionOptions(origin: String):
     )
 }
 
-/**
- * todo: temp func to convert for duolabs authenticator
- */
-//fun AuthenticatorGetAssertionOptions.toDuoLabAuthn(): duo.labs.webauthn.models.AuthenticatorGetAssertionOptions {
-//    val duoLabs = duo.labs.webauthn.models.AuthenticatorGetAssertionOptions()
-//    duoLabs.clientDataHash = clientDataHash
-//    duoLabs.requireUserPresence = requireUserPresence
-//    duoLabs.requireUserVerification = requireUserVerification
-//    duoLabs.rpId = rpId
-//    duoLabs.allowCredentialDescriptorList = allowCredentialDescriptorList.map {
-//        PublicKeyCredentialDescriptor(
-//            it.type,
-//            it.getId(),
-//            mutableListOf()  // TODO - check this is ok
-//        )
-//    }
-//
-//    return duoLabs
-//}
 
 /*******************************************************************/

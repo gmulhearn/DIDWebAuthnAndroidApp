@@ -57,11 +57,6 @@ class ContactSelectPresenter @Inject constructor(
         router.toWalletInfo()
     }
 
-    override fun externalAuthClicked() {
-        //router.toExternalAuth()
-        router.toExternalSession()
-    }
-
     // endregion
 
     // region view event handlers

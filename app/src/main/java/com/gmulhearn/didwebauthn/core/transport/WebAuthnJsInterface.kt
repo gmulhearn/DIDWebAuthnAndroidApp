@@ -77,7 +77,7 @@ class WebAuthnJsInterface(private val bridge: WebAuthnBridgeWebView) {
         allowedCredentials: List<AllowCredentialDescriptor>,
         onConfirmation: () -> Unit
     ) {
-        val allowedCredsString = allowedCredentials.joinToString(separator = ",\n", prefix = "- ") { Base64.getEncoder().encodeToString(it.getId()) }
+        val allowedCredsString = allowedCredentials.joinToString(separator = ",\n", prefix = "- ") { it.getId().toString(Charsets.UTF_8) }
         bridge.requestPermissionFromView(
             "Incoming WebAuthn Authentication Request",
             "request from origin: $origin\nallowed keys Ids: $allowedCredsString",

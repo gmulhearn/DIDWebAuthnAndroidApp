@@ -89,9 +89,6 @@
             android:id="@+id/action_contactSelectFragment_to_walletInfoFragment"
             app:destination="@id/walletInfoFragment" />
         <action
-            android:id="@+id/action_contactSelectFragment_to_externalAuthFragment"
-            app:destination="@id/externalAuthFragment" />
-        <action
             android:id="@+id/action_contactSelectFragment_to_externalSessionFragment"
             app:destination="@id/externalSessionFragment" />
     </fragment>
@@ -126,11 +123,6 @@
         android:name="com.gmulhearn.didwebauthn.ui.walletInfo.WalletInfoFragment"
         android:label="fragment_wallet_info"
         tools:layout="@layout/fragment_wallet_info" />
-    <fragment
-        android:id="@+id/externalAuthFragment"
-        android:name="com.gmulhearn.didwebauthn.ui.externalauth.ExternalAuthFragment"
-        android:label="fragment_external_auth"
-        tools:layout="@layout/fragment_external_auth" />
     <fragment
         android:id="@+id/externalSessionFragment"
         android:name="com.gmulhearn.didwebauthn.ui.externalsession.ExternalSessionFragment"

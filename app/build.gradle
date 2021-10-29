@@ -74,8 +74,6 @@ dependencies {
     // OKHTTP
     implementation 'com.squareup.okhttp3:okhttp:4.4.0'
 
-    // TODO - remove completely
-    // implementation project(path: ':android-webauthn-authenticator')
 
     def daggerVersion = "2.27"
     implementation "com.google.dagger:dagger:$daggerVersion"
@@ -92,12 +90,10 @@ dependencies {
 
     // SUDO RELAY - can be removed if using firebase
     implementation "com.sudoplatform:sudoconfigmanager:1.2.3"
-    implementation 'com.sudoplatform:sudodirelay:0.1.0-1632093972-SNAPSHOT'
+    implementation 'com.sudoplatform:sudodirelay:0.1.0'
     implementation "com.sudoplatform:sudologging:1.0.25"
 
     implementation 'com.google.code.gson:gson:2.8.6'
-
-    // implementation 'com.github.duo-labs:android-webauthn-authenticator:master-SNAPSHOT'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

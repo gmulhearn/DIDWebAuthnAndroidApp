@@ -59,19 +59,15 @@ class DIDAuthenticator @Inject constructor(
     ): PublicKeyCredentialAttestationResponse {
 
         if (credOpts.pubKeyCredParams.none { (it.second.toInt() == EDDSA_ALG || it.second.toInt() == ES256_ALG) }) {
-            // throw, unsupported
+            // TODO - throw, unsupported
         }
 
-        // TODO: validity checks here
+        // TODO: more validity checks here
 
-        val authData = createAuthData(credOpts)
+        val (authData, credentialId) = createAuthData(credOpts)
 
-        // TODO: should just return below rather than extract like this
-        val l = (authData[53].toInt() shl 8) + authData[54]
-        val credentialId = Arrays.copyOfRange(authData, 55, 55 + l)
-
-        val baos = ByteArrayOutputStream()
-        CborEncoder(baos).encode(
+        val byteStream = ByteArrayOutputStream()
+        CborEncoder(byteStream).encode(
             CborBuilder()
                 .addMap()
                 .put("authData", authData)
@@ -82,7 +78,7 @@ class DIDAuthenticator @Inject constructor(
                 .build()
         )
 
-        val attestObj = baos.toByteArray()
+        val attestObj = byteStream.toByteArray()
 
         return createPublicKeyCredentialAttestationResponse(
             rawId = credentialId,
@@ -95,13 +91,14 @@ class DIDAuthenticator @Inject constructor(
      * creates the authData component (FOR REGISTRATION) on the attestation object
      * see: https://www.w3.org/TR/webauthn/#attestation-object
      */
-    private fun createAuthData(credOpts: AuthenticatorMakeCredentialOptions): ByteArray {
+    private fun createAuthData(credOpts: AuthenticatorMakeCredentialOptions): Pair<ByteArray, ByteArray> {
         // assume must be either eddsa or es256, (constraint verified by function caller)
         val keyAlg = // ES256_ALG
             if (credOpts.pubKeyCredParams.any { it.second.toInt() == EDDSA_ALG }) EDDSA_ALG else ES256_ALG
 
         val rpIdHash = Sha256Hash.hash(credOpts.rp.id.toByteArray(Charsets.UTF_8))
-        val flags: Byte = 0x01 or (0x01 shl 6) or (0x01 shl 2)// attested cred included and user verified
+        val flags: Byte =
+            0x01 or (0x01 shl 6) or (0x01 shl 2)// attested cred included and user verified
         val counter = 1
 
         /** create AttestedCredentialData */
@@ -117,13 +114,14 @@ class DIDAuthenticator @Inject constructor(
             }
         }
 
-        val id = didCred.keyId.toByteArray(Charsets.UTF_8)
+        val credentialId = didCred.keyId.toByteArray(Charsets.UTF_8)
         val aaguid = ByteArray(16).map { 0.toByte() }.toByteArray() // byte array of zeros
 
-        val attestedCredDataBuff = ByteBuffer.allocate(16 + 2 + id.size + coseEncoded.size)
+        val attestedCredDataBuff =
+            ByteBuffer.allocate(16 + 2 + credentialId.size + coseEncoded.size)
         attestedCredDataBuff.put(aaguid)
-        attestedCredDataBuff.putShort(id.size.toShort())
-        attestedCredDataBuff.put(id)
+        attestedCredDataBuff.putShort(credentialId.size.toShort())
+        attestedCredDataBuff.put(credentialId)
         attestedCredDataBuff.put(coseEncoded)
         val attestedCredData = attestedCredDataBuff.array()
 
@@ -135,7 +133,7 @@ class DIDAuthenticator @Inject constructor(
         authDataBuff.putInt(counter)
         authDataBuff.put(attestedCredData)
 
-        return authDataBuff.array()
+        return Pair(authDataBuff.array(), credentialId)
     }
 
     /**
@@ -330,8 +328,10 @@ class DIDAuthenticator @Inject constructor(
      * increments the sign counter for a did
      */
     private fun incrementCounterForDIDCred(didCred: WebAuthnDIDData) {
-        val newMetadata = DIDMetaData(webAuthnData = didCred.copy(authCounter = didCred.authCounter + 1))
-        Did.setDidMetadata(walletProvider.getWallet(), didCred.did, Gson().toJson(newMetadata)).get()
+        val newMetadata =
+            DIDMetaData(webAuthnData = didCred.copy(authCounter = didCred.authCounter + 1))
+        Did.setDidMetadata(walletProvider.getWallet(), didCred.did, Gson().toJson(newMetadata))
+            .get()
     }
 
     /**
@@ -402,62 +402,4 @@ class DIDAuthenticator @Inject constructor(
     }
 
     /***********************************************************************************/
-
-
-    /** GRAVEYARD */
-//    private fun createAndGetDidVerkey(): ByteArray {
-//        val myDids = Did.getListMyDidsWithMeta(walletProvider.getWallet()).get()
-//        val myDidsJSON = JSONObject("{ \"dids\": $myDids}")
-//
-//        val myDidVer = myDidsJSON.getJSONArray("dids")
-//            .getJSONObject(0).getString("verkey")
-//        return Base58.decode(myDidVer)
-//    }
-//
-//    private fun getDidVerkey(): ByteArray {
-//        val myDids = Did.getListMyDidsWithMeta(walletProvider.getWallet()).get()
-//        val myDidsJSON = JSONObject("{ \"dids\": $myDids}")
-//
-//        val myDidVer = myDidsJSON.getJSONArray("dids")
-//            .getJSONObject(0).getString("verkey")
-//        return Base58.decode(myDidVer)
-//    }
-
-    /** GRAVEYARD DUOLABS IMPL BELOW */
-//    private fun duoLabsMakeCredentials(
-//        credOpts: AuthenticatorMakeCredentialOptions,
-//        clientDataJson: String
-//    ): PublicKeyCredentialAttestationResponse {
-//        val duoLabsMakeCreds = credOpts.toDuoLabsAuthn()
-//        println(duoLabsMakeCreds.credTypesAndPubKeyAlgs)
-//
-//        val attestationObject = duoLabsAuthn.makeCredential(duoLabsMakeCreds)
-//        println(attestationObject)
-//        println(attestationObject.credentialId)
-//        println(attestationObject.credentialIdBase64)
-//        println(attestationObject.asCBOR())
-//        return createPublicKeyCredentialAttestationResponse(
-//            rawId = attestationObject.credentialId,
-//            attestationObject = attestationObject.asCBOR(),
-//            clientDataJson = clientDataJson.toByteArray(Charsets.UTF_8)
-//        )
-//    }
-//
-//    fun duoLabsGetAssertion(
-//        assertionOpts: AuthenticatorGetAssertionOptions,
-//        clientDataJson: String
-//    ): PublicKeyCredentialAssertionResponse {
-//        val duoLabsGetAssertionOpts = assertionOpts.toDuoLabAuthn()
-//
-//        val assertionResult =
-//            duoLabsAuthn.getAssertion(duoLabsGetAssertionOpts, null)
-//
-//        return createPublicKeyCredentialAssertionResponse(
-//            rawId = assertionResult.selectedCredentialId,
-//            authenticatorData = assertionResult.authenticatorData,
-//            clientDataJson = clientDataJson.toByteArray(Charsets.UTF_8),
-//            signature = assertionResult.signature,
-//            userHandle = assertionResult.selectedCredentialUserHandle
-//        )
-//    }
 }

@@ -10,8 +10,6 @@ import com.gmulhearn.didwebauthn.ui.didcomm.contactselect.ContactSelectFragment
 import com.gmulhearn.didwebauthn.ui.didcomm.contactselect.ContactSelectModule
 import com.gmulhearn.didwebauthn.ui.didselect.DIDSelectFragment
 import com.gmulhearn.didwebauthn.ui.didselect.DIDSelectModule
-import com.gmulhearn.didwebauthn.ui.externalauth.ExternalAuthFragment
-import com.gmulhearn.didwebauthn.ui.externalauth.ExternalAuthModule
 import com.gmulhearn.didwebauthn.ui.externalsession.ExternalSessionFragment
 import com.gmulhearn.didwebauthn.ui.externalsession.ExternalSessionModule
 import com.gmulhearn.didwebauthn.ui.wallets.WalletsFragment
@@ -56,10 +54,6 @@ abstract class FragmentBindingModule {
     @ActivityScope
     @ContributesAndroidInjector(modules = [WalletInfoModule::class])
     abstract fun bindWalletInfoFragment(): WalletInfoFragment
-
-    @ActivityScope
-    @ContributesAndroidInjector(modules = [ExternalAuthModule::class])
-    abstract fun bindExternalAuthFragment(): ExternalAuthFragment
 
     @ActivityScope
     @ContributesAndroidInjector(modules = [ExternalSessionModule::class])

@@ -22,14 +22,14 @@ allprojects {
     repositories {
         maven { url = "https://repo.sovrin.org/repository/maven-public/" }
         maven { url 'https://jitpack.io' }
-        maven {
-            name = "android-snapshots"
-            url = "https://repo.tools.anonyome.com/repository/android-snapshots/"
-            credentials {
-                username = nexusUsername
-                password = nexusPassword
-            }
-        }
+//        maven {
+//            name = "android-snapshots"
+//            url = "https://repo.tools.anonyome.com/repository/android-snapshots/"
+//            credentials {
+//                username = nexusUsername
+//                password = nexusPassword
+//            }
+//        }
         google()
         jcenter()
     }

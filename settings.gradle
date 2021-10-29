@@ -1,3 +1,2 @@
-// include ':android-webauthn-authenticator'
 include ':app'
 rootProject.name = "DIDWebAuthnAndroid"
