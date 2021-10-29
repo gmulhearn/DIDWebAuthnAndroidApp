@@ -83,6 +83,8 @@ class DIDAuthenticator @Inject constructor(
 
         val attestObj = byteStream.toByteArray()
 
+        // NOTE: difference from CTAP spec - the complete PublicKeyCredential response is constructed
+        //  inside the authenticator for convenience.
         return createPublicKeyCredentialAttestationResponse(
             rawId = credentialId,
             attestationObject = attestObj,
@@ -256,6 +258,8 @@ class DIDAuthenticator @Inject constructor(
         val id = didCred.keyId.toByteArray(Charsets.UTF_8)
         val user = didCred.userInfo.id
 
+        // NOTE: difference from CTAP spec - the complete PublicKeyCredential response is constructed
+        //  inside the authenticator for convenience.
         return createPublicKeyCredentialAssertionResponse(
             rawId = id,
             authenticatorData = authData,
