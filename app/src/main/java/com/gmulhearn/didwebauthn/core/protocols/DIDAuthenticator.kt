@@ -39,6 +39,16 @@ import java.security.spec.ECGenParameterSpec
 import java.security.spec.ECPoint
 import javax.inject.Inject
 
+/**
+ * Implementation of the WebAuthn authenticator which uses DIDs keys/crypto when EdDSA is permitted.
+ * Otherwise, ES256 is used as a backup key.
+ * The public facing functions, [authenticatorMakeCredential] & [authenticatorGetAssertion], are
+ * designed to closely match the defined FIDO2 CTAP spec:
+ *  https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html
+ * Differences from the spec:
+ *  - both authenticator methods return the full PublicKeyCredential object - this is for convenience.
+ *  - majority of checks aren't fully implemented - this is proof of concept.
+ */
 class DIDAuthenticator @Inject constructor(
     val context: Context,
     val walletProvider: WalletProvider
@@ -377,14 +387,14 @@ class DIDAuthenticator @Inject constructor(
 
     /********************************* KEY TRANSLATION *********************************/
     /**
-     * TODO
+     * Generates a P256 [KeyPair] tagged with the provided [didVerkey].
      */
     private fun generateES256KeyFromDID(didVerkey: String): KeyPair {
-        val seed = Crypto.cryptoSign(
-            walletProvider.getWallet(),
-            didVerkey,
-            "seed".toByteArray(Charsets.UTF_8)  // TODO - is this completely secure?
-        ).get()
+//        val seed = Crypto.cryptoSign(
+//            walletProvider.getWallet(),
+//            didVerkey,
+//            "seed".toByteArray(Charsets.UTF_8)  //  is this completely secure?
+//        ).get()
 
         val keyGenParameterSpec = KeyGenParameterSpec.Builder(
             "ES256_FROM_DID_VERKEY_$didVerkey",
@@ -396,13 +406,13 @@ class DIDAuthenticator @Inject constructor(
 
         val generator =
             KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
-        generator.initialize(keyGenParameterSpec, FixedSecureRandom(seed))
+        generator.initialize(keyGenParameterSpec)
 
         return generator.genKeyPair()
     }
 
     /**
-     * TODO
+     * Uses the [didVerkey] to search for the matching P256 [KeyPair].
      */
     private fun getES256KeyFromDID(didVerkey: String): KeyPair {
         val store = KeyStore.getInstance("AndroidKeyStore")
