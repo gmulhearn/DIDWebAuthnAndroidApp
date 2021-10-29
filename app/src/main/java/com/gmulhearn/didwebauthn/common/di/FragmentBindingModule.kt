@@ -6,16 +6,16 @@ import com.gmulhearn.didwebauthn.ui.didcomm.addcontacts.AddContactFragment
 import com.gmulhearn.didwebauthn.ui.didcomm.AddContact.AddContactModule
 import com.gmulhearn.didwebauthn.ui.didcomm.chat.ChatFragment
 import com.gmulhearn.didwebauthn.ui.didcomm.chat.ChatModule
-import com.gmulhearn.didwebauthn.ui.didcomm.contactselect.ContactSelectFragment
-import com.gmulhearn.didwebauthn.ui.didcomm.contactselect.ContactSelectModule
-import com.gmulhearn.didwebauthn.ui.didselect.DIDSelectFragment
-import com.gmulhearn.didwebauthn.ui.didselect.DIDSelectModule
+import com.gmulhearn.didwebauthn.ui.home.HomeFragment
+import com.gmulhearn.didwebauthn.ui.home.HomeModule
+import com.gmulhearn.didwebauthn.ui.retired.didselect.DIDSelectFragment
+import com.gmulhearn.didwebauthn.ui.retired.didselect.DIDSelectModule
 import com.gmulhearn.didwebauthn.ui.externalsession.ExternalSessionFragment
 import com.gmulhearn.didwebauthn.ui.externalsession.ExternalSessionModule
-import com.gmulhearn.didwebauthn.ui.wallets.WalletsFragment
-import com.gmulhearn.didwebauthn.ui.wallets.WalletsModule
-import com.gmulhearn.didwebauthn.ui.signing.SigningFragment
-import com.gmulhearn.didwebauthn.ui.signing.SigningModule
+import com.gmulhearn.didwebauthn.ui.retired.wallets.WalletsFragment
+import com.gmulhearn.didwebauthn.ui.retired.wallets.WalletsModule
+import com.gmulhearn.didwebauthn.ui.retired.signing.SigningFragment
+import com.gmulhearn.didwebauthn.ui.retired.signing.SigningModule
 import com.gmulhearn.didwebauthn.ui.walletInfo.WalletInfoFragment
 import com.gmulhearn.didwebauthn.ui.walletInfo.WalletInfoModule
 import dagger.Module
@@ -36,8 +36,8 @@ abstract class FragmentBindingModule {
     abstract fun bindSigningFragment(): SigningFragment
 
     @ActivityScope
-    @ContributesAndroidInjector(modules = [ContactSelectModule::class])
-    abstract fun bindContactSelectFragment(): ContactSelectFragment
+    @ContributesAndroidInjector(modules = [HomeModule::class])
+    abstract fun bindHomeFragment(): HomeFragment
 
     @ActivityScope
     @ContributesAndroidInjector(modules = [AddContactModule::class])

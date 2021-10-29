@@ -295,7 +295,6 @@ class AddContactInteractor @Inject constructor(
     }
 
     override fun savePendingState(outState: Bundle) {
-        // TODO save interactor state to bundle and output success if required
     }
 
     // endregion

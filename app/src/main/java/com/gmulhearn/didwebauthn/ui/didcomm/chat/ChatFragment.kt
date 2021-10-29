@@ -112,8 +112,6 @@ class ChatFragment : Fragment(), ChatContract.View {
 
     // region View contract
 
-    // TODO Add view contract overrides
-
     // endregion
 
 }

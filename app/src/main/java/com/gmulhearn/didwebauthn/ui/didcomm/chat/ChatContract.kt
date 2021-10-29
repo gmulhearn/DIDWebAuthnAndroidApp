@@ -104,7 +104,7 @@ interface ChatContract {
         /**
          * Called after [InteractorInput.loadData] completes successfully
          */
-        fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
+        fun loadDataResult()
         fun updateMessages(messageList: MutableList<MessageDisplayModel>)
         fun updateChatInfoState(showing: Boolean, data: String)
 
@@ -114,9 +114,6 @@ interface ChatContract {
      * Declares all routes out of the module
      */
     interface Router {
-        /**
-         * TODO
-         */
         fun back()
     }
 }

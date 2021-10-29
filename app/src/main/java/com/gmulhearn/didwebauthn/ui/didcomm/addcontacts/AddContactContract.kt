@@ -14,11 +14,7 @@ interface AddContactContract {
      * Passive view interface. This interface declares behaviors that can modify the View
      */
     interface View {
-        /**
-         * TODO
-         */
         fun showQR(bitmap: Bitmap)
-
         fun setupCamera()
         fun showSnackbar(status: String)
     }
@@ -58,10 +54,6 @@ interface AddContactContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
-
-        /**
-         * TODO
-         */
         fun qrCodeRead(text: String?)
         fun setLabelClicked(label: String)
     }
@@ -102,10 +94,6 @@ interface AddContactContract {
         fun savePendingState(outState: Bundle)
 
         fun generateQR()
-
-        /**
-         * TODO
-         */
         fun processQrScan(text: String?)
         fun setLabel(label: String)
     }
@@ -118,7 +106,7 @@ interface AddContactContract {
         /**
          * Called after [InteractorInput.loadData] completes successfully
          */
-        fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
+        fun loadDataResult()
 
         fun generatedQR(bitmap: Bitmap)
         fun updateProtocolState(stage: ProtocolStage)
@@ -130,9 +118,6 @@ interface AddContactContract {
      */
     interface Router {
 
-        /**
-         * TODO
-         */
         fun back()
     }
 }

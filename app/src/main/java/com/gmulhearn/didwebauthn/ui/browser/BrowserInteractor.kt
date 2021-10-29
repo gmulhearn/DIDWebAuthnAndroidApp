@@ -28,11 +28,9 @@ class BrowserInteractor @Inject constructor(
     }
 
     override fun loadData(savedState: Bundle?) {
-        // TODO implement this. Call output with results of a data load or load existing state
     }
 
     override fun savePendingState(outState: Bundle) {
-        // TODO save interactor state to bundle and output success if required
     }
 
     // endregion

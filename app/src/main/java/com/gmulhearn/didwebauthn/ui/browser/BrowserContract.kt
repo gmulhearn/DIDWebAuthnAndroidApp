@@ -99,8 +99,7 @@ interface BrowserContract {
         /**
          * Called after [InteractorInput.loadData] completes successfully
          */
-        fun loadDataResult() // TODO: define output parameters here, and optionally other output functions for error handling
-
+        fun loadDataResult()
     }
 
     /**

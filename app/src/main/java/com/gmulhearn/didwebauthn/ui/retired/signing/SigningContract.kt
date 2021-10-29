@@ -1,26 +1,19 @@
-package com.gmulhearn.didwebauthn.ui.externalsession
+package com.gmulhearn.didwebauthn.ui.retired.signing
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.gmulhearn.didwebauthn.data.AllowCredentialDescriptor
-import com.gmulhearn.didwebauthn.data.UserInfo
 
 /**
- * ExternalSessionContract VIPER contract
+ * SigningContract VIPER contract
  */
-interface ExternalSessionContract {
+interface SigningContract {
 
     /**
      * Passive view interface. This interface declares behaviors that can modify the View
      */
     interface View {
-        fun signalClient(sig: String)
 
-        fun setupCamera()
-        fun hideCamera()
-        fun showConnected()
-        fun sendMessageInWebView(jsonData: String)
-        fun showUserPrompt(title: String, message: String, onConfirmation: () -> Unit)
+        fun updateSignedText(text: String)
     }
 
     /**
@@ -58,9 +51,8 @@ interface ExternalSessionContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
-        fun qrCodeRead(data: String)
-        fun onClientSignalled(data: String)
-        fun onServerMessage(data: String)
+
+        fun signTextPressed(text: String)
     }
 
     /**
@@ -98,9 +90,8 @@ interface ExternalSessionContract {
          */
         fun savePendingState(outState: Bundle)
 
-        fun processQrScan(data: String)
-        fun processClientSignal(data: String)
-        fun handleServerMessage(data: String)
+        fun signText(text: String)
+
     }
 
     /**
@@ -112,21 +103,9 @@ interface ExternalSessionContract {
          * Called after [InteractorInput.loadData] completes successfully
          */
         fun loadDataResult()
-        fun retrievedSignal(sig: String)
-        fun connectionSuccess()
-        fun responseGenerated(jsonData: String)
 
-        fun requestUserRegistrationConfirmation(
-            origin: String,
-            userInfo: UserInfo,
-            onConfirmation: () -> Unit
-        )
+        fun signTextResult(text: String)
 
-        fun requestUserAuthenticationConfirmation(
-            origin: String,
-            allowedCredentials: List<AllowCredentialDescriptor>,
-            onConfirmation: () -> Unit
-        )
     }
 
     /**

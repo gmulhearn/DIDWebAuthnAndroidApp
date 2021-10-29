@@ -1,23 +1,23 @@
-package com.gmulhearn.didwebauthn.ui.browser
+package com.gmulhearn.didwebauthn.ui.retired.signing
 
 import android.os.Bundle
 import com.gmulhearn.didwebauthn.common.ObjectDelegate
 import javax.inject.Inject
 
 /**
- * Browser VIPER Presenter Implementation
+ * Signing VIPER Presenter Implementation
  */
-class BrowserPresenter @Inject constructor(
-        private val interactor: BrowserContract.InteractorInput,
-        private val router: BrowserContract.Router
-) : BrowserContract.Presenter, BrowserContract.InteractorOutput {
+class SigningPresenter @Inject constructor(
+        private val interactor: SigningContract.InteractorInput,
+        private val router: SigningContract.Router
+) : SigningContract.Presenter, SigningContract.InteractorOutput {
 
-    internal val viewDelegate = ObjectDelegate<BrowserContract.View>()
+    internal val viewDelegate = ObjectDelegate<SigningContract.View>()
     internal val view by viewDelegate
 
     // region viper lifecycle
 
-    override fun attachView(view: BrowserContract.View) {
+    override fun attachView(view: SigningContract.View) {
         viewDelegate.attach(view)
         interactor.attachOutput(this)
     }
@@ -35,13 +35,8 @@ class BrowserPresenter @Inject constructor(
         interactor.savePendingState(outState)
     }
 
-    override fun querySubmitted(query: String) {
-        // interactor.resolveQuery(query)
-        if (query.commonPrefixWith("http") == "http") {
-            view.loadUrl(query)
-        } else {
-            view.loadUrl("https://$query")
-        }
+    override fun signTextPressed(text: String) {
+        interactor.signText(text)
     }
 
     // endregion
@@ -54,6 +49,11 @@ class BrowserPresenter @Inject constructor(
 
     override fun loadDataResult() {
     }
+
+    override fun signTextResult(text: String) {
+        view.updateSignedText(text)
+    }
+
     // endregion
 
 }

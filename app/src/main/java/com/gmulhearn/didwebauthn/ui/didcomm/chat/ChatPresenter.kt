@@ -47,14 +47,11 @@ class ChatPresenter @Inject constructor(
 
     // region view event handlers
 
-    // TODO Add view event handlers
-
     // endregion
 
     // region interactor output
 
     override fun loadDataResult() {
-        // TODO handle result
     }
 
     override fun updateMessages(messageList: MutableList<MessageDisplayModel>) {
@@ -69,7 +66,6 @@ class ChatPresenter @Inject constructor(
         }
     }
 
-    // TODO Add interactor outputs
 
     // endregion
 

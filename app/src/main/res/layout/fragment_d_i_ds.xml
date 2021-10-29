@@ -4,7 +4,7 @@
     android:id="@+id/DIDLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gmulhearn.didwebauthn.ui.didselect.DIDSelectFragment">
+    tools:context=".ui.retired.didselect.DIDSelectFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/greyout"

@@ -1,26 +1,22 @@
-package com.gmulhearn.didwebauthn.ui.externalsession
+package com.gmulhearn.didwebauthn.ui.retired.wallets
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.gmulhearn.didwebauthn.data.AllowCredentialDescriptor
-import com.gmulhearn.didwebauthn.data.UserInfo
+import com.gmulhearn.didwebauthn.data.WalletInfo
 
 /**
- * ExternalSessionContract VIPER contract
+ * WalletsContract VIPER contract
  */
-interface ExternalSessionContract {
+interface WalletsContract {
 
     /**
      * Passive view interface. This interface declares behaviors that can modify the View
      */
     interface View {
-        fun signalClient(sig: String)
 
-        fun setupCamera()
-        fun hideCamera()
-        fun showConnected()
-        fun sendMessageInWebView(jsonData: String)
-        fun showUserPrompt(title: String, message: String, onConfirmation: () -> Unit)
+        fun updateWalletList(wallets: MutableList<WalletsModels.WalletDisplayModel>)
+
+        fun onGenerationError()
     }
 
     /**
@@ -58,9 +54,10 @@ interface ExternalSessionContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
-        fun qrCodeRead(data: String)
-        fun onClientSignalled(data: String)
-        fun onServerMessage(data: String)
+
+        fun genWalletPressed(name: String)
+
+        fun walletClicked(name: String)
     }
 
     /**
@@ -98,9 +95,10 @@ interface ExternalSessionContract {
          */
         fun savePendingState(outState: Bundle)
 
-        fun processQrScan(data: String)
-        fun processClientSignal(data: String)
-        fun handleServerMessage(data: String)
+        fun generateWallet(name: String)
+
+        fun toWalletDIDSelect(walletName: String)
+
     }
 
     /**
@@ -112,21 +110,10 @@ interface ExternalSessionContract {
          * Called after [InteractorInput.loadData] completes successfully
          */
         fun loadDataResult()
-        fun retrievedSignal(sig: String)
-        fun connectionSuccess()
-        fun responseGenerated(jsonData: String)
 
-        fun requestUserRegistrationConfirmation(
-            origin: String,
-            userInfo: UserInfo,
-            onConfirmation: () -> Unit
-        )
+        fun walletGenerated(wallets: MutableList<WalletsModels.WalletDisplayModel>)
 
-        fun requestUserAuthenticationConfirmation(
-            origin: String,
-            allowedCredentials: List<AllowCredentialDescriptor>,
-            onConfirmation: () -> Unit
-        )
+        fun generationError()
     }
 
     /**
@@ -134,5 +121,6 @@ interface ExternalSessionContract {
      */
     interface Router {
 
+        fun toDIDSelect(walletInfo: WalletInfo)
     }
 }

@@ -37,7 +37,7 @@ class AddContactFragment : Fragment(), AddContactContract.View {
     }
 
     internal fun inject() {
-        AndroidSupportInjection.inject(this) // TODO inject with the default Application injector or the Kit injector if inside a UI Kit
+        AndroidSupportInjection.inject(this)
     }
 
     // endregion
@@ -114,8 +114,6 @@ class AddContactFragment : Fragment(), AddContactContract.View {
     // endregion
 
     // region View contract
-
-    // TODO Add view contract overrides
 
     // endregion
 

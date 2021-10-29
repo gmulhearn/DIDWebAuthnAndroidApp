@@ -1,26 +1,21 @@
-package com.gmulhearn.didwebauthn.ui.externalsession
+package com.gmulhearn.didwebauthn.ui.home
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.gmulhearn.didwebauthn.data.AllowCredentialDescriptor
-import com.gmulhearn.didwebauthn.data.UserInfo
+import com.gmulhearn.didwebauthn.data.DidInfo
+import com.gmulhearn.didwebauthn.data.indy.PairwiseContact
 
 /**
- * ExternalSessionContract VIPER contract
+ * HomeContract VIPER contract
  */
-interface ExternalSessionContract {
+interface HomeContract {
 
     /**
      * Passive view interface. This interface declares behaviors that can modify the View
      */
     interface View {
-        fun signalClient(sig: String)
-
-        fun setupCamera()
-        fun hideCamera()
-        fun showConnected()
-        fun sendMessageInWebView(jsonData: String)
-        fun showUserPrompt(title: String, message: String, onConfirmation: () -> Unit)
+        fun updateContactList(contacts: List<PairwiseContact>)
+        fun onWalletLoaded()
     }
 
     /**
@@ -58,9 +53,12 @@ interface ExternalSessionContract {
          * @param outState state Bundle to write any current state to
          */
         fun saveState(outState: Bundle)
-        fun qrCodeRead(data: String)
-        fun onClientSignalled(data: String)
-        fun onServerMessage(data: String)
+        fun addContactClicked()
+        fun contactClicked(pairwiseContact: PairwiseContact)
+        fun deleteClicked(pairwiseContact: PairwiseContact)
+        fun browserClicked()
+        fun walletInfoClicked()
+        fun externalSessionClicked()
     }
 
     /**
@@ -97,10 +95,9 @@ interface ExternalSessionContract {
          * @param outState Bundle to save Interactor state to
          */
         fun savePendingState(outState: Bundle)
-
-        fun processQrScan(data: String)
-        fun processClientSignal(data: String)
-        fun handleServerMessage(data: String)
+        fun toAddContact()
+        fun toChat(pairwiseContact: PairwiseContact)
+        fun deleteContact(pairwiseContact: PairwiseContact)
     }
 
     /**
@@ -112,21 +109,9 @@ interface ExternalSessionContract {
          * Called after [InteractorInput.loadData] completes successfully
          */
         fun loadDataResult()
-        fun retrievedSignal(sig: String)
-        fun connectionSuccess()
-        fun responseGenerated(jsonData: String)
 
-        fun requestUserRegistrationConfirmation(
-            origin: String,
-            userInfo: UserInfo,
-            onConfirmation: () -> Unit
-        )
-
-        fun requestUserAuthenticationConfirmation(
-            origin: String,
-            allowedCredentials: List<AllowCredentialDescriptor>,
-            onConfirmation: () -> Unit
-        )
+        fun updateContactList(myContacts: List<PairwiseContact>)
+        fun walletFinishedLoading()
     }
 
     /**
@@ -134,5 +119,10 @@ interface ExternalSessionContract {
      */
     interface Router {
 
+        fun toAddContact(didInfo: DidInfo)
+        fun toChat(pairwiseContact: PairwiseContact)
+        fun toBrowser()
+        fun toWalletInfo()
+        fun toExternalSession()
     }
 }

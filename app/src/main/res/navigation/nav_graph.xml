@@ -3,40 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/StartFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.gmulhearn.didwebauthn.FirstFragment"
+        android:id="@+id/StartFragment"
+        android:name="com.gmulhearn.didwebauthn.StartFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_first">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
-        <action
-            android:id="@+id/action_FirstFragment_to_WalletsFragment"
+            android:id="@+id/action_StartFragment_to_WalletsFragment"
             app:destination="@id/WalletsFragment" />
         <action
-            android:id="@+id/action_FirstFragment_to_DIDSelectFragment"
+            android:id="@+id/action_StartFragment_to_DIDSelectFragment"
             app:destination="@id/DIDSelectFragment" />
         <action
-            android:id="@+id/action_FirstFragment_to_contactSelectFragment"
-            app:destination="@id/contactSelectFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.gmulhearn.didwebauthn.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_StartFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/WalletsFragment"
-        android:name="com.gmulhearn.didwebauthn.ui.wallets.WalletsFragment"
+        android:name="com.gmulhearn.didwebauthn.ui.retired.wallets.WalletsFragment"
         android:label="fragment_i_d_generation"
         tools:layout="@layout/fragment_i_d_generation">
         <action
@@ -49,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/signingFragment"
-        android:name="com.gmulhearn.didwebauthn.ui.signing.SigningFragment"
+        android:name="com.gmulhearn.didwebauthn.ui.retired.signing.SigningFragment"
         android:label="fragment_signing"
         tools:layout="@layout/fragment_signing">
         <argument
@@ -58,38 +45,38 @@
     </fragment>
     <fragment
         android:id="@+id/DIDSelectFragment"
-        android:name="com.gmulhearn.didwebauthn.ui.didselect.DIDSelectFragment"
+        android:name="com.gmulhearn.didwebauthn.ui.retired.didselect.DIDSelectFragment"
         android:label="fragment_d_i_ds"
         tools:layout="@layout/fragment_d_i_ds">
         <action
             android:id="@+id/action_DIDSelectFragment_to_signingFragment"
             app:destination="@id/signingFragment" />
         <action
-            android:id="@+id/action_DIDSelectFragment_to_contactSelectFragment"
-            app:destination="@id/contactSelectFragment" />
+            android:id="@+id/action_DIDSelectFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
         <action
             android:id="@+id/action_DIDSelectFragment_to_browserFragment"
             app:destination="@id/browserFragment" />
     </fragment>
     <fragment
-        android:id="@+id/contactSelectFragment"
-        android:name="com.gmulhearn.didwebauthn.ui.didcomm.contactselect.ContactSelectFragment"
+        android:id="@+id/homeFragment"
+        android:name="com.gmulhearn.didwebauthn.ui.home.HomeFragment"
         android:label="fragment_contact_select"
         tools:layout="@layout/fragment_contact_select">
         <action
-            android:id="@+id/action_contactSelectFragment_to_addContactFragment"
+            android:id="@+id/action_homeFragment_to_addContactFragment"
             app:destination="@id/addContactFragment" />
         <action
-            android:id="@+id/action_contactSelectFragment_to_chatFragment"
+            android:id="@+id/action_homeFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
         <action
-            android:id="@+id/action_contactSelectFragment_to_browserFragment"
+            android:id="@+id/action_homeFragment_to_browserFragment"
             app:destination="@id/browserFragment" />
         <action
-            android:id="@+id/action_contactSelectFragment_to_walletInfoFragment"
+            android:id="@+id/action_homeFragment_to_walletInfoFragment"
             app:destination="@id/walletInfoFragment" />
         <action
-            android:id="@+id/action_contactSelectFragment_to_externalSessionFragment"
+            android:id="@+id/action_homeFragment_to_externalSessionFragment"
             app:destination="@id/externalSessionFragment" />
     </fragment>
     <fragment
@@ -113,11 +100,7 @@
         android:id="@+id/browserFragment"
         android:name="com.gmulhearn.didwebauthn.ui.browser.BrowserFragment"
         android:label="fragment_browser"
-        tools:layout="@layout/fragment_browser">
-        <argument
-            android:name="didInfo"
-            app:argType="com.gmulhearn.didwebauthn.data.DidInfo" />
-    </fragment>
+        tools:layout="@layout/fragment_browser" />
     <fragment
         android:id="@+id/walletInfoFragment"
         android:name="com.gmulhearn.didwebauthn.ui.walletInfo.WalletInfoFragment"

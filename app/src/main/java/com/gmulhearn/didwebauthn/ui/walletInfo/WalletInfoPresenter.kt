@@ -47,21 +47,16 @@ class WalletInfoPresenter @Inject constructor(
 
     // region view event handlers
 
-    // TODO Add view event handlers
-
     // endregion
 
     // region interactor output
 
     override fun loadDataResult(walletTitle: String) {
-        // TODO handle result
     }
 
     override fun updateInfo(didsString: String) {
         view.setInfoText(didsString)
     }
-
-    // TODO Add interactor outputs
 
     // endregion
 

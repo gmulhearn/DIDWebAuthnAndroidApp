@@ -50,14 +50,11 @@ class AddContactPresenter @Inject constructor(
 
     // region view event handlers
 
-    // TODO Add view event handlers
-
     // endregion
 
     // region interactor output
 
     override fun loadDataResult() {
-        // TODO handle result
     }
 
     override fun generatedQR(bitmap: Bitmap) {
@@ -71,9 +68,6 @@ class AddContactPresenter @Inject constructor(
     override fun onSuccessUpdate() {
         router.back()
     }
-
-    // TODO Add interactor outputs
-
     // endregion
 
 }

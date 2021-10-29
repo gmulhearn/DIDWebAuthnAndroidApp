@@ -4,7 +4,7 @@
     android:id="@+id/generateIDLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gmulhearn.didwebauthn.ui.wallets.WalletsFragment">
+    tools:context=".ui.retired.wallets.WalletsFragment">
 
     <Button
         android:id="@+id/genWalletButton"

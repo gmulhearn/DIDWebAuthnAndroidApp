@@ -56,13 +56,11 @@ class ExternalSessionPresenter @Inject constructor(
 
     // region view event handlers
 
-    // TODO Add view event handlers
     // endregion
 
     // region interactor output
 
     override fun loadDataResult() {
-        // TODO handle result
     }
 
     override fun retrievedSignal(sig: String) {
@@ -102,8 +100,6 @@ class ExternalSessionPresenter @Inject constructor(
             onConfirmation = onConfirmation
         )
     }
-
-    // TODO Add interactor outputs
 
     // endregion
 
