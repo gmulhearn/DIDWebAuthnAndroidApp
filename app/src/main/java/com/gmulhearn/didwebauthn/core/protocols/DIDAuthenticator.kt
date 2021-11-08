@@ -117,7 +117,7 @@ class DIDAuthenticator @Inject constructor(
 
         val rpIdHash = Sha256Hash.hash(rp.id.toByteArray(Charsets.UTF_8))
         val flags: Byte =
-            0x01 or (0x01 shl 6) or (0x01 shl 2)// attested cred included and user verified
+            0x01 or (0x01 shl 6) or (0x01 shl 2)// UP, attested cred included, UV
         val counter = 1
 
         /** create AttestedCredentialData */
@@ -142,15 +142,15 @@ class DIDAuthenticator @Inject constructor(
         attestedCredDataBuff.putShort(credentialId.size.toShort())
         attestedCredDataBuff.put(credentialId)
         attestedCredDataBuff.put(coseEncoded)
-        val attestedCredData = attestedCredDataBuff.array()
+        val attestedCredentialData = attestedCredDataBuff.array()
 
         /** **************************** */
 
-        val authDataBuff = ByteBuffer.allocate(32 + 1 + 4 + attestedCredData.size)
+        val authDataBuff = ByteBuffer.allocate(32 + 1 + 4 + attestedCredentialData.size)
         authDataBuff.put(rpIdHash)
         authDataBuff.put(flags)
         authDataBuff.putInt(counter)
-        authDataBuff.put(attestedCredData)
+        authDataBuff.put(attestedCredentialData)
 
         return Pair(authDataBuff.array(), credentialId)
     }
@@ -181,7 +181,8 @@ class DIDAuthenticator @Inject constructor(
     }
 
     /**
-     * TODO - redo
+     * Encodes a P256 KeyPair into COSE_Key formatting
+     * from: https://github.com/duo-labs/android-webauthn-authenticator
      */
     fun coseEncodeES256PublicKey(publicKey: PublicKey): ByteArray {
         val ecPublicKey: ECPublicKey = publicKey as ECPublicKey
@@ -211,7 +212,7 @@ class DIDAuthenticator @Inject constructor(
     }
 
     /**
-     * TODO - remove
+     * from: https://github.com/duo-labs/android-webauthn-authenticator
      */
     private fun toUnsignedFixedLength(arr: ByteArray, fixedLength: Int): ByteArray {
         val fixed = ByteArray(fixedLength)
@@ -241,10 +242,10 @@ class DIDAuthenticator @Inject constructor(
         val didCred = getDidCredential(rpId, allowList)
         incrementCounterForDIDCred(didCred)
         val counter = didCred.authCounter + 1
-        val authData = createAuthData(counter, didCred.rpInfo.id)
+        val authenticatorData = createAuthenticatorData(counter, didCred.rpInfo.id)
 
         val authDataClientDataHashToSign = mutableListOf<Byte>()
-        authData.forEach { authDataClientDataHashToSign.add(it) }
+        authenticatorData.forEach { authDataClientDataHashToSign.add(it) }
         clientDataHash.forEach { authDataClientDataHashToSign.add(it) }
 
         val sig = when (didCred.keyAlg) {
@@ -272,7 +273,7 @@ class DIDAuthenticator @Inject constructor(
         //  inside the authenticator for convenience.
         return createPublicKeyCredentialAssertionResponse(
             rawId = id,
-            authenticatorData = authData,
+            authenticatorData = authenticatorData,
             clientDataJson = clientDataJson.toByteArray(Charsets.UTF_8),
             signature = sig,
             userHandle = user
@@ -283,13 +284,13 @@ class DIDAuthenticator @Inject constructor(
      * creates the authData component (FOR AUTHENTICATION) on the attestation object
      * see: https://www.w3.org/TR/webauthn/#attestation-object
      */
-    private fun createAuthData(
+    private fun createAuthenticatorData(
         counter: Int,
         rpId: String
     ): ByteArray {
 
         val rpIdHash = Sha256Hash.hash(rpId.toByteArray(Charsets.UTF_8))
-        val flags: Byte = 0x01 // no attest data include
+        val flags: Byte = 0x01 or (0x01 shl 2) // UP and UV no attest data include
 
         val authDataBuff = ByteBuffer.allocate(32 + 1 + 4)
         authDataBuff.put(rpIdHash)
@@ -390,12 +391,6 @@ class DIDAuthenticator @Inject constructor(
      * Generates a P256 [KeyPair] tagged with the provided [didVerkey].
      */
     private fun generateES256KeyFromDID(didVerkey: String): KeyPair {
-//        val seed = Crypto.cryptoSign(
-//            walletProvider.getWallet(),
-//            didVerkey,
-//            "seed".toByteArray(Charsets.UTF_8)  //  is this completely secure?
-//        ).get()
-
         val keyGenParameterSpec = KeyGenParameterSpec.Builder(
             "ES256_FROM_DID_VERKEY_$didVerkey",
             KeyProperties.PURPOSE_SIGN
@@ -403,11 +398,9 @@ class DIDAuthenticator @Inject constructor(
             .setAlgorithmParameterSpec(ECGenParameterSpec("secp256r1"))
             .setDigests((KeyProperties.DIGEST_SHA256))
             .build()
-
         val generator =
             KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
         generator.initialize(keyGenParameterSpec)
-
         return generator.genKeyPair()
     }
 

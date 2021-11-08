@@ -51,7 +51,7 @@ data class AllowCredentialDescriptor(
 data class CredentialRequestOptions(
     @SerializedName("challenge") val mappedChallenge: Map<String, Int>,
     val timeout: Int,
-    val rpId: String,
+    val rpId: String?,
     val allowCredentials: List<AllowCredentialDescriptor>
 )
 

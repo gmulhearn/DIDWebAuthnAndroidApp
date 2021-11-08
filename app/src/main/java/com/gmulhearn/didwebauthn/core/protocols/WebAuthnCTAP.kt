@@ -195,12 +195,12 @@ fun CredentialRequestOptions.toAuthenticatorGetAssertionOptions(origin: String):
     )
     val clientDataHash = clientData.hash()
 
-    // val urlObj = URL(origin)
+    val urlObj = URL(origin)
 
     // TODO: IMPORTANT SECURITY: origin rpID check
 
     return AuthenticatorGetAssertionOptions(
-        rpId = rpId, // urlObj.host, // TODO need to check this works
+        rpId = rpId ?: urlObj.host, // TODO need to check this works
         clientDataHash = clientDataHash,
         allowCredentialDescriptorList = allowCredentials,
         requireUserPresence = true,
